@@ -20,7 +20,8 @@
         android:layout_marginStart="239dp"
         android:layout_marginTop="32dp"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_orange_light" />
+        android:background="@android:color/holo_orange_light"
+        android:onClick="clickLevel" />
 
     <Button
         android:text="Niveau 1"
@@ -31,7 +32,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/level2_button"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_green_light" />
+        android:background="@android:color/holo_green_light"
+        android:onClick="clickLevel" />
 
     <Button
         android:text="Niveau 3"
@@ -42,7 +44,8 @@
         android:layout_marginTop="71dp"
         android:id="@+id/level3_button"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_orange_dark" />
+        android:background="@android:color/holo_orange_dark"
+        android:onClick="clickLevel" />
 
     <Button
         android:text="Niveau 4"
@@ -53,5 +56,6 @@
         android:layout_marginTop="40dp"
         android:id="@+id/level4_button"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_red_dark" />
+        android:background="@android:color/holo_red_dark"
+        android:onClick="clickLevel" />
 </RelativeLayout>
