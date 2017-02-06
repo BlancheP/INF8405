@@ -8,21 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="tp1.inf8405.match3.MainActivity">
-
-    <Button
-        android:text="   Règles du jeu   "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/rules_button"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_green_light"
-        android:layout_marginLeft="92dp"
-        android:layout_marginTop="27dp"
-        android:layout_marginStart="236dp"
-        android:layout_below="@+id/start_button"
-        android:layout_alignParentStart="true"
-        android:onClick="clickRules" />
 
     <Button
         android:text="Quitter"
@@ -32,21 +19,34 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:background="@android:color/holo_green_light"
         android:layout_marginLeft="92dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginStart="15dp"
+        android:layout_marginTop="28dp"
+        android:onClick="onQuit"
         android:layout_below="@+id/rules_button"
-        android:layout_alignStart="@+id/rules_button"
-        android:onClick="onQuit" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:text="Démarrer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="113dp"
         android:id="@+id/start_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:background="@android:color/holo_green_light"
-        android:layout_width="wrap_content"
+        android:onClick="clickPlay"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/quit_button"
-        android:onClick="clickPlay" />
+        android:layout_alignStart="@+id/quit_button" />
+
+    <Button
+        android:text="   Règles du jeu   "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rules_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@android:color/holo_green_light"
+        android:layout_marginLeft="92dp"
+        android:layout_marginTop="35dp"
+        android:onClick="clickRules"
+        android:layout_below="@+id/start_button"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

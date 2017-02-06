@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void onQuit(View view){
         finish();
-        System.exit(1);
     }
 
     public void clickRules(View view){

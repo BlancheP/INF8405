@@ -8,20 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="tp1.inf8405.match3.ChooseLevelActivity">
-
-    <Button
-        android:text="Niveau 2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/level2_button"
-        android:layout_below="@+id/level1_button"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="239dp"
-        android:layout_marginTop="32dp"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_orange_light"
-        android:onClick="clickLevel" />
 
     <Button
         android:text="Niveau 1"
@@ -33,29 +21,43 @@
         android:layout_alignStart="@+id/level2_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:background="@android:color/holo_green_light"
-        android:onClick="clickLevel" />
-
-    <Button
-        android:text="Niveau 3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/level2_button"
-        android:layout_alignEnd="@+id/level2_button"
-        android:layout_marginTop="71dp"
-        android:id="@+id/level3_button"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_orange_dark"
-        android:onClick="clickLevel" />
+        android:onClick="clickLevel"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:text="Niveau 4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/level3_button"
-        android:layout_alignStart="@+id/level3_button"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="14dp"
         android:id="@+id/level4_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:background="@android:color/holo_red_dark"
-        android:onClick="clickLevel" />
+        android:onClick="clickLevel"
+        android:layout_below="@+id/level3_button"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Niveau 2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/level2_button"
+        android:layout_marginTop="29dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@android:color/holo_orange_light"
+        android:onClick="clickLevel"
+        android:layout_below="@+id/level1_button"
+        android:layout_alignStart="@+id/level3_button" />
+
+    <Button
+        android:text="Niveau 3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:id="@+id/level3_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@android:color/holo_orange_dark"
+        android:onClick="clickLevel"
+        android:layout_below="@+id/level2_button"
+        android:layout_alignStart="@+id/level4_button" />
+
 </RelativeLayout>
