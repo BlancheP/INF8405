@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Blanche on 2/6/2017.
@@ -20,11 +22,14 @@ public class GridView extends View
     float width = 0;
     float currentX = 0;
     float currentY = 0;
+    List<Integer> colors = null;
 
     public GridView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         paint = new Paint();
+        colors = new ArrayList<>(Arrays.asList(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.rgb(255,165,0), Color.rgb(148,0,211)));
+
     }
 
     protected void onDraw(Canvas canvas)
@@ -35,12 +40,12 @@ public class GridView extends View
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        paint.setColor(Color.RED);
         for (int i = 0; i < 5; i ++)
         {
             for (int j = 0; j < 8; j++)
             {
                 ArrayList<Float> coords = getCoords(i,j);
+                paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
 
@@ -73,6 +78,7 @@ public class GridView extends View
             {
                 grid[i][j].add(currentX);
                 grid[i][j].add(currentY);
+                grid[i][j].add((float)getRandomColor());
                 currentX += width;
                 System.out.println(grid[i][j]);
             }
@@ -85,5 +91,36 @@ public class GridView extends View
     protected ArrayList<Float> getCoords(int i, int j)
     {
         return grid[i][j];
+    }
+
+    protected int getRandomColor()
+    {
+        return colors.get((int)(Math.random() * colors.size()));
+    }
+
+    protected List<Integer> findCircle(int x, int y)
+    {
+        List<Integer> coords = new ArrayList<>();
+        for (int i = 0; i < grid.length; i++)
+        {
+            int max = Float.compare((float)y, ((float)grid[i][0].get(1) + width/2));
+            int min = Float.compare((float)y, ((float)grid[i][0].get(1) - width/2));
+            if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
+                coords.add(i);
+                break;
+            }
+
+        }
+
+        for (int j = 0; j < grid[i].length; j++)
+        {
+            int max = Float.compare((float)y, ((float)grid[i][j].get(0) + width/2));
+            int min = Float.compare((float)y, ((float)grid[i][j].get(0) - width/2));
+            if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
+                coords.add(j);
+                break;
+            }
+        }
+        return coords;
     }
 }
