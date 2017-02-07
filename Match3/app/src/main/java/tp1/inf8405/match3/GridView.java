@@ -101,7 +101,8 @@ public class GridView extends View
     protected List<Integer> findCircle(int x, int y)
     {
         List<Integer> coords = new ArrayList<>();
-        for (int i = 0; i < grid.length; i++)
+        int i;
+        for (i = 0; i < grid.length; i++)
         {
             int max = Float.compare((float)y, ((float)grid[i][0].get(1) + width/2));
             int min = Float.compare((float)y, ((float)grid[i][0].get(1) - width/2));
