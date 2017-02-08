@@ -31,10 +31,11 @@
         android:layout_marginTop="14dp"
         android:id="@+id/level4_button"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_red_dark"
+        android:background="@color/common_plus_signin_btn_text_light_focused"
         android:onClick="clickLevel"
         android:layout_below="@+id/level3_button"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:enabled="false"  />
 
     <Button
         android:text="Niveau 2"
@@ -43,10 +44,11 @@
         android:id="@+id/level2_button"
         android:layout_marginTop="29dp"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_orange_light"
+        android:background="@color/common_plus_signin_btn_text_light_default"
         android:onClick="clickLevel"
         android:layout_below="@+id/level1_button"
-        android:layout_alignStart="@+id/level3_button" />
+        android:layout_alignStart="@+id/level3_button"
+        android:enabled="false" />
 
     <Button
         android:text="Niveau 3"
@@ -55,9 +57,10 @@
         android:layout_marginTop="21dp"
         android:id="@+id/level3_button"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@android:color/holo_orange_dark"
+        android:background="@color/common_plus_signin_btn_text_light_default"
         android:onClick="clickLevel"
         android:layout_below="@+id/level2_button"
-        android:layout_alignStart="@+id/level4_button" />
+        android:layout_alignStart="@+id/level4_button"
+        android:enabled="false" />
 
 </RelativeLayout>
