@@ -4,8 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +20,7 @@ import java.util.List;
 
 public class GridView extends View
 {
+    //VARIABLES FOR GRID INITIATION
     Paint paint = null;
     ArrayList[][] grid = null;
     float width = 0;
@@ -24,12 +28,28 @@ public class GridView extends View
     float currentY = 0;
     List<Integer> colors = null;
 
+
+    //VARIABLES FOR SWIPE MANAGEMENT
+    float MIN_DELTA; //minimum distance in order for a swipe to take effect
+
+    float initialPositionX;
+    float initialPositionY;
+
+    float finalPositionX;
+    float finalPositionY;
+
     public GridView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         paint = new Paint();
-        colors = new ArrayList<>(Arrays.asList(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.rgb(255,165,0), Color.rgb(148,0,211)));
-
+        colors = new ArrayList<>(Arrays.asList(
+                Color.RED,
+                Color.BLUE,
+                Color.GREEN,
+                Color.YELLOW,
+                Color.rgb(255,165,0),
+                Color.rgb(148,0,211)
+        ));
     }
 
     protected void onDraw(Canvas canvas)
@@ -48,9 +68,7 @@ public class GridView extends View
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
-
         }
-
     }
 
     protected float circleRadius(int nbCols)
@@ -62,6 +80,7 @@ public class GridView extends View
     {
         grid = new ArrayList[nbRows][nbCols];
         width = w/(float)nbCols;
+        MIN_DELTA = width / 2;
         currentX = currentY = width / 2;
 
         for (int i = 0; i < nbRows; i++)
@@ -101,7 +120,10 @@ public class GridView extends View
     protected List<Integer> findCircle(int x, int y)
     {
         List<Integer> coords = new ArrayList<>();
-        for (int i = 0; i < grid.length; i++)
+
+        int i;
+
+        for (i = 0; i < grid.length; i++)
         {
             int max = Float.compare((float)y, ((float)grid[i][0].get(1) + width/2));
             int min = Float.compare((float)y, ((float)grid[i][0].get(1) - width/2));
@@ -122,5 +144,55 @@ public class GridView extends View
             }
         }
         return coords;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+
+        int action = MotionEventCompat.getActionMasked(event);
+
+        switch(action)
+        {
+            case (MotionEvent.ACTION_DOWN) :
+
+                initialPositionX = event.getX();
+                initialPositionY = event.getY();
+
+                //Toast.makeText(this.getContext(), "Action was DOWN at: " + initialPositionX, Toast.LENGTH_SHORT).show ();
+
+                return true;
+
+            case (MotionEvent.ACTION_UP) :
+
+                finalPositionX = event.getX();
+                finalPositionY = event.getY();
+
+                //Toast.makeText(this.getContext(), "Action was UP at : " + finalPositionX, Toast.LENGTH_SHORT).show ();
+
+                if(finalPositionX - initialPositionX >= MIN_DELTA)
+                {
+                    Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
+                }
+
+                else if (Math.abs(initialPositionX - finalPositionX) >= MIN_DELTA)
+                {
+                    Toast.makeText(this.getContext(), "Swipped LEFT", Toast.LENGTH_SHORT).show ();
+                }
+
+                else if (finalPositionY - initialPositionY >= MIN_DELTA)
+                {
+                    Toast.makeText(this.getContext(), "Swipped DOWN", Toast.LENGTH_SHORT).show ();
+                }
+
+                else if (Math.abs(initialPositionY - finalPositionY) >= MIN_DELTA)
+                {
+                    Toast.makeText(this.getContext(), "Swipped UP", Toast.LENGTH_SHORT).show ();
+                }
+
+                return true;
+
+            default :
+                return super.onTouchEvent(event);
+        }
     }
 }
