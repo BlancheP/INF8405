@@ -117,7 +117,7 @@ public class GridView extends View
         return colors.get((int)(Math.random() * colors.size()));
     }
 
-    protected List<Integer> findCircle(int x, int y)
+    protected List<Integer> findCircle(float x, float y)
     {
         List<Integer> coords = new ArrayList<>();
 
@@ -125,8 +125,8 @@ public class GridView extends View
 
         for (i = 0; i < grid.length; i++)
         {
-            int max = Float.compare((float)y, ((float)grid[i][0].get(1) + width/2));
-            int min = Float.compare((float)y, ((float)grid[i][0].get(1) - width/2));
+            int max = Float.compare(y, ((float)grid[i][0].get(1) + width/2));
+            int min = Float.compare(y, ((float)grid[i][0].get(1) - width/2));
             if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
                 coords.add(i);
                 break;
@@ -136,8 +136,8 @@ public class GridView extends View
 
         for (int j = 0; j < grid[i].length; j++)
         {
-            int max = Float.compare((float)y, ((float)grid[i][j].get(0) + width/2));
-            int min = Float.compare((float)y, ((float)grid[i][j].get(0) - width/2));
+            int max = Float.compare(x, ((float)grid[i][j].get(0) + width/2));
+            int min = Float.compare(x, ((float)grid[i][j].get(0) - width/2));
             if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
                 coords.add(j);
                 break;
@@ -157,10 +157,12 @@ public class GridView extends View
 
                 initialPositionX = event.getX();
                 initialPositionY = event.getY();
+                List<Integer> circleCoords = findCircle(initialPositionX, initialPositionY);
 
                 List<Integer> coordsActualCircle = findCircle((int)initialPositionX, (int)initialPositionY);
 
                 //Toast.makeText(this.getContext(), "Action was DOWN at: " + initialPositionX, Toast.LENGTH_SHORT).show ();
+                Toast.makeText(this.getContext(), "Il sagit du cercle " + circleCoords.get(0) + circleCoords.get(1), Toast.LENGTH_SHORT).show ();
 
                 return true;
 
