@@ -158,6 +158,8 @@ public class GridView extends View
                 initialPositionX = event.getX();
                 initialPositionY = event.getY();
 
+                List<Integer> coordsActualCircle = findCircle((int)initialPositionX, (int)initialPositionY);
+
                 //Toast.makeText(this.getContext(), "Action was DOWN at: " + initialPositionX, Toast.LENGTH_SHORT).show ();
 
                 return true;
