@@ -220,7 +220,7 @@ public class GridView extends View
         findMatch(circle, 2);
         findMatch(circle, 3);
 
-        if (matchCirclesHorizontal.size() > 2 || matchCirclesVertical.size() > 3) {
+        if (matchCirclesHorizontal.size() > 2 || matchCirclesVertical.size() > 2) {
             Toast.makeText(this.getContext(), "Horizontal: " + matchCirclesHorizontal.size(), Toast.LENGTH_SHORT).show ();
             Toast.makeText(this.getContext(), "Vertical: " + matchCirclesVertical.size(), Toast.LENGTH_SHORT).show ();
             return matchCirclesHorizontal.size() > matchCirclesVertical.size() ? 1 : 0;
@@ -251,11 +251,11 @@ public class GridView extends View
                 coords.add(circle.get(0) - 1);
                 coords.add(circle.get(1));
                 break;
-            case 1 /*down*/: if (circle.get(0) == grid.length) break;
+            case 1 /*down*/: if (circle.get(0) == grid.length - 1) break;
                 coords.add(circle.get(0) + 1);
                 coords.add(circle.get(1));
                 break;
-            case 2 /*right*/: if (circle.get(1) == grid[0].length) break;
+            case 2 /*right*/: if (circle.get(1) == grid[0].length - 1) break;
                 coords.add(circle.get(0));
                 coords.add(circle.get(1) + 1);
                 break;
@@ -271,6 +271,6 @@ public class GridView extends View
 
     protected Boolean isThereAMatch(List<Integer> circle, List<Integer> neighbor)
     {
-        return grid[circle.get(0)][circle.get(1)].get(2) == grid[neighbor.get(0)][neighbor.get(1)].get(2);
+        return Math.abs((float)grid[circle.get(0)][circle.get(1)].get(2) - (float)grid[neighbor.get(0)][neighbor.get(1)].get(2)) < 0.000001;
     }
 }
