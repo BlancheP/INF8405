@@ -236,9 +236,9 @@ public class GridView extends View
         if (neighbor.size() != 0 && isThereAMatch(circle, neighbor))
         {
             if (direction == 0 || direction == 1)
-                matchCirclesHorizontal.add(neighbor);
-            else
                 matchCirclesVertical.add(neighbor);
+            else
+                matchCirclesHorizontal.add(neighbor);
             findMatch(neighbor, direction);
         }
     }
