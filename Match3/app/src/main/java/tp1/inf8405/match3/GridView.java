@@ -159,10 +159,8 @@ public class GridView extends View
                 initialPositionY = event.getY();
                 List<Integer> circleCoords = findCircle(initialPositionX, initialPositionY);
 
-                List<Integer> coordsActualCircle = findCircle((int)initialPositionX, (int)initialPositionY);
-
                 //Toast.makeText(this.getContext(), "Action was DOWN at: " + initialPositionX, Toast.LENGTH_SHORT).show ();
-                Toast.makeText(this.getContext(), "Il sagit du cercle " + circleCoords.get(0) + circleCoords.get(1), Toast.LENGTH_SHORT).show ();
+                Toast.makeText(this.getContext(), "Il s'agit du cercle " + circleCoords.get(0) + circleCoords.get(1), Toast.LENGTH_SHORT).show ();
 
                 return true;
 
