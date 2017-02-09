@@ -31,12 +31,13 @@ public class GridView extends View
 
     //VARIABLES FOR SWIPE MANAGEMENT
     float MIN_DELTA; //minimum distance in order for a swipe to take effect
+    float initialPositionX = 0, initialPositionY = 0, finalPositionX, finalPositionY;
 
-    float initialPositionX;
-    float initialPositionY;
+    List<Integer> beginCoords = null;
+    List<Integer> endCoords = null;
 
-    float finalPositionX;
-    float finalPositionY;
+    List<List<Integer>> matchCirclesVertical = new ArrayList<>();
+    List<List<Integer>> matchCirclesHorizontal = new ArrayList<>();
 
     public GridView(Context context, AttributeSet attrs)
     {
@@ -56,7 +57,8 @@ public class GridView extends View
     {
         super.onDraw(canvas);
         float radius = circleRadius(8);
-        initGrid(5,8,getWidth());
+        if (grid == null)
+            initGrid(5,8,getWidth());
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
@@ -65,6 +67,11 @@ public class GridView extends View
             for (int j = 0; j < 8; j++)
             {
                 ArrayList<Float> coords = getCoords(i,j);
+                if (coords.size() < 3)
+                {
+                    grid[i][j].add((float)getRandomColor());
+                    coords = getCoords(i,j);
+                }
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
@@ -99,7 +106,6 @@ public class GridView extends View
                 grid[i][j].add(currentY);
                 grid[i][j].add((float)getRandomColor());
                 currentX += width;
-                System.out.println(grid[i][j]);
             }
             currentX = width / 2;
             currentY += width;
@@ -117,35 +123,6 @@ public class GridView extends View
         return colors.get((int)(Math.random() * colors.size()));
     }
 
-    protected List<Integer> findCircle(float x, float y)
-    {
-        List<Integer> coords = new ArrayList<>();
-
-        int i;
-
-        for (i = 0; i < grid.length; i++)
-        {
-            int max = Float.compare(y, ((float)grid[i][0].get(1) + width/2));
-            int min = Float.compare(y, ((float)grid[i][0].get(1) - width/2));
-            if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
-                coords.add(i);
-                break;
-            }
-
-        }
-
-        for (int j = 0; j < grid[i].length; j++)
-        {
-            int max = Float.compare(x, ((float)grid[i][j].get(0) + width/2));
-            int min = Float.compare(x, ((float)grid[i][j].get(0) - width/2));
-            if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
-                coords.add(j);
-                break;
-            }
-        }
-        return coords;
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
@@ -157,10 +134,9 @@ public class GridView extends View
 
                 initialPositionX = event.getX();
                 initialPositionY = event.getY();
-                List<Integer> circleCoords = findCircle(initialPositionX, initialPositionY);
+                beginCoords = findCircle(initialPositionX, initialPositionY);
 
                 //Toast.makeText(this.getContext(), "Action was DOWN at: " + initialPositionX, Toast.LENGTH_SHORT).show ();
-                Toast.makeText(this.getContext(), "Il s'agit du cercle " + circleCoords.get(0) + circleCoords.get(1), Toast.LENGTH_SHORT).show ();
 
                 return true;
 
@@ -174,27 +150,174 @@ public class GridView extends View
                 if(finalPositionX - initialPositionX >= MIN_DELTA)
                 {
                     Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
+                    endCoords = findNeighbor(beginCoords, 2);
                 }
 
                 else if (Math.abs(initialPositionX - finalPositionX) >= MIN_DELTA)
                 {
                     Toast.makeText(this.getContext(), "Swipped LEFT", Toast.LENGTH_SHORT).show ();
+                    endCoords = findNeighbor(beginCoords, 3);
                 }
 
                 else if (finalPositionY - initialPositionY >= MIN_DELTA)
                 {
                     Toast.makeText(this.getContext(), "Swipped DOWN", Toast.LENGTH_SHORT).show ();
+                    endCoords = findNeighbor(beginCoords, 1);
                 }
 
                 else if (Math.abs(initialPositionY - finalPositionY) >= MIN_DELTA)
                 {
                     Toast.makeText(this.getContext(), "Swipped UP", Toast.LENGTH_SHORT).show ();
+                    endCoords = findNeighbor(beginCoords, 0);
                 }
 
+                float oldColor1 = (float)grid[beginCoords.get(0)][beginCoords.get(1)].get(2), oldColor2 = (float)grid[endCoords.get(0)][endCoords.get(1)].get(2);
+                grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor2);
+                grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor1);
+
+                int statusBegin = match(beginCoords);
+                int statusEnd = match(endCoords);
+                if (statusBegin == -1 && statusEnd == -1 )
+                {
+                    grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor1);
+                    grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor2);
+                    Toast.makeText(this.getContext(), "Ceci est une action interdite!!", Toast.LENGTH_SHORT).show();
+                }
+                else if (statusBegin == 0) //Vertical match
+                {
+                    for (int i = 0; i < matchCirclesVertical.size(); i++)
+                    {
+                        List<Integer> current = matchCirclesVertical.get(i);
+                        grid[current.get(0)][current.get(1)].remove(2);
+                    }
+                }
+                else if (statusBegin == 1) //Horizontal match
+                {
+                    for (int i = 0; i < matchCirclesHorizontal.size(); i++)
+                    {
+                        List<Integer> current = matchCirclesHorizontal.get(i);
+                        grid[current.get(0)][current.get(1)].remove(2);
+                    }
+                }
+                else if (statusEnd == 0) //Vertical match
+                {
+                    for (int i = 0; i < matchCirclesVertical.size(); i++)
+                    {
+                        List<Integer> current = matchCirclesVertical.get(i);
+                        grid[current.get(0)][current.get(1)].remove(2);
+                    }
+                }
+                else // (statusEnd == 1) //Horizontal match
+                {
+                    for (int i = 0; i < matchCirclesHorizontal.size(); i++)
+                    {
+                        List<Integer> current = matchCirclesHorizontal.get(i);
+                        grid[current.get(0)][current.get(1)].remove(2);
+                    }
+                }
+                invalidate();
                 return true;
 
             default :
                 return super.onTouchEvent(event);
         }
+
+    }
+
+    protected List<Integer> findCircle(float x, float y)
+    {
+        List<Integer> coords = new ArrayList<>();
+
+        for (int i = 0; i < grid.length; i++)
+        {
+            int max = Float.compare(y, ((float)grid[i][0].get(1) + width/2));
+            int min = Float.compare(y, ((float)grid[i][0].get(1) - width/2));
+            if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
+                coords.add(i);
+                break;
+            }
+
+        }
+
+        for (int j = 0; j < grid[0].length; j++)
+        {
+            int max = Float.compare(x, ((float)grid[0][j].get(0) + width/2));
+            int min = Float.compare(x, ((float)grid[0][j].get(0) - width/2));
+            if (max == 0 || min == 0 || (max < 0 && min > 0) ) {
+                coords.add(j);
+                break;
+            }
+        }
+
+        return coords;
+    }
+
+    protected int match(List<Integer> circle)
+    {
+        matchCirclesHorizontal.clear();
+        matchCirclesVertical.clear();
+        matchCirclesHorizontal.add(circle);
+        matchCirclesVertical.add(circle);
+
+        //Vertical
+        findMatch(circle, 0);
+        findMatch(circle, 1);
+
+        //Horizontal
+        findMatch(circle, 2);
+        findMatch(circle, 3);
+
+        if (matchCirclesHorizontal.size() > 2 || matchCirclesVertical.size() > 2) {
+            Toast.makeText(this.getContext(), "Horizontal: " + matchCirclesHorizontal.size(), Toast.LENGTH_SHORT).show ();
+            Toast.makeText(this.getContext(), "Vertical: " + matchCirclesVertical.size(), Toast.LENGTH_SHORT).show ();
+            return matchCirclesHorizontal.size() > matchCirclesVertical.size() ? 1 : 0;
+        }
+        else
+            return -1;
+
+    }
+
+    protected void findMatch(List<Integer> circle, int direction)
+    {
+        List<Integer> neighbor = findNeighbor(circle, direction);
+        if (neighbor.size() != 0 && isThereAMatch(circle, neighbor))
+        {
+            if (direction == 0 || direction == 1)
+                matchCirclesVertical.add(neighbor);
+            else
+                matchCirclesHorizontal.add(neighbor);
+            findMatch(neighbor, direction);
+        }
+    }
+
+    protected List<Integer> findNeighbor(List<Integer> circle, int direction)
+    {
+        List<Integer> coords = new ArrayList<>();
+        switch (direction){
+            case 0 /*up*/: if (circle.get(0) == 0) break;
+                coords.add(circle.get(0) - 1);
+                coords.add(circle.get(1));
+                break;
+            case 1 /*down*/: if (circle.get(0) == grid.length - 1) break;
+                coords.add(circle.get(0) + 1);
+                coords.add(circle.get(1));
+                break;
+            case 2 /*right*/: if (circle.get(1) == grid[0].length - 1) break;
+                coords.add(circle.get(0));
+                coords.add(circle.get(1) + 1);
+                break;
+            case 3 /*left*/: if (circle.get(1) == 0) break;
+                coords.add(circle.get(0));
+                coords.add(circle.get(1) - 1);
+                break;
+            default:
+                break;
+        }
+        return coords;
+    }
+
+    protected Boolean isThereAMatch(List<Integer> circle, List<Integer> neighbor)
+    {
+        return Math.abs((float)grid[circle.get(0)][circle.get(1)].get(2) - (float)grid[neighbor.get(0)][neighbor.get(1)].get(2)) < 0.000001;
     }
 }
