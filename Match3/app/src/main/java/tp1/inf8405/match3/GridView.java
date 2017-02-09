@@ -27,6 +27,7 @@ public class GridView extends View
     float currentX = 0;
     float currentY = 0;
     List<Integer> colors = null;
+    int[] colorTable = null;
 
 
     //VARIABLES FOR SWIPE MANAGEMENT
@@ -79,10 +80,12 @@ public class GridView extends View
     protected void initGrid(int nbRows, int nbCols, int w)
     {
         grid = new ArrayList[nbRows][nbCols];
+        colorTable = new int[nbRows*nbCols];
         width = w/(float)nbCols;
         MIN_DELTA = width / 2;
         currentX = currentY = width / 2;
 
+        colorTable = getResources().getIntArray(R.array.colorGridL1);
         for (int i = 0; i < nbRows; i++)
         {
             for (int j = 0; j < nbCols; j++)
@@ -97,7 +100,8 @@ public class GridView extends View
             {
                 grid[i][j].add(currentX);
                 grid[i][j].add(currentY);
-                grid[i][j].add((float)getRandomColor());
+                grid[i][j].add((float)colorTable[j + i * nbCols]);
+                //grid[i][j].add((float)getRandomColor());
                 currentX += width;
                 System.out.println(grid[i][j]);
             }
