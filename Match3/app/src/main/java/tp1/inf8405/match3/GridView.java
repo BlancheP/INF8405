@@ -58,14 +58,16 @@ public class GridView extends View
     {
         super.onDraw(canvas);
         float radius = circleRadius(8);
+        int nbRows = getResources().getInteger(R.integer.numRowsL1);
+        int nbCols = getResources().getInteger(R.integer.numColsL1);
         if (grid == null)
-            initGrid(5,8,getWidth());
+            initGrid(nbRows, nbCols, getWidth());
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        for (int i = 0; i < 5; i ++)
+        for (int i = 0; i < nbRows; i ++)
         {
-            for (int j = 0; j < 8; j++)
+            for (int j = 0; j < nbCols; j++)
             {
                 ArrayList<Float> coords = getCoords(i,j);
                 if (coords.size() < 3)
