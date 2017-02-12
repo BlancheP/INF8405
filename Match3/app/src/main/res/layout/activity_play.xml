@@ -14,7 +14,6 @@
         android:layout_height="match_parent"
         android:layout_weight="0.9"
         android:id="@+id/objectifView"
-        android:text="Objectif: "
         android:layout_gravity="right"
         android:textStyle="bold"
         android:textSize="25sp"/>
@@ -34,7 +33,6 @@
         android:layout_height="match_parent"
         android:layout_weight="0.9"
         android:id="@+id/remainingShotsView"
-        android:text="Nombre de coups restants: "
         android:layout_gravity="right"
         android:textStyle="bold"
         android:textSize="25sp"/>

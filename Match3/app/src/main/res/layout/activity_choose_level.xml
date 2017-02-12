@@ -35,7 +35,7 @@
         android:onClick="clickLevel"
         android:layout_below="@+id/level3_button"
         android:layout_centerHorizontal="true"
-        android:enabled="false"  />
+        android:enabled="true"  />
 
     <Button
         android:text="Niveau 2"
@@ -48,7 +48,7 @@
         android:onClick="clickLevel"
         android:layout_below="@+id/level1_button"
         android:layout_alignStart="@+id/level3_button"
-        android:enabled="false" />
+        android:enabled="true" />
 
     <Button
         android:text="Niveau 3"
@@ -61,6 +61,6 @@
         android:onClick="clickLevel"
         android:layout_below="@+id/level2_button"
         android:layout_alignStart="@+id/level4_button"
-        android:enabled="false" />
+        android:enabled="true" />
 
 </RelativeLayout>

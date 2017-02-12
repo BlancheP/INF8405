@@ -8,6 +8,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class GridView extends View
     float currentX = 0;
     float currentY = 0;
     List<Integer> colors = null;
-    int[] colorTable = null;
 
 
     //VARIABLES FOR SWIPE MANAGEMENT
@@ -58,13 +58,21 @@ public class GridView extends View
     {
         super.onDraw(canvas);
         float radius = circleRadius(8);
-        int nbRows = getResources().getInteger(R.integer.numRowsL1);
-        int nbCols = getResources().getInteger(R.integer.numColsL1);
+
+        int[] colorTable = ((PlayActivity) getContext()).getColorTable();
+
+        int nbRows = ((PlayActivity) getContext()).getNbRows();
+        int nbCols = ((PlayActivity) getContext()).getNbCols();
+
         if (grid == null)
-            initGrid(nbRows, nbCols, getWidth());
+        {
+            initGrid(nbRows, nbCols, getWidth(), colorTable);
+        }
+
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
+
         for (int i = 0; i < nbRows; i ++)
         {
             for (int j = 0; j < nbCols; j++)
@@ -86,15 +94,14 @@ public class GridView extends View
         return getWidth()/nbCols/2;
     }
 
-    protected void initGrid(int nbRows, int nbCols, int w)
+    protected void initGrid(int nbRows, int nbCols, int w, int[] colorTable)
     {
         grid = new ArrayList[nbRows][nbCols];
-        colorTable = new int[nbRows*nbCols];
+
         width = w/(float)nbCols;
         MIN_DELTA = width / 2;
         currentX = currentY = width / 2;
 
-        colorTable = getResources().getIntArray(R.array.colorGridL1);
         for (int i = 0; i < nbRows; i++)
         {
             for (int j = 0; j < nbCols; j++)
@@ -188,6 +195,9 @@ public class GridView extends View
                     grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor1);
                     grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor2);
                     Toast.makeText(this.getContext(), "Ceci est une action interdite!!", Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
                 }
                 else if (statusBegin == 0) //Vertical match
                 {
@@ -195,6 +205,10 @@ public class GridView extends View
                     {
                         List<Integer> current = matchCirclesVertical.get(i);
                         grid[current.get(0)][current.get(1)].remove(2);
+
+                        //((PlayActivity) getContext()).decrementNbRemainingShots();
+                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
                     }
                 }
                 else if (statusBegin == 1) //Horizontal match
@@ -203,6 +217,10 @@ public class GridView extends View
                     {
                         List<Integer> current = matchCirclesHorizontal.get(i);
                         grid[current.get(0)][current.get(1)].remove(2);
+
+                        //((PlayActivity) getContext()).decrementNbRemainingShots();
+                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
                     }
                 }
                 else if (statusEnd == 0) //Vertical match
@@ -211,6 +229,10 @@ public class GridView extends View
                     {
                         List<Integer> current = matchCirclesVertical.get(i);
                         grid[current.get(0)][current.get(1)].remove(2);
+
+                        //((PlayActivity) getContext()).decrementNbRemainingShots();
+                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
                     }
                 }
                 else // (statusEnd == 1) //Horizontal match
@@ -219,6 +241,10 @@ public class GridView extends View
                     {
                         List<Integer> current = matchCirclesHorizontal.get(i);
                         grid[current.get(0)][current.get(1)].remove(2);
+
+                        //((PlayActivity) getContext()).decrementNbRemainingShots();
+                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
                     }
                 }
                 invalidate();
@@ -326,4 +352,5 @@ public class GridView extends View
     {
         return Math.abs((float)grid[circle.get(0)][circle.get(1)].get(2) - (float)grid[neighbor.get(0)][neighbor.get(1)].get(2)) < 0.000001;
     }
+
 }
