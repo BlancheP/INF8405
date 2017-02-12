@@ -27,6 +27,7 @@ public class GridView extends View
     float currentX = 0;
     float currentY = 0;
     List<Integer> colors = null;
+    int[] colorTable = null;
 
 
     //VARIABLES FOR SWIPE MANAGEMENT
@@ -57,14 +58,16 @@ public class GridView extends View
     {
         super.onDraw(canvas);
         float radius = circleRadius(8);
+        int nbRows = getResources().getInteger(R.integer.numRowsL1);
+        int nbCols = getResources().getInteger(R.integer.numColsL1);
         if (grid == null)
-            initGrid(5,8,getWidth());
+            initGrid(nbRows, nbCols, getWidth());
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        for (int i = 0; i < 5; i ++)
+        for (int i = 0; i < nbRows; i ++)
         {
-            for (int j = 0; j < 8; j++)
+            for (int j = 0; j < nbCols; j++)
             {
                 ArrayList<Float> coords = getCoords(i,j);
                 if (coords.size() < 3)
@@ -86,10 +89,12 @@ public class GridView extends View
     protected void initGrid(int nbRows, int nbCols, int w)
     {
         grid = new ArrayList[nbRows][nbCols];
+        colorTable = new int[nbRows*nbCols];
         width = w/(float)nbCols;
         MIN_DELTA = width / 2;
         currentX = currentY = width / 2;
 
+        colorTable = getResources().getIntArray(R.array.colorGridL1);
         for (int i = 0; i < nbRows; i++)
         {
             for (int j = 0; j < nbCols; j++)
@@ -104,7 +109,8 @@ public class GridView extends View
             {
                 grid[i][j].add(currentX);
                 grid[i][j].add(currentY);
-                grid[i][j].add((float)getRandomColor());
+                grid[i][j].add((float)colorTable[j + i * nbCols]);
+                //grid[i][j].add((float)getRandomColor());
                 currentX += width;
             }
             currentX = width / 2;

@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<resources>
+    <item name="numRowsL1" type="integer"> 5 </item>
+    <item name="numColsL1" type="integer"> 8 </item>
+
+    <item name="objectiveL1" type="integer">800</item>
+    <item name="nbMovesL1" type="integer">6</item>
+
+    <color name="bright_pink">#FF007F</color>
+    <color name="red">#FF0000</color>
+    <color name="orange">#FF7F00</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="chartreuse">#7FFF00</color>
+    <color name="green">#00FF00</color>
+    <color name="spring_green">#00FF7F</color>
+    <color name="cyan">#00FFFF</color>
+    <color name="azure">#007FFF</color>
+    <color name="blue">#0266C8</color>
+    <color name="violet">#7F00FF</color>
+    <color name="magenta">#FF00FF</color>
+    <color name="purple">#551A8B</color>
+
+
+    <array name="colorGridL1">
+
+
+        <item>@color/yellow</item>
+
+        <item>@color/green</item>
+
+
+
+        <item>@color/green</item>
+
+
+
+
+        <item>@color/yellow</item>
+
+
+
+        <item>@color/green</item>
+
+
+
+        <item>@color/yellow</item>
+
+
+
+        <item>@color/purple</item>
+
+
+
+        <item>@color/purple</item>
+
+
+
+
+
+
+        <item>@color/green</item>
+
+
+
+        <item>@color/purple</item>
+
+
+
+        <item>@color/orange</item>
+
+
+
+        <item>@color/red</item>
+
+
+
+        <item>@color/blue</item>
+
+
+        <item>@color/blue</item>
+
+
+        <item>@color/orange</item>
+
+
+        <item>@color/blue</item>
+
+
+
+
+
+        <item>@color/blue</item>
+
+
+        <item>@color/red</item>
+
+
+        <item>@color/orange</item>
+
+
+        <item>@color/red</item>
+
+
+        <item>@color/blue</item>
+
+
+        <item>@color/green</item>
+
+
+        <item>@color/orange</item>
+
+
+        <item>@color/red</item>
+
+
+
+
+
+        <item>@color/purple</item>
+
+
+        <item>@color/orange</item>
+
+
+        <item>@color/purple</item>
+
+
+        <item>@color/blue</item>
+
+
+        <item>@color/orange</item>
+
+
+        <item>@color/green</item>
+
+
+        <item>@color/green</item>
+
+
+        <item>@color/orange</item>
+
+
+
+
+
+
+        <item>@color/yellow</item>
+
+
+        <item>@color/red</item>
+
+
+        <item>@color/yellow</item>
+
+
+        <item>@color/orange</item>
+
+
+        <item>@color/blue</item>
+
+
+        <item>@color/red</item>
+
+
+        <item>@color/green</item>
+
+
+        <item>@color/purple</item>
+
+
+    </array>
+
+    <item name="numRowsL2" type="integer"> 6 </item>
+    <item name="numColsL2" type="integer"> 8 </item>
+
+    <item name="objectiveL2" type="integer">1200</item>
+    <item name="nbMovesL2" type="integer">10</item>
+
+    <array name="colorGridL2">
+        <item>@color/red</item>
+        <item>@color/green</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/green</item>
+        <item>@color/green</item>
+
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/green</item>
+        <item>@color/purple</item>
+        <item>@color/orange</item>
+
+        <item>@color/red</item>
+        <item>@color/yellow</item>
+        <item>@color/purple</item>
+        <item>@color/orange</item>
+        <item>@color/yellow</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/red</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+        <item>@color/purple</item>
+
+        <item>@color/red</item>
+        <item>@color/yellow</item>
+        <item>@color/yellow</item>
+        <item>@color/blue</item>
+        <item>@color/orange</item>
+        <item>@color/yellow</item>
+        <item>@color/blue</item>
+        <item>@color/blue</item>
+
+    </array>
+
+
+    <item name="numRowsL3" type="integer"> 7 </item>
+    <item name="numColsL3" type="integer"> 7 </item>
+
+    <item name="objectiveL3" type="integer">1400</item>
+    <item name="nbMovesL3" type="integer">10</item>
+
+    <array name="colorGridL3">
+        <item>@color/purple</item>
+        <item>@color/orange</item>
+        <item>@color/orange</item>
+        <item>@color/green</item>
+        <item>@color/red</item>
+        <item>@color/green</item>
+        <item>@color/green</item>
+
+        <item>@color/purple</item>
+        <item>@color/purple</item>
+        <item>@color/orange</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+
+        <item>@color/red</item>
+        <item>@color/green</item>
+        <item>@color/blue</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/green</item>
+        <item>@color/blue</item>
+
+        <item>@color/red</item>
+        <item>@color/red</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/red</item>
+        <item>@color/purple</item>
+
+        <item>@color/green</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/red</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/green</item>
+
+        <item>@color/red</item>
+        <item>@color/green</item>
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/green</item>
+
+        <item>@color/blue</item>
+        <item>@color/green</item>
+        <item>@color/red</item>
+        <item>@color/red</item>
+        <item>@color/green</item>
+        <item>@color/blue</item>
+        <item>@color/blue</item>
+
+    </array>
+
+    <item name="numRowsL4" type="integer"> 8 </item>
+    <item name="numColsL4" type="integer"> 7 </item>
+
+    <item name="objectiveL4" type="integer">1800</item>
+    <item name="nbMovesL4" type="integer">10</item>
+
+    <array name="colorGridL4">
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/green</item>
+
+        <item>@color/purple</item>
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/blue</item>
+        <item>@color/green</item>
+
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/orange</item>
+        <item>@color/purple</item>
+        <item>@color/purple</item>
+
+        <item>@color/green</item>
+        <item>@color/purple</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/purple</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/blue</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+
+        <item>@color/green</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+        <item>@color/red</item>
+        <item>@color/green</item>
+
+        <item>@color/blue</item>
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/orange</item>
+
+    </array>
+
+</resources>
