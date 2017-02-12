@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -36,9 +37,11 @@ public class GridView extends View
 
     List<Integer> beginCoords = null;
     List<Integer> endCoords = null;
+    BitSet statusBegin = null;
+    BitSet statusEnd = null;
 
-    List<List<Integer>> matchCirclesVertical = new ArrayList<>();
-    List<List<Integer>> matchCirclesHorizontal = new ArrayList<>();
+    List<List<List<Integer>>> matchCirclesVertical = new ArrayList<>();
+    List<List<List<Integer>>> matchCirclesHorizontal = new ArrayList<>();
 
     public GridView(Context context, AttributeSet attrs)
     {
@@ -52,6 +55,10 @@ public class GridView extends View
                 Color.rgb(255,165,0),
                 Color.rgb(148,0,211)
         ));
+        matchCirclesHorizontal.add(new ArrayList<List<Integer>>());
+        matchCirclesHorizontal.add(new ArrayList<List<Integer>>());
+        matchCirclesVertical.add(new ArrayList<List<Integer>>());
+        matchCirclesVertical.add(new ArrayList<List<Integer>>());
     }
 
     protected void onDraw(Canvas canvas)
@@ -162,25 +169,25 @@ public class GridView extends View
 
                 if(finalPositionX - initialPositionX >= MIN_DELTA)
                 {
-                    Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
+                    //Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 2);
                 }
 
                 else if (Math.abs(initialPositionX - finalPositionX) >= MIN_DELTA)
                 {
-                    Toast.makeText(this.getContext(), "Swipped LEFT", Toast.LENGTH_SHORT).show ();
+                    //Toast.makeText(this.getContext(), "Swipped LEFT", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 3);
                 }
 
                 else if (finalPositionY - initialPositionY >= MIN_DELTA)
                 {
-                    Toast.makeText(this.getContext(), "Swipped DOWN", Toast.LENGTH_SHORT).show ();
+                    //Toast.makeText(this.getContext(), "Swipped DOWN", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 1);
                 }
 
                 else if (Math.abs(initialPositionY - finalPositionY) >= MIN_DELTA)
                 {
-                    Toast.makeText(this.getContext(), "Swipped UP", Toast.LENGTH_SHORT).show ();
+                    //Toast.makeText(this.getContext(), "Swipped UP", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 0);
                 }
 
@@ -188,65 +195,26 @@ public class GridView extends View
                 grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor2);
                 grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor1);
 
-                int statusBegin = match(beginCoords);
-                int statusEnd = match(endCoords);
-                if (statusBegin == -1 && statusEnd == -1 )
+                statusBegin = new BitSet(2);
+                statusEnd = new BitSet(2);
+
+                statusBegin = match(beginCoords, 0);
+                statusEnd = match(endCoords, 1);
+
+                if (statusBegin.equals(new BitSet(2)) && statusEnd.equals(new BitSet(2)))
                 {
                     grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor1);
                     grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor2);
                     Toast.makeText(this.getContext(), "Ceci est une action interdite!!", Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
+                    // Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
                 }
-                else if (statusBegin == 0) //Vertical match
+                else
                 {
-                    for (int i = 0; i < matchCirclesVertical.size(); i++)
-                    {
-                        List<Integer> current = matchCirclesVertical.get(i);
-                        grid[current.get(0)][current.get(1)].remove(2);
-
-                        //((PlayActivity) getContext()).decrementNbRemainingShots();
-                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
-                    }
+                    doMatch(statusBegin, 0);
+                    doMatch(statusEnd, 1);
                 }
-                else if (statusBegin == 1) //Horizontal match
-                {
-                    for (int i = 0; i < matchCirclesHorizontal.size(); i++)
-                    {
-                        List<Integer> current = matchCirclesHorizontal.get(i);
-                        grid[current.get(0)][current.get(1)].remove(2);
 
-                        //((PlayActivity) getContext()).decrementNbRemainingShots();
-                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
-                    }
-                }
-                else if (statusEnd == 0) //Vertical match
-                {
-                    for (int i = 0; i < matchCirclesVertical.size(); i++)
-                    {
-                        List<Integer> current = matchCirclesVertical.get(i);
-                        grid[current.get(0)][current.get(1)].remove(2);
-
-                        //((PlayActivity) getContext()).decrementNbRemainingShots();
-                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
-                    }
-                }
-                else // (statusEnd == 1) //Horizontal match
-                {
-                    for (int i = 0; i < matchCirclesHorizontal.size(); i++)
-                    {
-                        List<Integer> current = matchCirclesHorizontal.get(i);
-                        grid[current.get(0)][current.get(1)].remove(2);
-
-                        //((PlayActivity) getContext()).decrementNbRemainingShots();
-                        //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
-                    }
-                }
                 invalidate();
                 return true;
 
@@ -254,6 +222,52 @@ public class GridView extends View
                 return super.onTouchEvent(event);
         }
 
+    }
+
+    protected void doMatch(BitSet status, int index)
+    {
+        if (status.get(0) == true) //Vertical match
+        {
+            for (int i = 0; i < matchCirclesVertical.get(index).size(); i++)
+            {
+                List<Integer> current = matchCirclesVertical.get(index).get(i);
+                //grid[current.get(0)][current.get(1)].set(2, (float)Color.WHITE);
+                bringCirclesDown(current);
+
+                //((PlayActivity) getContext()).decrementNbRemainingShots();
+                //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
+            }
+        }
+        if (status.get(1) == true) //Horizontal match
+        {
+            for (int i = 0; i < matchCirclesHorizontal.get(index).size(); i++)
+            {
+                List<Integer> current = matchCirclesHorizontal.get(index).get(i);
+                //grid[current.get(0)][current.get(1)].set(2, (float)Color.WHITE);
+                bringCirclesDown(current);
+
+                //((PlayActivity) getContext()).decrementNbRemainingShots();
+                //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
+
+            }
+        }
+    }
+
+    protected void bringCirclesDown(List<Integer> circle)
+    {
+        for (int i = circle.get(0); i > 0; i--)
+        {
+            if (grid[i-1][circle.get(1)].size() > 2)
+                grid[i][circle.get(1)].set(2, grid[i - 1][circle.get(1)].get(2));
+            else if (grid[i][circle.get(1)].size() > 2)
+            {
+                grid[i][circle.get(1)].remove(2);
+            }
+
+        }
+        if (grid[0][circle.get(1)].size() > 2)
+            grid[0][circle.get(1)].remove(2);
     }
 
     protected List<Integer> findCircle(float x, float y)
@@ -284,41 +298,45 @@ public class GridView extends View
         return coords;
     }
 
-    protected int match(List<Integer> circle)
+    protected BitSet match(List<Integer> circle, int index)
     {
-        matchCirclesHorizontal.clear();
-        matchCirclesVertical.clear();
-        matchCirclesHorizontal.add(circle);
-        matchCirclesVertical.add(circle);
+        BitSet status = new BitSet(2);
+        matchCirclesHorizontal.get(index).clear();
+        matchCirclesVertical.get(index).clear();
+        matchCirclesHorizontal.get(index).add(circle);
+        matchCirclesVertical.get(index).add(circle);
 
         //Vertical
-        findMatch(circle, 0);
-        findMatch(circle, 1);
+        findMatch(circle, 0, index);
+        findMatch(circle, 1, index);
 
         //Horizontal
-        findMatch(circle, 2);
-        findMatch(circle, 3);
+        findMatch(circle, 2, index);
+        findMatch(circle, 3, index);
 
-        if (matchCirclesHorizontal.size() > 2 || matchCirclesVertical.size() > 2) {
-            Toast.makeText(this.getContext(), "Horizontal: " + matchCirclesHorizontal.size(), Toast.LENGTH_SHORT).show ();
-            Toast.makeText(this.getContext(), "Vertical: " + matchCirclesVertical.size(), Toast.LENGTH_SHORT).show ();
-            return matchCirclesHorizontal.size() > matchCirclesVertical.size() ? 1 : 0;
+        if (matchCirclesHorizontal.get(index).size() > 2)
+        {
+            //Toast.makeText(this.getContext(), "Horizontal : " + matchCirclesHorizontal.size(), Toast.LENGTH_SHORT).show();
+            status.set(1);
         }
-        else
-            return -1;
-
+        if (matchCirclesVertical.get(index).size() > 2)
+        {
+            //Toast.makeText(this.getContext(), "Vertical : " + matchCirclesVertical.size(), Toast.LENGTH_SHORT).show();
+            status.set(0);
+        }
+        return status;
     }
 
-    protected void findMatch(List<Integer> circle, int direction)
+    protected void findMatch(List<Integer> circle, int direction, int index)
     {
         List<Integer> neighbor = findNeighbor(circle, direction);
         if (neighbor.size() != 0 && isThereAMatch(circle, neighbor))
         {
             if (direction == 0 || direction == 1)
-                matchCirclesVertical.add(neighbor);
+                matchCirclesVertical.get(index).add(neighbor);
             else
-                matchCirclesHorizontal.add(neighbor);
-            findMatch(neighbor, direction);
+                matchCirclesHorizontal.get(index).add(neighbor);
+            findMatch(neighbor, direction, index);
         }
     }
 
