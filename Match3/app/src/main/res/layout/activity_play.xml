@@ -4,15 +4,12 @@
     android:id="@+id/activity_play"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" ><![CDATA[
-    tools:context="tp1.inf8405.match3.PlayActivity">
-
-    ]]>
+    android:orientation="vertical" >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0.9"
+        android:layout_weight="0.90"
         android:id="@+id/objectifView"
         android:layout_gravity="right"
         android:textStyle="bold"
@@ -21,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0.9"
+        android:layout_weight="0.90"
         android:id="@+id/scoreView"
         android:text="Score: "
         android:layout_gravity="right"
@@ -31,21 +28,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0.9"
+        android:layout_weight="0.90"
         android:id="@+id/remainingShotsView"
         android:layout_gravity="right"
         android:textStyle="bold"
         android:textSize="25sp"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.80"
-        android:id="@+id/imageView" />
-
     <tp1.inf8405.match3.GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"></tp1.inf8405.match3.GridView>
+        android:layout_weight="0.15"></tp1.inf8405.match3.GridView>
 
 </LinearLayout>

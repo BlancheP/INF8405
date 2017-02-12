@@ -21,10 +21,14 @@ import java.util.List;
 
 public class GridView extends View
 {
+
+    double GRID_HEIGHT_OCCUPATION = 0.75;
+
     //VARIABLES FOR GRID INITIATION
     Paint paint = null;
     ArrayList[][] grid = null;
     float width = 0;
+    float height = 0;
     float currentX = 0;
     float currentY = 0;
     List<Integer> colors = null;
@@ -57,7 +61,8 @@ public class GridView extends View
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
-        float radius = circleRadius(8);
+        float radius = circleRadius(((PlayActivity) getContext()).getNbCols(),
+                                    ((PlayActivity) getContext()).getNbRows());
 
         int[] colorTable = ((PlayActivity) getContext()).getColorTable();
 
@@ -66,7 +71,7 @@ public class GridView extends View
 
         if (grid == null)
         {
-            initGrid(nbRows, nbCols, getWidth(), colorTable);
+            initGrid(nbRows, nbCols, getWidth(), getHeight(), colorTable);
         }
 
         paint.setStyle(Paint.Style.FILL);
@@ -89,16 +94,25 @@ public class GridView extends View
         }
     }
 
-    protected float circleRadius(int nbCols)
+    protected float circleRadius(int nbCols, int nbRows)
     {
-        return getWidth()/nbCols/2;
+        if(nbCols >= nbRows)
+        {
+            return getWidth()/nbCols/2;
+        }
+        else
+        {
+            return getHeight()/nbRows/2;
+        }
     }
 
-    protected void initGrid(int nbRows, int nbCols, int w, int[] colorTable)
+    protected void initGrid(int nbRows, int nbCols, int w, int h, int[] colorTable)
     {
         grid = new ArrayList[nbRows][nbCols];
 
         width = w/(float)nbCols;
+        height = h/(float)nbRows;
+
         MIN_DELTA = width / 2;
         currentX = currentY = width / 2;
 
@@ -121,9 +135,16 @@ public class GridView extends View
                 currentX += width;
             }
             currentX = width / 2;
-            currentY += width;
-        }
 
+            if(nbRows > 6)
+            {
+                currentY += height;
+            }
+            else
+            {
+                currentY += width;
+            }
+        }
     }
 
     protected ArrayList<Float> getCoords(int i, int j)
