@@ -8,7 +8,6 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,9 +20,6 @@ import java.util.List;
 
 public class GridView extends View
 {
-
-    double GRID_HEIGHT_OCCUPATION = 0.75;
-
     //VARIABLES FOR GRID INITIATION
     Paint paint = null;
     ArrayList[][] grid = null;
