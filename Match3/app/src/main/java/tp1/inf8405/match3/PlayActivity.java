@@ -111,8 +111,6 @@ public class PlayActivity extends AppCompatActivity {
 
     protected void initLevelPresets(int levelNumber)
     {
-
-
         switch (levelNumber)
         {
             case 1 :
@@ -130,6 +128,9 @@ public class PlayActivity extends AppCompatActivity {
                 nbRemainingShotsView = (TextView)findViewById(R.id.remainingShotsView);
                 nbRemainingShotsView.setText("Nombre de coups restants: " + nbRemainingShots);
 
+                scoreView = (TextView)findViewById(R.id.scoreView);
+                scoreView.setText("Score: " + score);
+
                 break;
 
             case 2 :
@@ -146,6 +147,10 @@ public class PlayActivity extends AppCompatActivity {
 
                 nbRemainingShotsView = (TextView)findViewById(R.id.remainingShotsView);
                 nbRemainingShotsView.setText("Nombre de coups restants: " + nbRemainingShots);
+
+                scoreView = (TextView)findViewById(R.id.scoreView);
+                scoreView.setText("Score: " + score);
+
                 break;
 
             case 3 :
@@ -162,6 +167,10 @@ public class PlayActivity extends AppCompatActivity {
 
                 nbRemainingShotsView = (TextView)findViewById(R.id.remainingShotsView);
                 nbRemainingShotsView.setText("Nombre de coups restants: " + nbRemainingShots);
+
+                scoreView = (TextView)findViewById(R.id.scoreView);
+                scoreView.setText("Score: " + score);
+
                 break;
 
             case 4 :
@@ -178,6 +187,10 @@ public class PlayActivity extends AppCompatActivity {
 
                 nbRemainingShotsView = (TextView)findViewById(R.id.remainingShotsView);
                 nbRemainingShotsView.setText("Nombre de coups restants: " + nbRemainingShots);
+
+                scoreView = (TextView)findViewById(R.id.scoreView);
+                scoreView.setText("Score: " + score);
+
                 break;
         }
     }
