@@ -102,11 +102,11 @@ public class GridView extends View
             }
         }
 
-        for (int i = 0; i < newCircles.size(); i ++)
+        /*for (int i = 0; i < newCircles.size(); i ++)
         {
             match(newCircles.get(i));
             newCircles.remove(i);
-        }
+        }*/
     }
 
     protected float circleRadius(int nbCols, int nbRows)
@@ -266,7 +266,7 @@ public class GridView extends View
 
     }
 
-    protected void match(List<Integer> circle)
+    /*protected void match(List<Integer> circle)
     {
         statusBegin = new BitSet(2);
         statusBegin = findMatch(circle, 0);
@@ -275,7 +275,7 @@ public class GridView extends View
             doMatch(statusBegin, 0);
             invalidate();
         }
-    }
+    }*/
 
     protected void doMatch(BitSet status, int index)
     {
@@ -287,12 +287,11 @@ public class GridView extends View
                     return circle2.get(0) > circle1.get(0) ? -1 : (circle2.get(0) < circle1.get(0)) ? 1 : 0;
                 }
             });
-            int col = matchCirclesVertical.get(index).get(0).get(1);
+            /*int col = matchCirclesVertical.get(index).get(0).get(1);
             for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1).get(0); i >= 0; i--)
             {
                 newCircles.add(Arrays.asList(i, col));
-            }
-            //for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1); i >= 0)
+            }*/
             for (int i = 0; i < matchCirclesVertical.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesVertical.get(index).get(i));
@@ -310,7 +309,7 @@ public class GridView extends View
                     return circle2.get(1) > circle1.get(1) ? -1 : (circle2.get(1) < circle1.get(1)) ? 1 : 0;
                 }
             });
-            int row = matchCirclesHorizontal.get(index).get(0).get(0);
+            /*int row = matchCirclesHorizontal.get(index).get(0).get(0);
             int minCol = matchCirclesHorizontal.get(index).get(0).get(1);
             int maxCol = matchCirclesHorizontal.get(index).get(matchCirclesHorizontal.get(index).size() - 1).get(1);
             for (int i = 0; i <= row; i++)
@@ -319,7 +318,7 @@ public class GridView extends View
                 {
                     newCircles.add(Arrays.asList(i, j));
                 }
-            }
+            }*/
             for (int i = 0; i < matchCirclesHorizontal.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesHorizontal.get(index).get(i));
