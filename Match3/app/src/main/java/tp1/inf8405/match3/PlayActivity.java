@@ -1,7 +1,9 @@
 package tp1.inf8405.match3;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +72,11 @@ public class PlayActivity extends AppCompatActivity {
         return objective;
     }
 
+    public int getLevelNumber()
+    {
+        return levelNumber;
+    }
+
     public void decrementNbRemainingShots()
     {
         nbRemainingShots--;
@@ -118,6 +125,7 @@ public class PlayActivity extends AppCompatActivity {
                 nbCols = getResources().getInteger(R.integer.numColsL1);
                 objective = getResources().getInteger(R.integer.objectiveL1);
                 nbRemainingShots = getResources().getInteger(R.integer.nbMovesL1);
+                score = 0;
 
                 colorTable = new int[nbRows*nbCols];
                 colorTable = getResources().getIntArray(R.array.colorGridL1);
@@ -138,6 +146,7 @@ public class PlayActivity extends AppCompatActivity {
                 nbCols = getResources().getInteger(R.integer.numColsL2);
                 objective = getResources().getInteger(R.integer.objectiveL2);
                 nbRemainingShots = getResources().getInteger(R.integer.nbMovesL2);
+                score = 0;
 
                 colorTable = new int[nbRows*nbCols];
                 colorTable = getResources().getIntArray(R.array.colorGridL2);
@@ -158,6 +167,7 @@ public class PlayActivity extends AppCompatActivity {
                 nbCols = getResources().getInteger(R.integer.numColsL3);
                 objective = getResources().getInteger(R.integer.objectiveL3);
                 nbRemainingShots = getResources().getInteger(R.integer.nbMovesL3);
+                score = 0;
 
                 colorTable = new int[nbRows*nbCols];
                 colorTable = getResources().getIntArray(R.array.colorGridL3);
@@ -178,6 +188,7 @@ public class PlayActivity extends AppCompatActivity {
                 nbCols = getResources().getInteger(R.integer.numColsL4);
                 objective = getResources().getInteger(R.integer.objectiveL4);
                 nbRemainingShots = getResources().getInteger(R.integer.nbMovesL4);
+                score = 0;
 
                 colorTable = new int[nbRows*nbCols];
                 colorTable = getResources().getIntArray(R.array.colorGridL4);
@@ -193,6 +204,40 @@ public class PlayActivity extends AppCompatActivity {
 
                 break;
         }
+    }
+
+    protected void gameOver()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setMessage("Désolé, vous avez perdu... Voulez-vous réessayer?");
+
+        alertDialogBuilder.setPositiveButton("Réessayer",
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1)
+                    {
+                        Intent intent = getIntent();
+                        intent.putExtra("level_number", levelNumber);
+                        finish();
+                        startActivity(intent);
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("Non",
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1)
+                    {
+                        Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }
 

@@ -1,10 +1,12 @@
 package tp1.inf8405.match3;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -240,6 +242,7 @@ public class GridView extends View
                     {
                         //TODO: Faire un Game Over et resetter la partie
                         Toast.makeText(this.getContext(), "Game Over", Toast.LENGTH_SHORT).show();
+                        ((PlayActivity)getContext()).gameOver();
                     }
 
                 }
