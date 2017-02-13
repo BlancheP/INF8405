@@ -15,6 +15,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -44,6 +46,8 @@ public class GridView extends View
 
     List<List<List<Integer>>> matchCirclesVertical = new ArrayList<>();
     List<List<List<Integer>>> matchCirclesHorizontal = new ArrayList<>();
+
+    List<List<Integer>> newCircles = new ArrayList<>();
 
     public GridView(Context context, AttributeSet attrs)
     {
@@ -96,6 +100,12 @@ public class GridView extends View
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
+        }
+
+        for (int i = 0; i < newCircles.size(); i ++)
+        {
+            match(newCircles.get(i));
+            newCircles.remove(i);
         }
     }
 
@@ -217,8 +227,8 @@ public class GridView extends View
                 statusBegin = new BitSet(2);
                 statusEnd = new BitSet(2);
 
-                statusBegin = match(beginCoords, 0);
-                statusEnd = match(endCoords, 1);
+                statusBegin = findMatch(beginCoords, 0);
+                statusEnd = findMatch(endCoords, 1);
 
                 if (statusBegin.equals(new BitSet(2)) && statusEnd.equals(new BitSet(2)))
                 {
@@ -256,15 +266,36 @@ public class GridView extends View
 
     }
 
+    protected void match(List<Integer> circle)
+    {
+        statusBegin = new BitSet(2);
+        statusBegin = findMatch(circle, 0);
+        if (!statusBegin.equals(new BitSet(2))) // There is a match
+        {
+            doMatch(statusBegin, 0);
+            invalidate();
+        }
+    }
+
     protected void doMatch(BitSet status, int index)
     {
         if (status.get(0) == true) //Vertical match
         {
+            Collections.sort(matchCirclesVertical.get(index), new Comparator<List<Integer>>() {
+                @Override
+                public int compare(List<Integer> circle1, List<Integer> circle2) {
+                    return circle2.get(0) > circle1.get(0) ? -1 : (circle2.get(0) < circle1.get(0)) ? 1 : 0;
+                }
+            });
+            int col = matchCirclesVertical.get(index).get(0).get(1);
+            for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1).get(0); i >= 0; i--)
+            {
+                newCircles.add(Arrays.asList(i, col));
+            }
+            //for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1); i >= 0)
             for (int i = 0; i < matchCirclesVertical.get(index).size(); i++)
             {
-                List<Integer> current = matchCirclesVertical.get(index).get(i);
-                //grid[current.get(0)][current.get(1)].set(2, (float)Color.WHITE);
-                bringCirclesDown(current);
+                bringCirclesDown(matchCirclesVertical.get(index).get(i));
 
                 //((PlayActivity) getContext()).decrementNbRemainingShots();
                 //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
@@ -273,11 +304,25 @@ public class GridView extends View
         }
         if (status.get(1) == true) //Horizontal match
         {
+            Collections.sort(matchCirclesHorizontal.get(index), new Comparator<List<Integer>>() {
+                @Override
+                public int compare(List<Integer> circle1, List<Integer> circle2) {
+                    return circle2.get(1) > circle1.get(1) ? -1 : (circle2.get(1) < circle1.get(1)) ? 1 : 0;
+                }
+            });
+            int row = matchCirclesHorizontal.get(index).get(0).get(0);
+            int minCol = matchCirclesHorizontal.get(index).get(0).get(1);
+            int maxCol = matchCirclesHorizontal.get(index).get(matchCirclesHorizontal.get(index).size() - 1).get(1);
+            for (int i = 0; i <= row; i++)
+            {
+                for (int j = minCol; j <= maxCol; j++)
+                {
+                    newCircles.add(Arrays.asList(i, j));
+                }
+            }
             for (int i = 0; i < matchCirclesHorizontal.get(index).size(); i++)
             {
-                List<Integer> current = matchCirclesHorizontal.get(index).get(i);
-                //grid[current.get(0)][current.get(1)].set(2, (float)Color.WHITE);
-                bringCirclesDown(current);
+                bringCirclesDown(matchCirclesHorizontal.get(index).get(i));
 
                 //((PlayActivity) getContext()).decrementNbRemainingShots();
                 //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
@@ -288,20 +333,19 @@ public class GridView extends View
 
     protected void bringCirclesDown(List<Integer> circle)
     {
+        int col = circle.get(1);
         for (int i = circle.get(0); i > 0; i--)
         {
-            if (grid[i-1][circle.get(1)].size() > 2)
-                grid[i][circle.get(1)].set(2, grid[i - 1][circle.get(1)].get(2));
-            else if (grid[i][circle.get(1)].size() > 2)
+            if (grid[i-1][col].size() > 2)
+                grid[i][col].set(2, grid[i - 1][col].get(2));
+            else if (grid[i][col].size() > 2)
             {
-                grid[i][circle.get(1)].remove(2);
+                grid[i][col].remove(2);
             }
 
         }
-        if (grid[0][circle.get(1)].size() > 2)
-            grid[0][circle.get(1)].remove(2);
-
-
+        if (grid[0][col].size() > 2)
+            grid[0][col].remove(2);
     }
 
     protected List<Integer> findCircle(float x, float y)
@@ -332,7 +376,7 @@ public class GridView extends View
         return coords;
     }
 
-    protected BitSet match(List<Integer> circle, int index)
+    protected BitSet findMatch(List<Integer> circle, int index)
     {
         BitSet status = new BitSet(2);
         matchCirclesHorizontal.get(index).clear();
@@ -341,12 +385,12 @@ public class GridView extends View
         matchCirclesVertical.get(index).add(circle);
 
         //Vertical
-        findMatch(circle, 0, index);
-        findMatch(circle, 1, index);
+        constructMatch(circle, 0, index);
+        constructMatch(circle, 1, index);
 
         //Horizontal
-        findMatch(circle, 2, index);
-        findMatch(circle, 3, index);
+        constructMatch(circle, 2, index);
+        constructMatch(circle, 3, index);
 
         if (matchCirclesHorizontal.get(index).size() > 2)
         {
@@ -362,7 +406,7 @@ public class GridView extends View
     }
 
     //Checks the neighboring circle in the specified direction to see if it matches the color of the current one
-    protected void findMatch(List<Integer> circle, int direction, int index)
+    protected void constructMatch(List<Integer> circle, int direction, int index)
     {
         List<Integer> neighbor = findNeighbor(circle, direction);
         if (neighbor.size() != 0 && isThereAMatch(circle, neighbor))
@@ -371,7 +415,7 @@ public class GridView extends View
                 matchCirclesVertical.get(index).add(neighbor);
             else
                 matchCirclesHorizontal.get(index).add(neighbor);
-            findMatch(neighbor, direction, index);
+            constructMatch(neighbor, direction, index);
         }
     }
 
