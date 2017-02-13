@@ -66,6 +66,30 @@ public class PlayActivity extends AppCompatActivity {
         nbRemainingShots--;
     }
 
+
+    //computes the quantity of points made from a match using the number of circles that are matched together
+    //and the number of the combo (if its the first move the number is 0, if its the first combo
+    //the number is 1, second combo: 2, and so on)
+    public void computePoints(int numCircles, int numCombo)
+    {
+        int addedScore = 0;
+        if(numCircles == 3)
+        {
+            addedScore += 100;
+        }
+        else if(numCircles == 4)
+        {
+            addedScore += 200;
+        }
+        else if(numCircles == 5)
+        {
+            addedScore += 300;
+        }
+
+        score += (addedScore * (numCombo + 1)); //the 1 added to numCombo is necessary so that the added score
+                                                //is mutiplied by 2 if it's the first combo (numCombo = 1), by 3 if it's the second combo (numCombo =2)
+    }
+
     protected void initLevelPresets(int levelNumber)
     {
         TextView objectiveView;

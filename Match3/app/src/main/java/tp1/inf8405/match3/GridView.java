@@ -257,8 +257,8 @@ public class GridView extends View
 
                 //((PlayActivity) getContext()).decrementNbRemainingShots();
                 //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
             }
+            ((PlayActivity) getContext()).computePoints(matchCirclesVertical.get(index).size(), 0);
         }
         if (status.get(1) == true) //Horizontal match
         {
@@ -270,8 +270,8 @@ public class GridView extends View
 
                 //((PlayActivity) getContext()).decrementNbRemainingShots();
                 //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
-
             }
+            ((PlayActivity) getContext()).computePoints(matchCirclesHorizontal.get(index).size(), 0);
         }
     }
 
@@ -289,6 +289,8 @@ public class GridView extends View
         }
         if (grid[0][circle.get(1)].size() > 2)
             grid[0][circle.get(1)].remove(2);
+
+
     }
 
     protected List<Integer> findCircle(float x, float y)
@@ -348,6 +350,7 @@ public class GridView extends View
         return status;
     }
 
+    //Checks the neighboring circle in the specified direction to see if it matches the color of the current one
     protected void findMatch(List<Integer> circle, int direction, int index)
     {
         List<Integer> neighbor = findNeighbor(circle, direction);
