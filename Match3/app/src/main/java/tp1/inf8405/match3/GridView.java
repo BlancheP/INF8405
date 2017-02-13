@@ -68,7 +68,6 @@ public class GridView extends View
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
-        newCircles.clear();
         float radius = circleRadius(((PlayActivity) getContext()).getNbCols(),
                                     ((PlayActivity) getContext()).getNbRows());
 
@@ -95,7 +94,6 @@ public class GridView extends View
                 {
                     grid[i][j].add((float)getRandomColor());
                     coords = getCoords(i,j);
-                    newCircles.add(Arrays.asList(i, j));
                 }
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
@@ -105,6 +103,7 @@ public class GridView extends View
         for (int i = 0; i < newCircles.size(); i ++)
         {
             match(newCircles.get(i));
+            newCircles.remove(i);
         }
     }
 
@@ -271,6 +270,7 @@ public class GridView extends View
         if (!statusBegin.equals(new BitSet(2))) // There is a match
         {
             doMatch(statusBegin, 0);
+            invalidate();
         }
     }
 
@@ -284,6 +284,12 @@ public class GridView extends View
                     return circle2.get(0) > circle1.get(0) ? -1 : (circle2.get(0) < circle1.get(0)) ? 1 : 0;
                 }
             });
+            int col = matchCirclesVertical.get(index).get(0).get(1);
+            for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1).get(0); i >= 0; i--)
+            {
+                newCircles.add(Arrays.asList(i, col));
+            }
+            //for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1); i >= 0)
             for (int i = 0; i < matchCirclesVertical.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesVertical.get(index).get(i));
@@ -301,6 +307,16 @@ public class GridView extends View
                     return circle2.get(1) > circle1.get(1) ? -1 : (circle2.get(1) < circle1.get(1)) ? 1 : 0;
                 }
             });
+            int row = matchCirclesHorizontal.get(index).get(0).get(0);
+            int minCol = matchCirclesHorizontal.get(index).get(0).get(1);
+            int maxCol = matchCirclesHorizontal.get(index).get(matchCirclesHorizontal.get(index).size() - 1).get(1);
+            for (int i = 0; i <= row; i++)
+            {
+                for (int j = minCol; j <= maxCol; j++)
+                {
+                    newCircles.add(Arrays.asList(i, j));
+                }
+            }
             for (int i = 0; i < matchCirclesHorizontal.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesHorizontal.get(index).get(i));
