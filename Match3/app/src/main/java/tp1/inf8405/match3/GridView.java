@@ -45,6 +45,8 @@ public class GridView extends View
     List<List<List<Integer>>> matchCirclesVertical = new ArrayList<>();
     List<List<List<Integer>>> matchCirclesHorizontal = new ArrayList<>();
 
+    List<List<Integer>> newCircles = new ArrayList<>();
+
     public GridView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
@@ -66,6 +68,7 @@ public class GridView extends View
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
+        newCircles.clear();
         float radius = circleRadius(((PlayActivity) getContext()).getNbCols(),
                                     ((PlayActivity) getContext()).getNbRows());
 
@@ -92,10 +95,16 @@ public class GridView extends View
                 {
                     grid[i][j].add((float)getRandomColor());
                     coords = getCoords(i,j);
+                    newCircles.add(Arrays.asList(i, j));
                 }
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
+        }
+
+        for (int i = 0; i < newCircles.size(); i ++)
+        {
+            match(newCircles.get(i));
         }
     }
 
