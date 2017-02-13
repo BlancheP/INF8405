@@ -48,12 +48,12 @@ public class GridView extends View
         super(context, attrs);
         paint = new Paint();
         colors = new ArrayList<>(Arrays.asList(
-                Color.RED,
-                Color.BLUE,
-                Color.GREEN,
-                Color.YELLOW,
-                Color.rgb(255,165,0),
-                Color.rgb(148,0,211)
+                Color.rgb(255, 0, 0), //red
+                Color.rgb(255, 255, 0), //yellow
+                Color.rgb(0, 255, 0), //green
+                Color.rgb(85, 26, 139), //purple
+                Color.rgb(255, 127, 0), //orange
+                Color.rgb(2, 102, 200)
         ));
         matchCirclesHorizontal.add(new ArrayList<List<Integer>>());
         matchCirclesHorizontal.add(new ArrayList<List<Integer>>());
