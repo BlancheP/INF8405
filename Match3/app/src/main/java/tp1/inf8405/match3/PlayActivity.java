@@ -23,6 +23,10 @@ public class PlayActivity extends AppCompatActivity {
 
     int[] colorTable = null;
 
+    TextView objectiveView;
+    TextView nbRemainingShotsView;
+    TextView scoreView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,17 +65,26 @@ public class PlayActivity extends AppCompatActivity {
         return nbRemainingShots;
     }
 
+    public int getObjective()
+    {
+        return objective;
+    }
+
     public void decrementNbRemainingShots()
     {
         nbRemainingShots--;
     }
 
+    public void displayUpdatedStats()
+    {
+        nbRemainingShotsView = (TextView)findViewById(R.id.remainingShotsView);
+        nbRemainingShotsView.setText("Nombre de coups restants: " + nbRemainingShots);
+
+        //TODO: Alexis, mets ton code ici pour le score (meme chose qu'en haut pour le nombre de coups restants)
+    }
+
     protected void initLevelPresets(int levelNumber)
     {
-        TextView objectiveView;
-        TextView nbRemainingShotsView;
-        TextView scoreView;
-
         scoreView = (TextView)findViewById(R.id.scoreView);
         scoreView.setText("Score: " + score);
 

@@ -230,6 +230,18 @@ public class GridView extends View
                 {
                     doMatch(statusBegin, 0);
                     doMatch(statusEnd, 1);
+
+                    ((PlayActivity) getContext()).decrementNbRemainingShots();
+                    ((PlayActivity) getContext()).displayUpdatedStats();
+                    Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show();
+
+                    if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
+                            (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
+                    {
+                        //TODO: Faire un Game Over et resetter la partie
+                        Toast.makeText(this.getContext(), "Game Over", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
                 invalidate();
