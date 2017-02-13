@@ -92,21 +92,46 @@ public class GridView extends View
             for (int j = 0; j < nbCols; j++)
             {
                 ArrayList<Float> coords = getCoords(i,j);
-                if (coords.size() < 3)
+                /*if (coords.size() < 3)
                 {
                     grid[i][j].add((float)getRandomColor());
                     coords = getCoords(i,j);
-                }
+                }*/
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
         }
+    }
 
-        /*for (int i = 0; i < newCircles.size(); i ++)
+    protected void match()
+    {
+        while (newCircles.size() > 0)
         {
-            match(newCircles.get(i));
-            newCircles.remove(i);
-        }*/
+            statusBegin = new BitSet(2);
+            statusBegin = findMatch(newCircles.get(0), 0);
+            if (!statusBegin.equals(new BitSet(2))) // There is a match
+            {
+                doMatch(statusBegin, 0);
+                updateGrid();
+                invalidate();
+            }
+            newCircles.remove(0);
+        }
+    }
+
+    protected void updateGrid()
+    {
+        for (int i = 0; i < grid.length; i ++)
+        {
+            for (int j = 0; j < grid[i].length; j++)
+            {
+                ArrayList<Float> coords = getCoords(i,j);
+                if (coords.size() < 3)
+                {
+                    grid[i][j].add((float)getRandomColor());
+                }
+            }
+        }
     }
 
     protected float circleRadius(int nbCols, int nbRows)
@@ -257,7 +282,9 @@ public class GridView extends View
 
                 }
 
+                updateGrid();
                 invalidate();
+                match();
                 return true;
 
             default :
@@ -265,17 +292,6 @@ public class GridView extends View
         }
 
     }
-
-    /*protected void match(List<Integer> circle)
-    {
-        statusBegin = new BitSet(2);
-        statusBegin = findMatch(circle, 0);
-        if (!statusBegin.equals(new BitSet(2))) // There is a match
-        {
-            doMatch(statusBegin, 0);
-            invalidate();
-        }
-    }*/
 
     protected void doMatch(BitSet status, int index)
     {
@@ -287,11 +303,11 @@ public class GridView extends View
                     return circle2.get(0) > circle1.get(0) ? -1 : (circle2.get(0) < circle1.get(0)) ? 1 : 0;
                 }
             });
-            /*int col = matchCirclesVertical.get(index).get(0).get(1);
+            int col = matchCirclesVertical.get(index).get(0).get(1);
             for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1).get(0); i >= 0; i--)
             {
                 newCircles.add(Arrays.asList(i, col));
-            }*/
+            }
             for (int i = 0; i < matchCirclesVertical.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesVertical.get(index).get(i));
@@ -309,7 +325,7 @@ public class GridView extends View
                     return circle2.get(1) > circle1.get(1) ? -1 : (circle2.get(1) < circle1.get(1)) ? 1 : 0;
                 }
             });
-            /*int row = matchCirclesHorizontal.get(index).get(0).get(0);
+            int row = matchCirclesHorizontal.get(index).get(0).get(0);
             int minCol = matchCirclesHorizontal.get(index).get(0).get(1);
             int maxCol = matchCirclesHorizontal.get(index).get(matchCirclesHorizontal.get(index).size() - 1).get(1);
             for (int i = 0; i <= row; i++)
@@ -318,7 +334,7 @@ public class GridView extends View
                 {
                     newCircles.add(Arrays.asList(i, j));
                 }
-            }*/
+            }
             for (int i = 0; i < matchCirclesHorizontal.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesHorizontal.get(index).get(i));
