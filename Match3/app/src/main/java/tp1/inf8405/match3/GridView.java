@@ -8,7 +8,6 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,9 +21,6 @@ import java.util.List;
 
 public class GridView extends View
 {
-
-    double GRID_HEIGHT_OCCUPATION = 0.75;
-
     //VARIABLES FOR GRID INITIATION
     Paint paint = null;
     ArrayList[][] grid = null;
@@ -234,6 +230,18 @@ public class GridView extends View
                 {
                     doMatch(statusBegin, 0);
                     doMatch(statusEnd, 1);
+
+                    ((PlayActivity) getContext()).decrementNbRemainingShots();
+                    ((PlayActivity) getContext()).displayUpdatedStats();
+                    Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show();
+
+                    if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
+                            (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
+                    {
+                        //TODO: Faire un Game Over et resetter la partie
+                        Toast.makeText(this.getContext(), "Game Over", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
                 invalidate();

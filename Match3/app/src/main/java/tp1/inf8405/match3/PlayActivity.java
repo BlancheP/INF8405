@@ -23,6 +23,10 @@ public class PlayActivity extends AppCompatActivity {
 
     int[] colorTable = null;
 
+    TextView objectiveView;
+    TextView nbRemainingShotsView;
+    TextView scoreView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,11 @@ public class PlayActivity extends AppCompatActivity {
         return nbRemainingShots;
     }
 
+    public int getObjective()
+    {
+        return objective;
+    }
+
     public void decrementNbRemainingShots()
     {
         nbRemainingShots--;
@@ -90,14 +99,19 @@ public class PlayActivity extends AppCompatActivity {
                                                 //is mutiplied by 2 if it's the first combo (numCombo = 1), by 3 if it's the second combo (numCombo =2)
     }
 
-    protected void initLevelPresets(int levelNumber)
+
+    public void displayUpdatedStats()
     {
-        TextView objectiveView;
-        TextView nbRemainingShotsView;
-        TextView scoreView;
+        nbRemainingShotsView = (TextView)findViewById(R.id.remainingShotsView);
+        nbRemainingShotsView.setText("Nombre de coups restants: " + nbRemainingShots);
 
         scoreView = (TextView)findViewById(R.id.scoreView);
         scoreView.setText("Score: " + score);
+    }
+
+    protected void initLevelPresets(int levelNumber)
+    {
+
 
         switch (levelNumber)
         {
