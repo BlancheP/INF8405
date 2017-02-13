@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,8 @@ import android.widget.Toast;
  */
 
 public class PlayActivity extends AppCompatActivity {
+
+    public static final int NUMBER_OF_LEVELS = 4;
 
     int levelNumber;
 
@@ -28,6 +31,8 @@ public class PlayActivity extends AppCompatActivity {
     TextView objectiveView;
     TextView nbRemainingShotsView;
     TextView scoreView;
+
+    Button nextLevelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,7 @@ public class PlayActivity extends AppCompatActivity {
         if(numCircles == 3)
         {
             addedScore += 100;
+            addedScore += 1000;
         }
         else if(numCircles == 4)
         {
@@ -238,6 +244,66 @@ public class PlayActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    protected void victory()
+    {
+        levelNumber++;
+
+        if(levelNumber <= NUMBER_OF_LEVELS)
+        {
+            AlertDialog.Builder winLevelDialog = new AlertDialog.Builder(this);
+            winLevelDialog.setMessage("Vous avez gagné! Voulez-vous passer au niveau suivant?");
+
+            winLevelDialog.setPositiveButton("Prochain Niveau",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            Intent intent = getIntent();
+
+
+                            //TODO: unlock next level first
+
+                            intent.putExtra("level_number", levelNumber);
+                            finish();
+                            startActivity(intent);
+                        }
+                    });
+
+            winLevelDialog.setNegativeButton("Non",
+                    new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1)
+                        {
+                            Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+            AlertDialog alertDialog = winLevelDialog.create();
+            alertDialog.show();
+        }
+
+        else
+        {
+            AlertDialog.Builder winGameDialog = new AlertDialog.Builder(this);
+            winGameDialog.setMessage("Félicitations, vous avez complété le jeu!");
+
+            winGameDialog.setPositiveButton("Je sais, je suis un Dieu",
+                    new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface arg0, int arg1)
+                {
+                    Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            AlertDialog alert = winGameDialog.create();
+            alert.show();
+        }
     }
 }
 

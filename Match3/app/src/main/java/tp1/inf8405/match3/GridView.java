@@ -1,12 +1,10 @@
 package tp1.inf8405.match3;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -245,16 +243,18 @@ public class GridView extends View
 
                     ((PlayActivity) getContext()).decrementNbRemainingShots();
                     ((PlayActivity) getContext()).displayUpdatedStats();
-                    Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show();
 
                     if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
                             (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
                     {
-                        //TODO: Faire un Game Over et resetter la partie
-                        Toast.makeText(this.getContext(), "Game Over", Toast.LENGTH_SHORT).show();
                         ((PlayActivity)getContext()).gameOver();
                     }
 
+                    else if((((PlayActivity) getContext()).getScore() >= ((PlayActivity) getContext()).getObjective()))
+                    {
+                        ((PlayActivity) getContext()).victory();
+                    }
                 }
 
                 invalidate();
