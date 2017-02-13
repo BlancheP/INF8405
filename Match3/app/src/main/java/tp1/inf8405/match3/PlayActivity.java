@@ -97,7 +97,7 @@ public class PlayActivity extends AppCompatActivity {
         if(numCircles == 3)
         {
             addedScore += 100;
-            addedScore += 1000;
+            //addedScore += 1000;
         }
         else if(numCircles == 4)
         {
