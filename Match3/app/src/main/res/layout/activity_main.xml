@@ -20,7 +20,7 @@
         android:background="@android:color/holo_green_light"
         android:layout_marginLeft="92dp"
         android:layout_marginTop="28dp"
-        android:onClick="onQuit"
+        android:onClick="clickQuit"
         android:layout_below="@+id/rules_button"
         android:layout_centerHorizontal="true" />
 

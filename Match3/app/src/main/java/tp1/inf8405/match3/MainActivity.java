@@ -1,6 +1,8 @@
 package tp1.inf8405.match3;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,8 +15,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void onQuit(View view){
-        finish();
+    public void clickQuit(View view){
+        AlertDialog.Builder quitDialog = new AlertDialog.Builder(this);
+
+        quitDialog.setMessage("Voulez-vous vraiment quitter l'application?");
+
+        quitDialog.setPositiveButton("Oui",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                    }
+                });
+
+        quitDialog.setNegativeButton("Non", null);
+
+        AlertDialog alertDialog = quitDialog.create();
+        alertDialog.show();
     }
 
     public void clickRules(View view){

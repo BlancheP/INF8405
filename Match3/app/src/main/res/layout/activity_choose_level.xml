@@ -12,6 +12,15 @@
     tools:context="tp1.inf8405.match3.ChooseLevelActivity">
 
     <Button
+        android:id="@+id/quit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Quitter"
+        android:elevation="0dp"
+        android:onClick="clickQuit" />
+
+    <Button
         android:text="Niveau 1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
