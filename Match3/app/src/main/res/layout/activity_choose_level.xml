@@ -11,6 +11,17 @@
     android:orientation="vertical"
     tools:context="tp1.inf8405.match3.ChooseLevelActivity">
 
+    <TextView
+        android:text="Choix des niveaux"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:id="@+id/chooseLeveltextView"
+        android:textStyle="bold"
+        android:textSize="50dp"/>
+
     <Button
         android:id="@+id/quit_button"
         android:layout_width="wrap_content"
@@ -25,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/level1_button"
-        android:layout_marginTop="97dp"
+        android:layout_marginTop="150dp"
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/level2_button"
         style="@style/Widget.AppCompat.Button.Colored"
