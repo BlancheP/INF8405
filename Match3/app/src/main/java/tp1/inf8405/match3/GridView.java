@@ -119,6 +119,17 @@ public class GridView extends View
             }
             newCircles.remove(0);
         }
+
+        if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
+                (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
+        {
+            ((PlayActivity)getContext()).gameOver();
+        }
+
+        else if((((PlayActivity) getContext()).getScore() >= ((PlayActivity) getContext()).getObjective()))
+        {
+            ((PlayActivity) getContext()).victory();
+        }
     }
 
     protected void updateGrid()
