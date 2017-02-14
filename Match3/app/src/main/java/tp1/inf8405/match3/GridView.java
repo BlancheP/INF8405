@@ -219,6 +219,9 @@ public class GridView extends View
 
                 //Toast.makeText(this.getContext(), "Action was UP at : " + finalPositionX, Toast.LENGTH_SHORT).show ();
 
+                if (beginCoords.size() < 2)
+                    return true;
+                
                 if(finalPositionX - initialPositionX >= MIN_DELTA)
                 {
                     //Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
