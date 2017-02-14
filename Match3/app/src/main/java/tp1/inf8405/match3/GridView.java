@@ -47,6 +47,9 @@ public class GridView extends View
 
     List<List<Integer>> newCircles = new ArrayList<>();
 
+    //Variable for combo management
+    int numCombo = 0;
+
     public GridView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
@@ -109,11 +112,23 @@ public class GridView extends View
             statusBegin = findMatch(newCircles.get(0), 0);
             if (!statusBegin.equals(new BitSet(2))) // There is a match
             {
+                numCombo++;
                 doMatch(statusBegin, 0);
                 updateGrid();
                 invalidate();
             }
             newCircles.remove(0);
+        }
+
+        if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
+                (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
+        {
+            ((PlayActivity)getContext()).gameOver();
+        }
+
+        else if((((PlayActivity) getContext()).getScore() >= ((PlayActivity) getContext()).getObjective()))
+        {
+            ((PlayActivity) getContext()).victory();
         }
     }
 
@@ -270,6 +285,8 @@ public class GridView extends View
                 }
                 else
                 {
+                    //numCombo is set to 0 because there was a move at that moment
+                    numCombo = 0;
                     doMatch(statusBegin, 0);
                     doMatch(statusEnd, 1);
 
@@ -322,7 +339,7 @@ public class GridView extends View
                 //((PlayActivity) getContext()).decrementNbRemainingShots();
                 //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
             }
-            ((PlayActivity) getContext()).computePoints(matchCirclesVertical.get(index).size(), 0);
+            ((PlayActivity) getContext()).computePoints(matchCirclesVertical.get(index).size(), numCombo);
         }
         if (status.get(1) == true) //Horizontal match
         {
@@ -349,8 +366,10 @@ public class GridView extends View
                 //((PlayActivity) getContext()).decrementNbRemainingShots();
                 //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
             }
-            ((PlayActivity) getContext()).computePoints(matchCirclesHorizontal.get(index).size(), 0);
+            ((PlayActivity) getContext()).computePoints(matchCirclesHorizontal.get(index).size(), numCombo);
         }
+
+        ((PlayActivity) getContext()).displayUpdatedStats();
     }
 
     // Fonction qui s'execute a la suite d'un match afin de mettre a jour la grille
