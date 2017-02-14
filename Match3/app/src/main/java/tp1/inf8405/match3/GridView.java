@@ -221,7 +221,7 @@ public class GridView extends View
 
                 if (beginCoords.size() < 2)
                     return true;
-                
+
                 if(finalPositionX - initialPositionX >= MIN_DELTA)
                 {
                     //Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
@@ -353,6 +353,8 @@ public class GridView extends View
         }
     }
 
+    // Fonction qui s'execute a la suite d'un match afin de mettre a jour la grille
+    // Fait descendre les cercles selon le match obtenu
     protected void bringCirclesDown(List<Integer> circle)
     {
         int col = circle.get(1);
@@ -370,10 +372,13 @@ public class GridView extends View
             grid[0][col].remove(2);
     }
 
+    // Fonction qui permet de trouver le cercle correspond aux coordonnees x et y
+    // On l'utilise lorsque le user fait un swipe dans le jeu
     protected List<Integer> findCircle(float x, float y)
     {
         List<Integer> coords = new ArrayList<>();
 
+        // Determine la rangee correspondante
         for (int i = 0; i < grid.length; i++)
         {
             int max = Float.compare(y, ((float)grid[i][0].get(1) + width/2));
@@ -385,6 +390,7 @@ public class GridView extends View
 
         }
 
+        // Determine la colonne correspondante
         for (int j = 0; j < grid[0].length; j++)
         {
             int max = Float.compare(x, ((float)grid[0][j].get(0) + width/2));
@@ -398,27 +404,32 @@ public class GridView extends View
         return coords;
     }
 
+    // Fonction qui determine s'il y a des matchs (horizontal ou vertical)
+    // Retourne des flags qui correspondent aux differents matchs possibles
     protected BitSet findMatch(List<Integer> circle, int index)
     {
+        // Initialisation des variables
         BitSet status = new BitSet(2);
         matchCirclesHorizontal.get(index).clear();
         matchCirclesVertical.get(index).clear();
         matchCirclesHorizontal.get(index).add(circle);
         matchCirclesVertical.get(index).add(circle);
 
-        //Vertical
+        // On cherche des matchs verticaux
         constructMatch(circle, 0, index);
         constructMatch(circle, 1, index);
 
-        //Horizontal
+        // On cherche des matchs horizontaux
         constructMatch(circle, 2, index);
         constructMatch(circle, 3, index);
 
+        // Mettre le flag s'il y a un match horizontal
         if (matchCirclesHorizontal.get(index).size() > 2)
         {
             //Toast.makeText(this.getContext(), "Horizontal : " + matchCirclesHorizontal.size(), Toast.LENGTH_SHORT).show();
             status.set(1);
         }
+        // Mettre le flag s'il y a un match vertical
         if (matchCirclesVertical.get(index).size() > 2)
         {
             //Toast.makeText(this.getContext(), "Vertical : " + matchCirclesVertical.size(), Toast.LENGTH_SHORT).show();
@@ -427,20 +438,26 @@ public class GridView extends View
         return status;
     }
 
-    //Checks the neighboring circle in the specified direction to see if it matches the color of the current one
+    // Fonction qui verifie les cercles voisins dans une direction donnee
+    // Verifie si les couleurs sont les memes
     protected void constructMatch(List<Integer> circle, int direction, int index)
     {
+        // Trouver le voisin
         List<Integer> neighbor = findNeighbor(circle, direction);
+        // S'il y a un voisin et que celui-ci est de la meme couleur que le cercle etudie
         if (neighbor.size() != 0 && isThereAMatch(circle, neighbor))
         {
+            // On ajoute le voisin au match
             if (direction == 0 || direction == 1)
                 matchCirclesVertical.get(index).add(neighbor);
             else
                 matchCirclesHorizontal.get(index).add(neighbor);
+            // On appelle la fonction recursivement afin de creer la chaine des cercles constituant le match
             constructMatch(neighbor, direction, index);
         }
     }
 
+    // Fonction qui retourne le voisin d'un cercle
     protected List<Integer> findNeighbor(List<Integer> circle, int direction)
     {
         List<Integer> coords = new ArrayList<>();
@@ -467,6 +484,7 @@ public class GridView extends View
         return coords;
     }
 
+    // Fonction qui determine si deux cercles sont de meme couleur
     protected Boolean isThereAMatch(List<Integer> circle, List<Integer> neighbor)
     {
         return Math.abs((float)grid[circle.get(0)][circle.get(1)].get(2) - (float)grid[neighbor.get(0)][neighbor.get(1)].get(2)) < 0.000001;
