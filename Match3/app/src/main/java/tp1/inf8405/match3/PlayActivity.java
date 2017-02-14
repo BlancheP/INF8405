@@ -216,8 +216,9 @@ public class PlayActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
-                        startActivity(intent);
+                        //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                        finish();
+                        //startActivity(intent);
                     }
                 });
 
@@ -251,8 +252,9 @@ public class PlayActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
-                            startActivity(intent);
+                            //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                            finish();
+                            //startActivity(intent);
                         }
                     });
 
@@ -266,8 +268,9 @@ public class PlayActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
-                            startActivity(intent);
+                            //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                            finish();
+                            //startActivity(intent);
                         }
                     });
 
