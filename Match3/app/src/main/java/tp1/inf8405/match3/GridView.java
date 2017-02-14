@@ -242,6 +242,10 @@ public class GridView extends View
                     //Toast.makeText(this.getContext(), "Swipped UP", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 0);
                 }
+                else
+                {
+                    endCoords = beginCoords;
+                }
 
                 float oldColor1 = (float)grid[beginCoords.get(0)][beginCoords.get(1)].get(2), oldColor2 = (float)grid[endCoords.get(0)][endCoords.get(1)].get(2);
                 grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor2);
