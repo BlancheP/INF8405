@@ -34,14 +34,13 @@ public class GridView extends View
     float MIN_DELTA; //minimum distance in order for a swipe to take effect
     float initialPositionX = 0, initialPositionY = 0, finalPositionX, finalPositionY;
 
+    // Variable pour la detection des matchs
     List<Integer> beginCoords = null;
     List<Integer> endCoords = null;
     BitSet statusBegin = null;
     BitSet statusEnd = null;
-
     List<List<List<Integer>>> matchCirclesVertical = new ArrayList<>();
     List<List<List<Integer>>> matchCirclesHorizontal = new ArrayList<>();
-
     List<List<Integer>> newCircles = new ArrayList<>();
 
     //Variable for combo management
@@ -65,59 +64,68 @@ public class GridView extends View
         matchCirclesVertical.add(new ArrayList<List<Integer>>());
     }
 
+    // Fonction qui dessine la grille
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
+        // Trouver le rayon des cercles
         float radius = circleRadius(((PlayActivity) getContext()).getNbCols(),
                                     ((PlayActivity) getContext()).getNbRows());
 
+        // Lire le fichier XML et en tirer les couleurs des cercles selon le niveau
         int[] colorTable = ((PlayActivity) getContext()).getColorTable();
 
         int nbRows = ((PlayActivity) getContext()).getNbRows();
         int nbCols = ((PlayActivity) getContext()).getNbCols();
 
+        // Initialiser la grille si c'est la premiere fois qu'on la dessine
         if (grid == null)
         {
             initGrid(nbRows, nbCols, getWidth(), getHeight(), colorTable);
         }
 
+        // Appliquer un font blanc
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
 
+        // Dessiner tous les cercles
         for (int i = 0; i < nbRows; i ++)
         {
             for (int j = 0; j < nbCols; j++)
             {
                 ArrayList<Float> coords = getCoords(i,j);
-                /*if (coords.size() < 3)
-                {
-                    grid[i][j].add((float)getRandomColor());
-                    coords = getCoords(i,j);
-                }*/
                 paint.setColor(Math.round(coords.get(2)));
                 canvas.drawCircle(coords.get(0), coords.get(1), radius, paint);
             }
         }
     }
 
+    // Fonction qui est appelee pour detecter les combos une fois le match initial detecte
     protected void match()
     {
+        // On verifie tous les nouveaux cercles avant que le user puisse jouer un nouveau coup
         while (newCircles.size() > 0)
         {
             statusBegin = new BitSet(2);
+            // On trouve les matchs autour de ce cercle
             statusBegin = findMatch(newCircles.get(0), 0);
-            if (!statusBegin.equals(new BitSet(2))) // There is a match
+            if (!statusBegin.equals(new BitSet(2))) // Il y a un match
             {
                 numCombo++;
+                // On effectue les actions qui viennent apres la detection d'un match
+                // Soit le retrait des cercles faisant partie du match et on update la grille
                 doMatch(statusBegin, 0);
+                // On update la grille en donnant des couleurs aleatoires aux nouveaux cercles
                 updateGrid();
+                // On redessine la grille eventuellement
                 invalidate();
             }
             newCircles.remove(0);
         }
     }
 
+    // Fonction qui permet de donner des couleurs aleatoires aux nouveaux cercles
     protected void updateGrid()
     {
         for (int i = 0; i < grid.length; i ++)
@@ -133,6 +141,7 @@ public class GridView extends View
         }
     }
 
+    // Fonction qui calcule le rayon des cercles selon la taille de la grille
     protected float circleRadius(int nbCols, int nbRows)
     {
         if(nbCols >= nbRows)
@@ -145,6 +154,7 @@ public class GridView extends View
         }
     }
 
+    // Fonction qui initialise la grille
     protected void initGrid(int nbRows, int nbCols, int w, int h, int[] colorTable)
     {
         grid = new ArrayList[nbRows][nbCols];
@@ -155,6 +165,7 @@ public class GridView extends View
         MIN_DELTA = width / 2;
         currentX = currentY = width / 2;
 
+        // Initialisation de la grille
         for (int i = 0; i < nbRows; i++)
         {
             for (int j = 0; j < nbCols; j++)
@@ -163,6 +174,7 @@ public class GridView extends View
             }
         }
 
+        // Pour tous les cercles, on leur assigne en 0 : leur rangee, en 1 : leur colonne et en 2 : leur couleur
         for (int i = 0; i < nbRows; i++)
         {
             for (int j = 0; j < nbCols; j++)
@@ -170,7 +182,6 @@ public class GridView extends View
                 grid[i][j].add(currentX);
                 grid[i][j].add(currentY);
                 grid[i][j].add((float)colorTable[j + i * nbCols]);
-                //grid[i][j].add((float)getRandomColor());
                 currentX += width;
             }
             currentX = width / 2;
@@ -186,16 +197,19 @@ public class GridView extends View
         }
     }
 
+    // Fonction qui retourne les coordonnees du centre du cercle selon sa position dans la grille
     protected ArrayList<Float> getCoords(int i, int j)
     {
         return grid[i][j];
     }
 
+    // Fonction qui retourne une couleur random
     protected int getRandomColor()
     {
         return colors.get((int)(Math.random() * colors.size()));
     }
 
+    // Fonction qui detecte les swipes
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
@@ -205,52 +219,50 @@ public class GridView extends View
         {
             case (MotionEvent.ACTION_DOWN) :
 
+                // On detecte le cercle initial du swipe
                 initialPositionX = event.getX();
                 initialPositionY = event.getY();
                 beginCoords = findCircle(initialPositionX, initialPositionY);
-
-                //Toast.makeText(this.getContext(), "Action was DOWN at: " + initialPositionX, Toast.LENGTH_SHORT).show ();
 
                 return true;
 
             case (MotionEvent.ACTION_UP) :
 
+                // On detecte le cercle final du swipe
                 finalPositionX = event.getX();
                 finalPositionY = event.getY();
 
-                //Toast.makeText(this.getContext(), "Action was UP at : " + finalPositionX, Toast.LENGTH_SHORT).show ();
-
+                // Si le swipe ne part pas d'un cercle, ne rien faire
                 if (beginCoords.size() < 2)
                     return true;
 
+                // Swipe a droite, le cercle final est donc le voisin de droite du cercle initial
                 if(finalPositionX - initialPositionX >= MIN_DELTA)
                 {
-                    //Toast.makeText(this.getContext(), "Swipped RIGHT", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 2);
                 }
-
+                // Swipe a gauche, le cercle final est donc le voisin de gauche du cercle initial
                 else if (Math.abs(initialPositionX - finalPositionX) >= MIN_DELTA)
                 {
-                    //Toast.makeText(this.getContext(), "Swipped LEFT", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 3);
                 }
-
+                // Swipe en bas, le cercle final est donc le voisin du bas du cercle initial
                 else if (finalPositionY - initialPositionY >= MIN_DELTA)
                 {
-                    //Toast.makeText(this.getContext(), "Swipped DOWN", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 1);
                 }
-
+                // Swipe en haut, le cercle final est donc le voisin du haut du cercle initial
                 else if (Math.abs(initialPositionY - finalPositionY) >= MIN_DELTA)
                 {
-                    //Toast.makeText(this.getContext(), "Swipped UP", Toast.LENGTH_SHORT).show ();
                     endCoords = findNeighbor(beginCoords, 0);
                 }
+                // Il ne s'agit pas d'un swipe donc ne rien faire
                 else
                 {
                     endCoords = beginCoords;
                 }
 
+                // On echange la couleur des deux cercles
                 float oldColor1 = (float)grid[beginCoords.get(0)][beginCoords.get(1)].get(2), oldColor2 = (float)grid[endCoords.get(0)][endCoords.get(1)].get(2);
                 grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor2);
                 grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor1);
@@ -258,34 +270,36 @@ public class GridView extends View
                 statusBegin = new BitSet(2);
                 statusEnd = new BitSet(2);
 
+                // On cherche les matchs pour les deux cercles
                 statusBegin = findMatch(beginCoords, 0);
                 statusEnd = findMatch(endCoords, 1);
 
+                // Si aucun match n'est detecte, il s'agit d'une action interdite
                 if (statusBegin.equals(new BitSet(2)) && statusEnd.equals(new BitSet(2)))
                 {
+                    // On remet les couleurs initiales aux cercles
                     grid[beginCoords.get(0)][beginCoords.get(1)].set(2, oldColor1);
                     grid[endCoords.get(0)][endCoords.get(1)].set(2, oldColor2);
                     Toast.makeText(this.getContext(), "Ceci est une action interdite!!", Toast.LENGTH_SHORT).show();
-
-                    // Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
                 }
+                // S'il y a un match
                 else
                 {
                     //numCombo is set to 0 because there was a move at that moment
                     numCombo = 0;
+                    // On effectue le match
                     doMatch(statusBegin, 0);
                     doMatch(statusEnd, 1);
 
                     ((PlayActivity) getContext()).decrementNbRemainingShots();
                     ((PlayActivity) getContext()).displayUpdatedStats();
-                    //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show();
-
                 }
 
-                updateGrid();
-                invalidate();
-                match();
+                updateGrid(); // On met la grille a jour
+                invalidate(); // On redessine la grille eventuellement
+                match(); // On cherche les matchs sur les nouveaux cercles de la grille
 
+                // On gere la victoire ou la defaite du niveau
                 if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
                         (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
                 {
@@ -305,38 +319,45 @@ public class GridView extends View
 
     }
 
+    // Fonction qui affectue les actions d'un match apres la detection de celui-ci
     protected void doMatch(BitSet status, int index)
     {
-        if (status.get(0) == true) //Vertical match
+        if (status.get(0) == true) // Match vertical
         {
+            // On trie la liste des cercles faisant partie du match en ordre croissant de rangee afin de faciliter le traitement
             Collections.sort(matchCirclesVertical.get(index), new Comparator<List<Integer>>() {
                 @Override
                 public int compare(List<Integer> circle1, List<Integer> circle2) {
                     return circle2.get(0) > circle1.get(0) ? -1 : (circle2.get(0) < circle1.get(0)) ? 1 : 0;
                 }
             });
+            // On ajoute les cercles qui seront modifies par le match a une liste qui sera traitee plus tard
+            // Soit tous ceux en haut du cercle le plus bas dans le match vertical
             int col = matchCirclesVertical.get(index).get(0).get(1);
             for (int i = matchCirclesVertical.get(index).get(matchCirclesVertical.get(index).size() - 1).get(0); i >= 0; i--)
             {
                 newCircles.add(Arrays.asList(i, col));
             }
+            // On retire les cercles qui font partie du match et on update ainsi la grille
+            // en descendant les cercles qui etaient au dessus
             for (int i = 0; i < matchCirclesVertical.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesVertical.get(index).get(i));
-
-                //((PlayActivity) getContext()).decrementNbRemainingShots();
-                //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
             }
+            // On ajoute les points correspondant au match
             ((PlayActivity) getContext()).computePoints(matchCirclesVertical.get(index).size(), numCombo);
         }
-        if (status.get(1) == true) //Horizontal match
+        if (status.get(1) == true) // Match horizontal
         {
+            // On trie la liste des cercles faisant partie du match en ordre croissant de colonne afin de faciliter le traitement
             Collections.sort(matchCirclesHorizontal.get(index), new Comparator<List<Integer>>() {
                 @Override
                 public int compare(List<Integer> circle1, List<Integer> circle2) {
                     return circle2.get(1) > circle1.get(1) ? -1 : (circle2.get(1) < circle1.get(1)) ? 1 : 0;
                 }
             });
+            // On ajoute les cercles qui seront modifies par le match a une liste qui sera traitee plus tard
+            // Soit tous ceux qui sont en haut des cercles formant une ligne horizontale
             int row = matchCirclesHorizontal.get(index).get(0).get(0);
             int minCol = matchCirclesHorizontal.get(index).get(0).get(1);
             int maxCol = matchCirclesHorizontal.get(index).get(matchCirclesHorizontal.get(index).size() - 1).get(1);
@@ -347,13 +368,13 @@ public class GridView extends View
                     newCircles.add(Arrays.asList(i, j));
                 }
             }
+            // On retire les cercles qui font partie du match et on update ainsi la grille
+            // en descendant les cercles qui etaient au dessus
             for (int i = 0; i < matchCirclesHorizontal.get(index).size(); i++)
             {
                 bringCirclesDown(matchCirclesHorizontal.get(index).get(i));
-
-                //((PlayActivity) getContext()).decrementNbRemainingShots();
-                //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show ();
             }
+            // On ajoute les points correspondant au match
             ((PlayActivity) getContext()).computePoints(matchCirclesHorizontal.get(index).size(), numCombo);
         }
 
