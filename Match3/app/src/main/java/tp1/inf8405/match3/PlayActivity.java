@@ -9,9 +9,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Created by Blanche on 2/6/2017.
- */
 
 public class PlayActivity extends AppCompatActivity {
 
