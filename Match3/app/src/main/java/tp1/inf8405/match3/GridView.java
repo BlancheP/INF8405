@@ -112,6 +112,8 @@ public class GridView extends View
             statusBegin = findMatch(newCircles.get(0), 0);
             if (!statusBegin.equals(new BitSet(2))) // Il y a un match
             {
+                //si on se trouve dans cette fonction c'est qu'il y a un combo, on incrémente
+                // donc la variable
                 numCombo++;
                 // On effectue les actions qui viennent apres la detection d'un match
                 // Soit le retrait des cercles faisant partie du match et on update la grille
@@ -285,7 +287,8 @@ public class GridView extends View
                 // S'il y a un match
                 else
                 {
-                    //numCombo is set to 0 because there was a move at that moment
+                    //numCombo est mis à 0 parce qu'il vient d'y avoir un mouvement d'effectuer ce qui signifie
+                    // que le combo serait terminé.
                     numCombo = 0;
                     // On effectue le match
                     doMatch(statusBegin, 0);

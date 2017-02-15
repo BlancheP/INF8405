@@ -56,6 +56,7 @@ public class ChooseLevelActivity extends AppCompatActivity {
         finish();
     }
 
+    //fonction qui va debloquer tous les niveaux precedant à un niveau passé en parametre
     public void unlockToLatestLevel(int latestLevel){
 
         Button levelButton;
