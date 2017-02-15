@@ -62,17 +62,17 @@ public class ChooseLevelActivity extends AppCompatActivity {
 
         switch(latestLevel) {
             case 1:
-                Toast.makeText(this.getApplicationContext(), "Niveau 1 unlocked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this.getApplicationContext(), "Niveau 1 unlocked", Toast.LENGTH_SHORT).show();
                 break;
 
             case 2:
-                Toast.makeText(this.getApplicationContext(), "Niveau 2 unlocked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this.getApplicationContext(), "Niveau 2 unlocked", Toast.LENGTH_SHORT).show();
                 levelButton = (Button) findViewById(R.id.level2_button);
                 levelButton.setEnabled(true);
                 break;
 
             case 3:
-                Toast.makeText(this.getApplicationContext(), "Niveau 3 unlocked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this.getApplicationContext(), "Niveau 3 unlocked", Toast.LENGTH_SHORT).show();
                 levelButton = (Button) findViewById(R.id.level2_button);
                 levelButton.setEnabled(true);
                 levelButton = (Button) findViewById(R.id.level3_button);
@@ -80,7 +80,7 @@ public class ChooseLevelActivity extends AppCompatActivity {
                 break;
 
             case 4:
-                Toast.makeText(this.getApplicationContext(), "Niveau 4 unlocked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this.getApplicationContext(), "Niveau 4 unlocked", Toast.LENGTH_SHORT).show();
                 levelButton = (Button) findViewById(R.id.level2_button);
                 levelButton.setEnabled(true);
                 levelButton = (Button) findViewById(R.id.level3_button);

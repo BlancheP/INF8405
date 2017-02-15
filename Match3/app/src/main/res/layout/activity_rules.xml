@@ -20,8 +20,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textSize="50sp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif" />
+        android:textStyle="bold" />
 
     <TableLayout
         android:layout_height="wrap_content"
@@ -35,7 +34,7 @@
             <TextView android:id="@+id/firstRule"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="- Déplacer les cercles pour faire des ensembles verticaux ou horizontaux d'au moins trois jetons de la même couleur."
+                android:text="- Déplacez les cercles pour faire des ensembles verticaux ou horizontaux d'au moins trois jetons de la même couleur."
                 android:layout_span="2"
                 android:layout_weight="1"
                 android:textSize="25sp"
@@ -63,7 +62,7 @@
             <TextView android:id="@+id/fourthRule"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="- Un combo double les points de l'ensemble, et pour chaque combo subséquent ce facteur est augmenté de un."
+                android:text="- Un combo double les points de l'ensemble, et pour chaque combo subséquent ce facteur est augmenté d'un."
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textSize="25sp"
@@ -84,7 +83,7 @@
             <TextView android:id="@+id/sixthRule"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="- Pour débloquer les niveaux verrouillé il faut compléter le niveau précédent."
+                android:text="- Pour débloquer les niveaux verrouillés, il faut compléter le niveau précédent."
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textSize="25sp"
@@ -94,7 +93,7 @@
             <TextView android:id="@+id/seventhRule"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="- Si le nombre de coup restant atteint zéro, le niveau est échoué."
+                android:text="- Si le nombre de coups restants atteint zéro, le niveau est échoué."
                 android:layout_weight="1"
                 android:gravity="left"
                 android:textSize="25sp"
