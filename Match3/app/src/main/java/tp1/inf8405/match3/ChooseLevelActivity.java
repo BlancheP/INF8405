@@ -15,6 +15,10 @@ public class ChooseLevelActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_level);
+
+        Bundle extras = getIntent().getExtras();
+        int levelToUnlock = extras.getInt("level_to_unlock");
+        unlockToLatestLevel(levelToUnlock);
     }
 
     public void clickLevel(View view){
@@ -49,6 +53,43 @@ public class ChooseLevelActivity extends AppCompatActivity {
         }
 
         startActivity(intent);
+        finish();
+    }
+
+    public void unlockToLatestLevel(int latestLevel){
+
+        Button levelButton;
+
+        switch(latestLevel) {
+            case 1:
+                Toast.makeText(this.getApplicationContext(), "Niveau 1 unlocked", Toast.LENGTH_SHORT).show();
+                break;
+
+            case 2:
+                Toast.makeText(this.getApplicationContext(), "Niveau 2 unlocked", Toast.LENGTH_SHORT).show();
+                levelButton = (Button) findViewById(R.id.level2_button);
+                levelButton.setEnabled(true);
+                break;
+
+            case 3:
+                Toast.makeText(this.getApplicationContext(), "Niveau 3 unlocked", Toast.LENGTH_SHORT).show();
+                levelButton = (Button) findViewById(R.id.level2_button);
+                levelButton.setEnabled(true);
+                levelButton = (Button) findViewById(R.id.level3_button);
+                levelButton.setEnabled(true);
+                break;
+
+            case 4:
+                Toast.makeText(this.getApplicationContext(), "Niveau 4 unlocked", Toast.LENGTH_SHORT).show();
+                levelButton = (Button) findViewById(R.id.level2_button);
+                levelButton.setEnabled(true);
+                levelButton = (Button) findViewById(R.id.level3_button);
+                levelButton.setEnabled(true);
+                levelButton = (Button) findViewById(R.id.level4_button);
+                levelButton.setEnabled(true);
+                break;
+        }
+
     }
 
     public void clickQuit(View view){

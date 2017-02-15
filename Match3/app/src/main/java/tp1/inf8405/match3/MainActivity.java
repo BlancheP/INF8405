@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickPlay(View view){
         Intent intent = new Intent(this, ChooseLevelActivity.class);
+        intent.putExtra("level_to_unlock", PlayActivity.levelToUnlock);
         startActivity(intent);
     }
 }
