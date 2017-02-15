@@ -88,7 +88,7 @@ public class PlayActivity extends AppCompatActivity {
         int addedScore = 0;
         if (numCircles == 3) {
             addedScore += 100;
-            //addedScore += 1000;
+            addedScore += 1000;
         } else if (numCircles == 4) {
             addedScore += 200;
         } else if (numCircles >= 5) {
@@ -238,10 +238,6 @@ public class PlayActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
                             Intent intent = getIntent();
-
-
-                            //TODO: unlock next level first
-
                             intent.putExtra("level_number", levelNumber);
                             finish();
                             startActivity(intent);
