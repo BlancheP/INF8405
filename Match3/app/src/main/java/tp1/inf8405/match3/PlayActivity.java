@@ -72,9 +72,8 @@ public class PlayActivity extends AppCompatActivity {
     }
 
 
-    //computes the quantity of points made from a match using the number of circles that are matched together
-    //and the number of the combo (if its the first move the number is 0, if its the first combo
-    //the number is 1, second combo: 2, and so on)
+    //calcule la quantité de points acquis à partir du "match" en utilisant le nombre de cercle dans cet ensemble
+    //et le nombre du combo (si c'est un mouvement, donc pas de combo, le premier combo, le deuxième, le troisième, etc.)
     public void computePoints(int numCircles, int numCombo) {
         int addedScore = 0;
         if (numCircles == 3) {
@@ -86,8 +85,9 @@ public class PlayActivity extends AppCompatActivity {
             addedScore += 300;
         }
 
-        score += (addedScore * (numCombo + 1)); //the 1 added to numCombo is necessary so that the added score
-        //is mutiplied by 2 if it's the first combo (numCombo = 1), by 3 if it's the second combo (numCombo =2)
+        score += (addedScore * (numCombo + 1)); //le 1 ajouté est pour faire en sorte que si ce n'est pas un combo (numCombo = 0)
+                                                //le score ajouté ne sera pas 0 et ne sera pas modifié par la variable numCombo.
+                                                //Si c'est un combo, le facteur sera ainsi à la valeur souhaitée pour la multiplication.
     }
 
 
