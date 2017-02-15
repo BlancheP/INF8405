@@ -101,8 +101,7 @@ public class ChooseLevelActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        finish();
-                        System.exit(0);
+                        finishAffinity();
                     }
                 });
 
