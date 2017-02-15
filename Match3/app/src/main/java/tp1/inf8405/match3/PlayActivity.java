@@ -99,6 +99,7 @@ public class PlayActivity extends AppCompatActivity {
         scoreView.setText("Score: " + score);
     }
 
+    //chargement des presets du niveau actuel
     protected void initLevelPresets(int levelNumber) {
         switch (levelNumber) {
             case 1:
@@ -219,12 +220,16 @@ public class PlayActivity extends AppCompatActivity {
 
     protected void victory() {
 
+        //si le niveau victorieux actuel est un niveau en-dessous du prochain niveau a debloquer,
+        //ce dernier sera debloqué
         if((levelToUnlock + 1) - levelNumber == 1){
             levelToUnlock++;
         }
 
+        //incrementer pour passer au prochain niveau si l'utilisateur le desire
         levelNumber++;
 
+        //verification si le niveau actuel est le dernier niveau du jeu
         if (levelNumber <= NUMBER_OF_LEVELS) {
             AlertDialog.Builder winLevelDialog = new AlertDialog.Builder(this);
             winLevelDialog.setMessage("Vous avez gagné! Voulez-vous passer au niveau suivant?");
@@ -260,10 +265,8 @@ public class PlayActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
                             levelToUnlock = NUMBER_OF_LEVELS;
                             finish();
-                            //startActivity(intent);
                         }
                     });
 
