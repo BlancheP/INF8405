@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,9 +15,10 @@ import android.widget.Toast;
 
 public class PlayActivity extends AppCompatActivity {
 
-    public static final int NUMBER_OF_LEVELS = 4;
+    private static final int NUMBER_OF_LEVELS = 4;
 
-    int levelNumber;
+    public int levelNumber = 1;
+    public static int levelToUnlock = 1; //this variable will be used to determine what is the latest unlocked level
 
     int nbRows;
     int nbCols;
@@ -32,8 +32,6 @@ public class PlayActivity extends AppCompatActivity {
     TextView objectiveView;
     TextView nbRemainingShotsView;
     TextView scoreView;
-
-    Button nextLevelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +70,6 @@ public class PlayActivity extends AppCompatActivity {
         return objective;
     }
 
-    public int getLevelNumber() {
-        return levelNumber;
-    }
-
     public void decrementNbRemainingShots() {
         nbRemainingShots--;
     }
@@ -88,7 +82,7 @@ public class PlayActivity extends AppCompatActivity {
         int addedScore = 0;
         if (numCircles == 3) {
             addedScore += 100;
-            addedScore += 1000;
+            //addedScore += 1000;
         } else if (numCircles == 4) {
             addedScore += 200;
         } else if (numCircles >= 5) {
@@ -227,6 +221,11 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     protected void victory() {
+
+        if((levelToUnlock + 1) - levelNumber == 1){
+            levelToUnlock++;
+        }
+
         levelNumber++;
 
         if (levelNumber <= NUMBER_OF_LEVELS) {
@@ -265,6 +264,7 @@ public class PlayActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
                             //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                            levelToUnlock = NUMBER_OF_LEVELS;
                             finish();
                             //startActivity(intent);
                         }

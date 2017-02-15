@@ -12,7 +12,7 @@
     tools:context="tp1.inf8405.match3.MainActivity">
 
     <TextView
-        android:text="Match 3"
+        android:text="Match 3+"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
