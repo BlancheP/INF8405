@@ -11,13 +11,93 @@
     tools:context="tp1.inf8405.match3.RulesActivity">
 
     <TextView
-        android:text="Rules"
+        android:text="Règles du jeu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="301dp"
-        android:layout_marginTop="201dp"
+        android:layout_marginTop="48dp"
         android:id="@+id/textView2"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <TableLayout
+        android:layout_height="wrap_content"
+        android:id="@+id/TableLayout01"
+        android:layout_width="wrap_content"
+
+        android:layout_marginTop="18dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true">
+        <TableRow>
+            <TextView android:id="@+id/firstRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Déplacez les cercles pour faire des ensembles verticaux ou horizontaux d'au moins trois jetons de la même couleur."
+                android:layout_span="2"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/secondRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Un déplacement qui ne crée aucun ensemble d'au moins trois jetons sera considéré comme invalide et le déplacement sera annulé."
+                android:textSize="25sp"
+                />
+            </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/thirdRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Les points : un ensemble de trois jetons donne 100 points, un ensemble de 4 jetons donne 200 points et un ensemble de 5 jetons donne 300 points."
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="25sp"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/fourthRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Un combo double les points de l'ensemble, et pour chaque combo subséquent ce facteur est augmenté d'un."
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="25sp"
+                />
+        </TableRow>
+        <TableRow>
+
+            <TextView android:id="@+id/fifthRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Pour compléter un niveau il faut atteindre l'objectif de points spécifique au niveau."
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="25sp"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/sixthRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Pour débloquer les niveaux verrouillés, il faut compléter le niveau précédent."
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="25sp"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/seventhRule"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="- Si le nombre de coups restants atteint zéro, le niveau est échoué."
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textSize="25sp"
+                />
+        </TableRow>
+    </TableLayout>
 </RelativeLayout>

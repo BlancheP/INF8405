@@ -17,9 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by Blanche on 2/6/2017.
- */
 
 public class GridView extends View
 {
@@ -118,17 +115,6 @@ public class GridView extends View
                 invalidate();
             }
             newCircles.remove(0);
-        }
-
-        if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
-                (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
-        {
-            ((PlayActivity)getContext()).gameOver();
-        }
-
-        else if((((PlayActivity) getContext()).getScore() >= ((PlayActivity) getContext()).getObjective()))
-        {
-            ((PlayActivity) getContext()).victory();
         }
     }
 
@@ -294,21 +280,23 @@ public class GridView extends View
                     ((PlayActivity) getContext()).displayUpdatedStats();
                     //Toast.makeText(this.getContext(), "Shots Remaining: " + ((PlayActivity) getContext()).getNbRemainingShots(), Toast.LENGTH_SHORT).show();
 
-                    if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
-                            (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
-                    {
-                        ((PlayActivity)getContext()).gameOver();
-                    }
-
-                    else if((((PlayActivity) getContext()).getScore() >= ((PlayActivity) getContext()).getObjective()))
-                    {
-                        ((PlayActivity) getContext()).victory();
-                    }
                 }
 
                 updateGrid();
                 invalidate();
                 match();
+
+                if(((PlayActivity) getContext()).getNbRemainingShots() == 0 &&
+                        (((PlayActivity) getContext()).getScore() < ((PlayActivity) getContext()).getObjective()))
+                {
+                    ((PlayActivity)getContext()).gameOver();
+                }
+
+                else if((((PlayActivity) getContext()).getScore() >= ((PlayActivity) getContext()).getObjective()))
+                {
+                    ((PlayActivity) getContext()).victory();
+                }
+
                 return true;
 
             default :

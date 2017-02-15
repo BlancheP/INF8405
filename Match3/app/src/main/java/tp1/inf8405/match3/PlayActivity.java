@@ -6,19 +6,16 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Created by Blanche on 2/6/2017.
- */
 
 public class PlayActivity extends AppCompatActivity {
 
-    public static final int NUMBER_OF_LEVELS = 4;
+    private static final int NUMBER_OF_LEVELS = 4;
 
-    int levelNumber;
+    public int levelNumber = 1;
+    public static int levelToUnlock = 1; //this variable will be used to determine what is the latest unlocked level
 
     int nbRows;
     int nbCols;
@@ -32,8 +29,6 @@ public class PlayActivity extends AppCompatActivity {
     TextView objectiveView;
     TextView nbRemainingShotsView;
     TextView scoreView;
-
-    Button nextLevelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +65,6 @@ public class PlayActivity extends AppCompatActivity {
 
     public int getObjective() {
         return objective;
-    }
-
-    public int getLevelNumber() {
-        return levelNumber;
     }
 
     public void decrementNbRemainingShots() {
@@ -216,8 +207,9 @@ public class PlayActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
-                        startActivity(intent);
+                        //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                        finish();
+                        //startActivity(intent);
                     }
                 });
 
@@ -226,6 +218,11 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     protected void victory() {
+
+        if((levelToUnlock + 1) - levelNumber == 1){
+            levelToUnlock++;
+        }
+
         levelNumber++;
 
         if (levelNumber <= NUMBER_OF_LEVELS) {
@@ -237,10 +234,6 @@ public class PlayActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
                             Intent intent = getIntent();
-
-
-                            //TODO: unlock next level first
-
                             intent.putExtra("level_number", levelNumber);
                             finish();
                             startActivity(intent);
@@ -251,8 +244,9 @@ public class PlayActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
-                            startActivity(intent);
+                            //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                            finish();
+                            //startActivity(intent);
                         }
                     });
 
@@ -266,8 +260,10 @@ public class PlayActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
-                            startActivity(intent);
+                            //Intent intent = new Intent(getApplicationContext(), ChooseLevelActivity.class);
+                            levelToUnlock = NUMBER_OF_LEVELS;
+                            finish();
+                            //startActivity(intent);
                         }
                     });
 
