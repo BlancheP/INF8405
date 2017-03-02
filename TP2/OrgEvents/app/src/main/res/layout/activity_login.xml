@@ -46,6 +46,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvRegister"
         android:layout_below="@+id/bLogin"
-        android:layout_centerHorizontal="true"
-        android:clickable="true"/>
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
