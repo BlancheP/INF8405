@@ -1,0 +1,7 @@
+#Wed Feb 15 14:59:20 EST 2017
+base.0=C\:\\Users\\Alexis\\Desktop\\INF8405\\Match3\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_4f59b8e88d1feecb25fda69331942dd252a1786d
+renamed.1=classes2.dex
+renamed.0=classes.dex
+file.1=C\:\\Users\\Alexis\\Desktop\\INF8405\\Match3\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_b59f944407214e820bfcc36150f8429bdcd86c2c\\classes.dex
+base.1=C\:\\Users\\Alexis\\Desktop\\INF8405\\Match3\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_b59f944407214e820bfcc36150f8429bdcd86c2c
+file.0=C\:\\Users\\Alexis\\Desktop\\INF8405\\Match3\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_4f59b8e88d1feecb25fda69331942dd252a1786d\\classes.dex
