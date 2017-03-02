@@ -11,17 +11,30 @@ import com.google.firebase.storage.StorageReference;
 
 public class DatabaseManager {
     private static StorageReference mStorageRef;
-    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private static DatabaseReference rootRef = database.getReference();
-    private static DatabaseReference userRef = rootRef.child("users");
+
+    //private static DatabaseReference
 
 
    private DatabaseManager(){
      }
 
     static void addUser(String userName, String password){
-         userRef.child(userName).child("password").setValue(password);
+        FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(userName)
+                .child("password")
+                .setValue(password);
     }
+
+    static void addGroup(String groupName, String userName){
+        FirebaseDatabase.getInstance().getReference()
+                .child("groups")
+                .child(groupName)
+                .child("managerName")
+                .setValue(userName);
+
+    }
+
 
 
 
