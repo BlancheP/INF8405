@@ -9,10 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -31,6 +28,15 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View w) {
                 dispatchTakePictureIntent();
+            }
+        });
+
+        bRegister.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View w) {
+
+                DatabaseManager.addUser(etUsername.getText().toString(),
+                                        etPassword.getText().toString());
             }
         });
     }
