@@ -19,23 +19,4 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.startActivity(registerIntent);
         //dispatchTakePictureIntent();
     }
-
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap)extras.get("data");
-            ImageView v = (ImageView)findViewById(R.id.photoView);
-            v.setImageBitmap(imageBitmap);
-        }
-    }
 }
