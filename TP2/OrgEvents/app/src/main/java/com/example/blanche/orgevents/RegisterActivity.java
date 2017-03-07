@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -35,8 +36,20 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View w) {
 
-                DatabaseManager.addUser(etUsername.getText().toString(),
-                                        etPassword.getText().toString());
+                if (!DatabaseManager.userExists(etUsername.getText().toString())) {
+                    DatabaseManager.addUser(etUsername.getText().toString(),
+                            etPassword.getText().toString());
+                    Intent refresh = new Intent(RegisterActivity.this, MainActivity.class);
+                    startActivity(refresh);
+                    finish();
+                    Toast done = Toast.makeText(getApplicationContext(), "You have been successfully registered!", Toast.LENGTH_SHORT);
+                    done.show();
+                }
+                else {
+                    etUsername.setError("A user with the same username already exists!");
+                    Toast done = Toast.makeText(getApplicationContext(), "Some fields are invalid!", Toast.LENGTH_SHORT);
+                    done.show();
+                }
             }
         });
     }
