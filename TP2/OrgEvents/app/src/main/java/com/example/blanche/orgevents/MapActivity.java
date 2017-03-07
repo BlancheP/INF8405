@@ -16,6 +16,7 @@ import java.text.StringCharacterIterator;
  * Created by alain.trandang on 2017-02-23.
  */
 
+/*
 public class MapActivity extends Activity {
 
     private GoogleApiClient mGoogleApiClient;
@@ -60,6 +61,6 @@ public class MapActivity extends Activity {
         mGoogleApiClient.disconnect();
         super.onStop();
     }
-    */
-
 }
+
+*/
