@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-25.1.0_b8d3f5053133c70d1696d009765bc8324d9a6d75\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e79aa3d9a16f8c9f16377c0608de70a8f31e5d80">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-25.1.0_d9bc8f8d242ef8d7ffe0ab86811f8259a8360344\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="65d086ee9daaf87b5af62ad24471edafa433354c">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-appindexing-8.4.0_38c320e1f171619ec367e8e8c2223af263a47a99\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f02263e35e52668dd17b73bf961437e3d562b35f">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-media-compat-25.1.0_02c22b11e87a33ba7ca40a9336570523ff292495\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\8.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="fef2b3e4b6b1b0e5fe7b69fa137a5fa55a3182ab">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-base-8.4.0_e14e396b94b6ed2a69756bab6eeb5d0a82c8152c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="0a0ef86b7fa568a52bf6214a0326ca1f1d618da7">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-utils-25.1.0_0c9627730e4d2b86206935154a66d997d7928515\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2a53c4f3518116b8c6aee0e477233f0f7da8616f">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-fragment-25.1.0_956e03146f2b8fe7dc0cbe815e77d2964aa4cb5d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6fb6ac3e8d3b9013819920d9ea11f3803c4c0033">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-25.1.0_a6972299b2abf4f8c9f5e2689882bfb1f7c18cbf\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="aee64634871d88a419d59eb743c1258a60f19700">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-25.1.0_80ec91d0ed9e7763ede969689e588b45001e4bff\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5379598f04ee3f3ed83d74a25125cef548f3dca5">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_4f59b8e88d1feecb25fda69331942dd252a1786d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ca3c7aa31e2726a400a6e552b93cb9f63c9a1e6d">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-compat-25.1.0_8f3fc0e84a97924132a17e026a177d065e0cebda\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\AppData\Local\Android\sdk1\extras\android\m2repository\com\android\support\support-annotations\25.1.0\support-annotations-25.1.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="64cb6b229a8bdfd907bc8dd46839a0053e4c018d">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.1.0_7a9c061e59fd54407df168002014ab08a5aa842d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5a5c208e1a6598145e5ba238649de1943fe9f9cf">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_b59f944407214e820bfcc36150f8429bdcd86c2c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8e673cdfadd8f2d98fdb2fda2285c30f6e449782">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-basement-8.4.0_ee1155c324b2201cbc68343de84c2030937901e5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1630658fbc2d222b988603c27b4a4249586fbfe7">
+        <dex dex="C:\Users\Alexis\Desktop\INF8405\Match3\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-25.1.0_43623ba442f91224fe2f8b5996fcdc12d93c8dc2\classes.dex" />
+    </item>
+
+</items>
