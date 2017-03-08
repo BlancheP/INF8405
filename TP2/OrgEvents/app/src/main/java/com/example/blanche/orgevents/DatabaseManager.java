@@ -42,6 +42,7 @@ public class DatabaseManager {
                     done.show();
                 }
                 else {
+                    LoginActivity.setCurrentUser(etUsername.getText().toString());
                     DatabaseManager.addUserToBD(etUsername.getText().toString(),
                             password);
                     Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
