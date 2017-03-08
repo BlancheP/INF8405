@@ -1,6 +1,5 @@
 package com.example.blanche.orgevents;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +9,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static String currentUser = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,8 +25,9 @@ public class LoginActivity extends AppCompatActivity {
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                LoginActivity.this.startActivity(registerIntent);
+                Intent goToRegister = new Intent(LoginActivity.this, RegisterActivity.class);
+                LoginActivity.this.startActivity(goToRegister);
+                finish();
             }
         });
 
@@ -36,5 +39,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public static String getCurrentUser() {
+        return currentUser;
+    }
 
+    public static void setCurrentUser(String user) {
+        currentUser = user;
+    }
 }

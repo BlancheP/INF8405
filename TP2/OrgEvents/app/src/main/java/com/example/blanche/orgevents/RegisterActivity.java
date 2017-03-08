@@ -1,5 +1,6 @@
 package com.example.blanche.orgevents;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
@@ -35,21 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View w) {
-
-                if (!DatabaseManager.userExists(etUsername.getText().toString())) {
-                    DatabaseManager.addUser(etUsername.getText().toString(),
-                            etPassword.getText().toString());
-                    Intent refresh = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(refresh);
-                    finish();
-                    Toast done = Toast.makeText(getApplicationContext(), "You have been successfully registered!", Toast.LENGTH_SHORT);
-                    done.show();
-                }
-                else {
-                    etUsername.setError("A user with the same username already exists!");
-                    Toast done = Toast.makeText(getApplicationContext(), "Some fields are invalid!", Toast.LENGTH_SHORT);
-                    done.show();
-                }
+                DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, getApplicationContext());
             }
         });
     }
