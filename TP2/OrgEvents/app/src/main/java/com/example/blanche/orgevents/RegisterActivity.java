@@ -1,5 +1,6 @@
 package com.example.blanche.orgevents;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -34,9 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View w) {
-
-                DatabaseManager.addUser(etUsername.getText().toString(),
-                                        etPassword.getText().toString());
+                DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, getApplicationContext());
             }
         });
     }

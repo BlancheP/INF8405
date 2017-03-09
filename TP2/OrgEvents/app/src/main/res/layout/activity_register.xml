@@ -14,7 +14,7 @@ tools:context="com.example.blanche.orgevents.RegisterActivity">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/etPassword"
         android:hint="Password"

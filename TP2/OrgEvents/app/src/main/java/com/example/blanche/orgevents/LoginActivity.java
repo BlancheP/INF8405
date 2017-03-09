@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static String currentUser = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,21 +24,26 @@ public class LoginActivity extends AppCompatActivity {
 
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View w) {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                LoginActivity.this.startActivity(registerIntent);
+            public void onClick(View v) {
+                Intent goToRegister = new Intent(LoginActivity.this, RegisterActivity.class);
+                LoginActivity.this.startActivity(goToRegister);
+                finish();
             }
         });
 
-        bLogin.setOnClickListener(new View.OnClickListener(){
+        bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View w) {
-
-                //TODO: verify if username and password are valid
-
-                Intent intent = new Intent(LoginActivity.this, CreateGroupActivity.class);
-                LoginActivity.this.startActivity(intent);
+            public void onClick(View v) {
+                DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
             }
         });
+    }
+
+    public static String getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(String user) {
+        currentUser = user;
     }
 }
