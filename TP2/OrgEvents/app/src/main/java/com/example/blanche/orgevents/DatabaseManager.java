@@ -32,6 +32,7 @@ public class DatabaseManager {
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
     public static DatabaseReference groupsRef = databaseRef.child("groups");
+    private static DatabaseReference eventsRef = databaseRef.child("events");
     final public static List<String> groups = new ArrayList<>();
 
     private DatabaseManager(){}
@@ -165,5 +166,22 @@ public class DatabaseManager {
                 Log.d("Photo","success");
             }
         });
+    }
+    //fonction pour sauvegarder un evenement dans la base de donnees.
+    //TODO: probablement ajouter la liste des participants a l'evenement.
+    static void addEventToBD(String eventName, String location, String description,String startDate, String endDate) {
+        eventsRef.child(eventName)
+                .child("Location")
+                .setValue(location);
+        eventsRef.child(eventName)
+                .child("description")
+                .setValue(description);
+        eventsRef.child(eventName)
+                .child("startDate")
+                .setValue(startDate);
+        eventsRef.child(eventName)
+                .child("endDate")
+                .setValue(endDate);
+
     }
 }
