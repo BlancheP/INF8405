@@ -98,7 +98,7 @@ public class DatabaseManager {
                     DatabaseManager.addGroupToBD(groupName, LoginActivity.getCurrentUser());
                 }
 
-                Intent goToMain = new Intent(context, MainActivity.class);
+                Intent goToMain = new Intent(context, MapsActivity.class);
                 context.startActivity(goToMain);
             }
 
