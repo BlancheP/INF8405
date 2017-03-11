@@ -3,6 +3,7 @@ package com.example.blanche.orgevents;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -21,8 +22,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -41,6 +46,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location previousLocation;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
+
+    LocationManager mLocationManager;
+    Location myLocation;
 
     private Marker currLocationMarker;
 
@@ -69,33 +77,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            return;
-        }
-
-        mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-    }
-
-
-    // google play service onConnected method (google play service provides location tracking)
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Log.d("debug", "now connected");
-        showPhoneStatePermission(); // this will call the update location if the permission is granted
-    }
-
     // activity on start
     protected void onStart() {
         mGoogleApiClient.connect();
@@ -108,6 +89,96 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.disconnect();
         super.onStop();
         Toast.makeText(MapsActivity.this, "API CLIENT DISCONNECTED", Toast.LENGTH_SHORT).show();
+    }
+
+    // google play service onConnected method (google play service provides location tracking)
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Toast.makeText(MapsActivity.this, "onConnected() CALLED", Toast.LENGTH_SHORT).show();
+        //showPhoneStatePermission(); // this will call the update location if the permission is granted
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showExplanation("Permission Needed", "Rationale", android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_PERMISSION_PHONE_STATE);
+            } else {
+                requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_PERMISSION_PHONE_STATE);
+            }
+        } else {
+
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            //myLocation = getLastKnownLocation();
+
+            if (mLastLocation != null) {
+                Toast.makeText(MapsActivity.this, "Latitude: " + mLastLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "Longitude: " + mLastLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
+
+    private Location getLastKnownLocation() {
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showExplanation("Permission Needed", "Rationale", android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_PERMISSION_PHONE_STATE);
+            } else {
+                requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_PERMISSION_PHONE_STATE);
+            }
+        }
+        else {
+
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            List<String> providers = mLocationManager.getProviders(true);
+            Location bestLocation = null;
+            for (String provider : providers) {
+                Location l = mLocationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
+            return bestLocation;
+        }
+        return null;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        mMap = googleMap;
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showExplanation("Permission Needed", "Rationale", android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_PERMISSION_PHONE_STATE);
+            } else {
+                requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_PERMISSION_PHONE_STATE);
+            }
+        }
+        else {
+            // Add a marker in Sydney and move the camera
+            LatLng sydney = new LatLng(-34, 151);
+            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.setMyLocationEnabled(true);
+            //updateUI();
+        }
     }
 
     // code to grant location tracking permission :
