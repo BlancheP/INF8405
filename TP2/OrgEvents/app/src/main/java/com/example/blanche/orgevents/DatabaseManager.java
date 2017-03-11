@@ -167,7 +167,8 @@ public class DatabaseManager {
             }
         });
     }
-
+    //fonction pour sauvegarder un evenement dans la base de donnees.
+    //TODO: probablement ajouter la liste des participants a l'evenement.
     static void addEventToBD(String eventName, String location, String description,String startDate, String endDate) {
         eventsRef.child(eventName)
                 .child("Location")
