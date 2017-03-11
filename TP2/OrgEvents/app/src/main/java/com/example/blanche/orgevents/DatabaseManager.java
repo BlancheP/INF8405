@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Alexis on 02/03/2017.
- */
 
 public class DatabaseManager {
     private static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -91,7 +88,6 @@ public class DatabaseManager {
                             return;
                         }
                     }
-
                     Toast error = Toast.makeText(context, "The username or password do not match any existing user!", Toast.LENGTH_SHORT);
                     error.show();
                 }
@@ -111,7 +107,7 @@ public class DatabaseManager {
                     DatabaseManager.addGroupToBD(groupName, LoginActivity.getCurrentUser());
                 }
 
-                Intent goToMain = new Intent(context, MainActivity.class);
+                Intent goToMain = new Intent(context, MapsActivity.class);
                 context.startActivity(goToMain);
             }
 
