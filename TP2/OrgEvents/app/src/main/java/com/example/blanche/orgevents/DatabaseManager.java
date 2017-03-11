@@ -2,25 +2,33 @@ package com.example.blanche.orgevents;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 public class DatabaseManager {
-    private static StorageReference mStorageRef;
+    private static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
     public static DatabaseReference groupsRef = databaseRef.child("groups");
@@ -29,7 +37,7 @@ public class DatabaseManager {
     private DatabaseManager(){}
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
-    static void addUser(final String password, final EditText etUsername, final Context context, final Context appContext) {
+    static void addUser(final String password, final EditText etUsername, final Context context, final Context appContext, final Bitmap profilePicture) {
         usersRef.child(etUsername.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -42,6 +50,7 @@ public class DatabaseManager {
                     LoginActivity.setCurrentUser(etUsername.getText().toString());
                     DatabaseManager.addUserToBD(etUsername.getText().toString(),
                             password);
+                    DatabaseManager.addPhotoToBD(etUsername.getText().toString(), profilePicture);
                     Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
                     context.startActivity(goToGroupSelection);
                     Toast done = Toast.makeText(appContext, "You have been successfully registered!", Toast.LENGTH_SHORT);
@@ -135,6 +144,25 @@ public class DatabaseManager {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
+    static void addPhotoToBD(String username, Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask task = storageRef.child(username).putBytes(data);
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Photo","Failure");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("Photo","success");
             }
         });
     }
