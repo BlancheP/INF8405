@@ -289,7 +289,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             Toast.makeText(MapsActivity.this, "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
             mMap.setMyLocationEnabled(true);
-            zoomToThisLocation(location.getLatitude(), location.getLongitude());
         } catch(SecurityException e) {
 
         }
@@ -301,11 +300,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
+        /*
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .title("I am here!");
 
         mMap.addMarker(options);
+        */
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 }
