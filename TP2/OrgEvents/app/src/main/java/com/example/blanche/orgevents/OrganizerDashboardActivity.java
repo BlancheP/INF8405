@@ -17,7 +17,7 @@ import java.text.StringCharacterIterator;
  * Created by alain.trandang on 2017-03-09.
  */
 
-public class OrganizerDashboardActivity extends AppCompatActivity{
+public class OrganizerDashboardActivity extends ActivityWithMenu{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
