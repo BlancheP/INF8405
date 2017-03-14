@@ -1,6 +1,8 @@
 package com.example.blanche.orgevents;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -27,6 +29,13 @@ public class GroupSelectionActivity extends ActivityWithMenu {
                 DatabaseManager.addGroup(currentGroup, GroupSelectionActivity.this);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.simple_menu, menu);
+        return true;
     }
 
     public static String getGroup() {

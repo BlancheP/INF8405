@@ -54,6 +54,13 @@ public class RegisterActivity extends ActivityWithMenu {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.simple_menu, menu);
+        return true;
+    }
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private void dispatchTakePictureIntent() {
