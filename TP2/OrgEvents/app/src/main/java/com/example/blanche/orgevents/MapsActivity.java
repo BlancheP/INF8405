@@ -113,23 +113,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
-
-        /*
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
-            @Override
-            public void onMapLongClick(LatLng point) {
-
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                                    .position(point)
-                                    .icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-                Toast.makeText(MapsActivity.this, "New Marker at Lat: " + marker.getPosition().latitude
-                        + ", Long: " + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
     }
 
     // code to grant location tracking permission :
@@ -292,6 +275,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Add marker on LongClick position
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(latLng.toString());
         mMap.addMarker(markerOptions);
+
+        //TODO: Ajout d'un nom et d'une photo pour un lieu (appuyer longuement)
+        //TODO: Validation et envoi des coordonnées du lieu ainsi que du nom et de la photo au serveur
+        //TODO: 3 lieux maximum
     }
 
     @Override
