@@ -3,6 +3,7 @@ package com.example.blanche.orgevents;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -107,9 +108,44 @@ public class DatabaseManager {
                 if (!dataSnapshot.exists()) {
                     DatabaseManager.addGroupToBD(groupName, LoginActivity.getCurrentUser());
                 }
+                else {
+                    DatabaseManager.addUserToGroup(LoginActivity.getCurrentUser(), groupName);
+                }
 
                 Intent goToMain = new Intent(context, MapsActivity.class);
                 context.startActivity(goToMain);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    // Fonction qui ajoute le user au groupe s'il n'y etait pas deja
+    static void addUserToGroup(final String username, final String group) {
+        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    String user = (String) dataSnapshot.getValue();
+                    if (!user.equals(username)) {
+                        groupsRef.child(group).child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    groupsRef.child(group).child("users").child(username).setValue(username);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
             }
 
             @Override
