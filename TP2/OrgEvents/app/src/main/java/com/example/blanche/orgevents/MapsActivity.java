@@ -24,15 +24,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Console;
 import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1; // constant for the permission callack
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -49,15 +51,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location previousLocation;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
-
-    LocationManager mLocationManager;
-    Location myLocation;
-
-    private Marker currLocationMarker;
-
-    private TextView mLongitudeText;
-    private TextView mLatitudeText;
-    private LatLng latLng;
 
 
     @Override
@@ -117,6 +110,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
+
+        /*
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+            @Override
+            public void onMapLongClick(LatLng point) {
+
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                                    .position(point)
+                                    .icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+                Toast.makeText(MapsActivity.this, "New Marker at Lat: " + marker.getPosition().latitude
+                        + ", Long: " + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
+            }
+        });
+        */
     }
 
     // code to grant location tracking permission :
@@ -186,15 +199,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // code to start and track locations updates:
     protected void startLocationUpdates() {
         try {
-            //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, createLocationRequest(), (LocationListener) this);
-
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            if (mLastLocation != null) {
-                mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-                mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-            }
-
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, createLocationRequest(), this);
         }
         catch (SecurityException e) {
             Log.e("location", "permission denied");
@@ -274,5 +280,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch(SecurityException e) {
 
         }
+    }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+
+        Toast.makeText(MapsActivity.this,
+                "New Marker Added:\n" + latLng.latitude + " : " + latLng.longitude,
+                Toast.LENGTH_LONG).show();
+
+        //Add marker on LongClick position
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(latLng.toString());
+        mMap.addMarker(markerOptions);
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+
     }
 }

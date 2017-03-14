@@ -26,17 +26,16 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".LoginActivity">
+        <activity android:screenOrientation="portrait" android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".GroupSelectionActivity"/>
-        <activity android:name=".OrganizerDashboardActivity"/>
-        <activity android:name=".MapsActivity"/>
+        <activity android:screenOrientation="portrait" android:name=".MainActivity"/>
+        <activity android:screenOrientation="portrait" android:name=".RegisterActivity"/>
+        <activity android:screenOrientation="portrait" android:name=".GroupSelectionActivity"/>
+        <activity android:screenOrientation="portrait" android:name=".OrganizerDashboardActivity"/>
+        <activity android:screenOrientation="portrait" android:name=".MapsActivity"/>
     </application>
 </manifest>
