@@ -1,5 +1,6 @@
 package com.example.blanche.orgevents;
 
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -10,11 +11,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -22,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -30,11 +37,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.Console;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerClickListener, GoogleMap.InfoWindowAdapter{
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1; // constant for the permission callack
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -52,6 +61,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
 
+    private String newLocationName = "";
+
+    private ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
+
+    /*
+    private final View myContentsView;
+
+    MapsActivity(){
+        myContentsView = getLayoutInflater().inflate(R.layout.custom_info_window_contents, null);
+    }
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +98,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
                 .setInterval(30 * 1000)        // 30 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
+
+        //mMap.setInfoWindowAdapter(new MapsActivity());
     }
 
     @Override
@@ -113,23 +135,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
-
-        /*
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
-            @Override
-            public void onMapLongClick(LatLng point) {
-
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                                    .position(point)
-                                    .icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-                Toast.makeText(MapsActivity.this, "New Marker at Lat: " + marker.getPosition().latitude
-                        + ", Long: " + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
     }
 
     // code to grant location tracking permission :
@@ -283,19 +288,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapLongClick(LatLng latLng) {
+    public void onMapLongClick(final LatLng latLng) {
 
+        /*
         Toast.makeText(MapsActivity.this,
                 "New Marker Added:\n" + latLng.latitude + " : " + latLng.longitude,
                 Toast.LENGTH_LONG).show();
+                */
 
-        //Add marker on LongClick position
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(latLng.toString());
-        mMap.addMarker(markerOptions);
+        if(markersOptionsList.size() < 3) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enter Location Name");
+
+            // Set up the input
+            final EditText input = new EditText(this);
+
+            // Specify the type of input expected
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    newLocationName = input.getText().toString();
+
+                    //Add marker on LongClick position
+                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
+                    mMap.addMarker(markerOptions).showInfoWindow();
+                    markersOptionsList.add(markerOptions);
+
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+
+        } else {
+            new AlertDialog.Builder(MapsActivity.this)
+                    .setTitle("Alert")
+                    .setMessage("You cannot add more than 3 locations")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
+        //TODO: Ajout d'une photo pour un lieu
+        //TODO: Validation et envoi des coordonnées du lieu ainsi que du nom et de la photo au serveur
+        //TODO: 3 lieux maximum - DONE
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
 
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
+
+    //permet de fournir une vue qui peut être utilisée pour l'intégralité de la fenêtre d'info
+    @Override
+    public View getInfoWindow(Marker marker) {
+        return null;
+    }
+
+    //permet uniquement de personnaliser le contenu de la fenêtre mais conserve le cadre et
+    //l'arrière-plan de la fenêtre d'info par défaut.
+    @Override
+    public View getInfoContents(Marker marker) {
+        return null;
     }
 }
