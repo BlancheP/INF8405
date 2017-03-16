@@ -4,4 +4,21 @@
     android:layout_height="match_parent"
     tools:context=".OrganizerDashboardActivity">
 
+    <Button
+        android:id="@+id/bCreateEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="357dp"
+        android:text="Create event"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/bVote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bCreateEvent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="81dp"
+        android:text="Vote" />
 </RelativeLayout>
