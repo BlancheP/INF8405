@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+    android:layout_gravity="center"
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Group Selection"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="If you want to join a group, please start typing the name and select from the choices offered." />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="To create a new group, all you have to do is type it in." />
+
+    <AutoCompleteTextView
+        android:id="@+id/actvGroupSelection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/bSelectGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join group"
+        android:textAlignment="center"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

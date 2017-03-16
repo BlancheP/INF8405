@@ -1,14 +1,17 @@
 package com.example.blanche.orgevents;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends ActivityWithMenu {
+
+    private static String currentUser = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +25,33 @@ public class LoginActivity extends AppCompatActivity {
 
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View w) {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                LoginActivity.this.startActivity(registerIntent);
+            public void onClick(View v) {
+                Intent goToRegister = new Intent(LoginActivity.this, RegisterActivity.class);
+                LoginActivity.this.startActivity(goToRegister);
+                finish();
             }
         });
+
+        bLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.simple_menu, menu);
+        return true;
+    }
+
+    public static String getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(String user) {
+        currentUser = user;
     }
 }
