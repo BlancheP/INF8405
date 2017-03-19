@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -49,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final String TAG = MapsActivity.class.getSimpleName();
 
-    private GoogleMap mMap;
+    public static GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final float MIN_ZOOM_LEVEL = 14f;
     private final float MAX_ZOOM_LEVEL = 14f;
@@ -63,7 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String newLocationName = "";
 
-    private ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
+    public static ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
+    private ArrayList<CustomLocation> locationArrayList;
 
     /*
     private final View myContentsView;
@@ -90,7 +92,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .addApi(LocationServices.API)
                     .build();
             Toast.makeText(MapsActivity.this, "API CLIENT BUILT", Toast.LENGTH_SHORT).show();
+            Log.d("MapsActivity", "API CLIENT BUILT");
         }
+
 
         // Create the LocationRequest object
         //TODO: manage the case where the battery is low
@@ -100,6 +104,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
 
         //mMap.setInfoWindowAdapter(new MapsActivity());
+
+
+        //TODO: check for callback Listener after LocationRequest has been called
+
     }
 
     @Override
@@ -124,6 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnected(Bundle connectionHint) {
 
         Toast.makeText(MapsActivity.this, "onConnected() CALLED", Toast.LENGTH_SHORT).show();
+        Log.d("MapsActivity", "onConnected() CALLED");
         showPhoneStatePermission(); // this will call zoomToThisLocation() if the permission is granted
     }
 
@@ -135,6 +144,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
+
+        if(markersOptionsList.size() != 0){
+            DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
+        }
+
+        //TODO: to put function below somewhere else
+        //DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
+
+        //Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
+        Log.d("MapsActivity", "onMapReady called()");
     }
 
     // code to grant location tracking permission :
@@ -281,6 +300,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentLocation = location;
         try {
             Toast.makeText(MapsActivity.this, "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
+            Log.d("MapsActivity", "onLocationChanged CALLED");
             mMap.setMyLocationEnabled(true);
         } catch(SecurityException e) {
 
@@ -296,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.LENGTH_LONG).show();
                 */
 
-        if(markersOptionsList.size() < 3) {
+        if(markersOptionsList.size() < 4) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enter Location Name");
 
@@ -314,10 +334,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     newLocationName = input.getText().toString();
 
-                    //Add marker on LongClick position
-                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
-                    mMap.addMarker(markerOptions).showInfoWindow();
-                    markersOptionsList.add(markerOptions);
+                    new AlertDialog.Builder(MapsActivity.this)
+                            .setTitle("Confirmation")
+                            .setMessage("Would you like to send this location to your guests?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    //Add marker on LongClick position
+                                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
+                                    mMap.addMarker(markerOptions).showInfoWindow();
+                                    markersOptionsList.add(markerOptions);
+
+                                    //send location name and coords to Firebase
+                                    DatabaseManager.addLocationToCurrentGroup(
+                                            GroupSelectionActivity.getGroup(),
+                                            newLocationName,
+                                            latLng.latitude,
+                                            latLng.longitude);
+
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            })
+                            .show();
 
 
                 }
@@ -343,14 +385,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .show();
         }
 
-        //TODO: Ajout d'une photo pour un lieu
-        //TODO: Validation et envoi des coordonnées du lieu ainsi que du nom et de la photo au serveur
-        //TODO: 3 lieux maximum - DONE
+        //TODO: Ajout éventuel d'une photo pour un lieu
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-
     }
 
     @Override
@@ -370,4 +409,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public View getInfoContents(Marker marker) {
         return null;
     }
+
+
 }

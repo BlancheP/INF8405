@@ -11,6 +11,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -218,6 +220,133 @@ public class DatabaseManager {
         eventsRef.child(eventName)
                 .child("endDate")
                 .setValue(endDate);
-
     }
+
+    static void addLocationToCurrentGroup(String groupName,
+                                          String locationName,
+                                          double latitude,
+                                          double longitude) {
+        groupsRef.child(groupName)
+                .child("Locations")
+                .child(locationName).child("Coords")
+                .child("latitude").setValue(latitude);
+
+        groupsRef.child(groupName)
+                .child("Locations")
+                .child(locationName).child("Coords")
+                .child("longitude").setValue(longitude);
+    }
+
+    static void getAllLocationsCurrentGroup(final String groupName){
+
+        groupsRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Map<String, Object> currentGroupLocations =
+                                (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                        //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
+
+                        //iterate through each location coordinates, ignoring their names
+                        for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                            String locationName = entry.getKey();
+
+
+                            double lat = (double)dataSnapshot
+                                                    .child(groupName)
+                                                    .child("Locations")
+                                                    .child(entry.getKey())
+                                                    .child("Coords")
+                                                    .child("latitude").getValue();
+
+                            double lgt = (double)dataSnapshot
+                                            .child(groupName)
+                                            .child("Locations")
+                                            .child(entry.getKey())
+                                            .child("Coords")
+                                            .child("longitude").getValue();
+
+                            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lgt)).title(locationName);
+                            MapsActivity.mMap.addMarker(markerOptions).showInfoWindow();
+                            MapsActivity.markersOptionsList.add(markerOptions);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+
+        Log.d("DatabaseManager", "getAllLocationsCurrentGroup called()");
+    }
+
+
+    static void sendCurrentUserCoords(String username, double latitude, double longitude) {
+
+        usersRef.child(username)
+                .child("Coords")
+                .child("latitude").setValue(latitude);
+
+        usersRef.child(username)
+                .child("Coords")
+                .child("longitude").setValue(longitude);
+    }
+
+    //TODO: getter of current group's current users
+
+    static void getAllCoordsUsersCurrentGroup(final String groupName){
+
+        groupsRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Map<String, Object> currentGroupUsersLocations =
+                                (Map<String, Object>) dataSnapshot.child(groupName).child("users").getValue();
+
+                        //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
+
+                        //iterate through each location coordinates, ignoring their names
+                        for (Map.Entry<String, Object> entry : currentGroupUsersLocations.entrySet()) {
+
+                            String userName = entry.getKey();
+
+                            Log.d("DatabaseManger", "User in " + groupName + ": " + userName);
+
+                            /*
+                            double lat = (double)dataSnapshot
+                                    .child(groupName)
+                                    .child("users")
+                                    .child(entry.getKey())
+                                    .child("Coords")
+                                    .child("latitude").getValue();
+
+                            double lgt = (double)dataSnapshot
+                                    .child(groupName)
+                                    .child("users")
+                                    .child(entry.getKey())
+                                    .child("Coords")
+                                    .child("longitude").getValue();
+
+                            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lgt)).title(userName);
+                            MapsActivity.mMap.addMarker(markerOptions).showInfoWindow();
+                            MapsActivity.markersOptionsList.add(markerOptions);
+                            */
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+
+        Log.d("DatabaseManager", "getAllCoordsUsersCurrentGroup called()");
+    }
+
 }
