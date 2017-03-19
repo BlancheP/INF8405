@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -64,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String newLocationName = "";
 
     private ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
+    private ArrayList<CustomLocation> locationArrayList;
 
     /*
     private final View myContentsView;
@@ -92,6 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(MapsActivity.this, "API CLIENT BUILT", Toast.LENGTH_SHORT).show();
         }
 
+
         // Create the LocationRequest object
         //TODO: manage the case where the battery is low
         mLocationRequest = LocationRequest.create()
@@ -100,6 +103,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
 
         //mMap.setInfoWindowAdapter(new MapsActivity());
+
+
+        //TODO: check for callback Listener after LocationRequest has been called
+
     }
 
     @Override
@@ -135,6 +142,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
+
+        locationArrayList = DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
+
+        for(CustomLocation location : locationArrayList){
+
+            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(location.mlatitude, location.mlongitude)).title(location.mlocationName);
+            mMap.addMarker(markerOptions).showInfoWindow();
+            markersOptionsList.add(markerOptions);
+
+        }
+
+        Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
     }
 
     // code to grant location tracking permission :
@@ -314,10 +333,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     newLocationName = input.getText().toString();
 
-                    //Add marker on LongClick position
-                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
-                    mMap.addMarker(markerOptions).showInfoWindow();
-                    markersOptionsList.add(markerOptions);
+                    new AlertDialog.Builder(MapsActivity.this)
+                            .setTitle("Confirmation")
+                            .setMessage("Would you like to send this location to your guests?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    //Add marker on LongClick position
+                                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
+                                    mMap.addMarker(markerOptions).showInfoWindow();
+                                    markersOptionsList.add(markerOptions);
+
+                                    //send location name and coords to Firebase
+                                    DatabaseManager.addLocationToCurrentGroup(
+                                            GroupSelectionActivity.getGroup(),
+                                            newLocationName,
+                                            latLng.latitude,
+                                            latLng.longitude);
+
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            })
+                            .show();
 
 
                 }
@@ -343,14 +384,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .show();
         }
 
-        //TODO: Ajout d'une photo pour un lieu
-        //TODO: Validation et envoi des coordonnées du lieu ainsi que du nom et de la photo au serveur
-        //TODO: 3 lieux maximum - DONE
+        //TODO: Ajout éventuel d'une photo pour un lieu
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-
     }
 
     @Override
@@ -370,4 +408,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public View getInfoContents(Marker marker) {
         return null;
     }
+
+
 }

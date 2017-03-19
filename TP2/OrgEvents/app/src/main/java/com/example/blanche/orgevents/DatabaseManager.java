@@ -218,6 +218,103 @@ public class DatabaseManager {
         eventsRef.child(eventName)
                 .child("endDate")
                 .setValue(endDate);
-
     }
+
+    static void addLocationToCurrentGroup(String groupName,
+                                          String locationName,
+                                          double latitude,
+                                          double longitude) {
+        groupsRef.child(groupName)
+                .child("Locations")
+                .child(locationName).child("Coords")
+                .child("latitude").setValue(latitude);
+
+        groupsRef.child(groupName)
+                .child("Locations")
+                .child(locationName).child("Coords")
+                .child("longitude").setValue(longitude);
+    }
+
+    //TODO: getter of location of current group
+
+    static ArrayList<CustomLocation> getAllLocationsCurrentGroup(final String groupName){
+
+        final ArrayList<CustomLocation> locationList = new ArrayList<>();
+
+        groupsRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Map<String, Object> currentGroupLocations =
+                                (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                        //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
+
+                        //iterate through each location coordinates, ignoring their names
+                        for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                            /*
+                            //Get groups map
+                            Map singleLocation = (Map) entry.getValue();
+                            Log.d("DatabaseManager",
+                                    "Single Location: " + entry.getKey() + ": ");
+
+                            Log.d("DatabaseManager", "Lat: " +
+                                    dataSnapshot
+                                    .child(groupName)
+                                    .child("Locations")
+                                    .child(entry.getKey())
+                                    .child("Coords").child("latitude").getValue());
+
+                            Log.d("DatabaseManager", "Long: " +
+                                    dataSnapshot
+                                    .child(groupName)
+                                    .child("Locations")
+                                    .child(entry.getKey())
+                                    .child("Coords").child("longitude").getValue());
+                                    */
+
+                            String locationName = entry.getKey();
+                            double lat = (double)dataSnapshot
+                                                    .child(groupName)
+                                                    .child("Locations")
+                                                    .child(entry.getKey())
+                                                    .child("Coords")
+                                                    .child("latitude").getValue();
+
+                            double lgt = (double)dataSnapshot
+                                            .child(groupName)
+                                            .child("Locations")
+                                            .child(entry.getKey())
+                                            .child("Coords")
+                                            .child("longitude").getValue();
+
+                            locationList.add(new CustomLocation(locationName, lat, lgt));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+
+        return locationList;
+    }
+
+
+    static void sendCurrentUserCoords(String username, double latitude, double longitude) {
+
+        usersRef.child(username)
+                .child("Coords")
+                .child("latitude").setValue(latitude);
+
+        usersRef.child(username)
+                .child("Coords")
+                .child("longitude").setValue(longitude);
+    }
+
+    //TODO: getter of current group's current users
+
 }
