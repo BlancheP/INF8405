@@ -247,32 +247,34 @@ public class DatabaseManager {
                         Map<String, Object> currentGroupLocations =
                                 (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
 
-                        //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
+                        if(currentGroupLocations != null){
 
-                        //iterate through each location coordinates, ignoring their names
-                        for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+                            //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
 
-                            String locationName = entry.getKey();
+                            //iterate through each location coordinates, ignoring their names
+                            for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                                String locationName = entry.getKey();
 
 
-                            double lat = (double)dataSnapshot
-                                                    .child(groupName)
-                                                    .child("Locations")
-                                                    .child(entry.getKey())
-                                                    .child("Coords")
-                                                    .child("latitude").getValue();
+                                double lat = (double) dataSnapshot
+                                        .child(groupName)
+                                        .child("Locations")
+                                        .child(entry.getKey())
+                                        .child("Coords")
+                                        .child("latitude").getValue();
 
-                            double lgt = (double)dataSnapshot
-                                            .child(groupName)
-                                            .child("Locations")
-                                            .child(entry.getKey())
-                                            .child("Coords")
-                                            .child("longitude").getValue();
+                                double lgt = (double) dataSnapshot
+                                        .child(groupName)
+                                        .child("Locations")
+                                        .child(entry.getKey())
+                                        .child("Coords")
+                                        .child("longitude").getValue();
 
-                            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lgt)).title(locationName);
-                            MapsActivity.mMap.addMarker(markerOptions).showInfoWindow();
-                            MapsActivity.markersOptionsList.add(markerOptions);
-
+                                MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lgt)).title(locationName);
+                                MapsActivity.mMap.addMarker(markerOptions).showInfoWindow();
+                                MapsActivity.markersOptionsList.add(markerOptions);
+                            }
                         }
                     }
 
