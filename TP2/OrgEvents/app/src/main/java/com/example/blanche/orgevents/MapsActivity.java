@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final String TAG = MapsActivity.class.getSimpleName();
 
-    private GoogleMap mMap;
+    public static GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final float MIN_ZOOM_LEVEL = 14f;
     private final float MAX_ZOOM_LEVEL = 14f;
@@ -64,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String newLocationName = "";
 
-    private ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
+    public static ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
     private ArrayList<CustomLocation> locationArrayList;
 
     /*
@@ -92,6 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .addApi(LocationServices.API)
                     .build();
             Toast.makeText(MapsActivity.this, "API CLIENT BUILT", Toast.LENGTH_SHORT).show();
+            Log.d("MapsActivity", "API CLIENT BUILT");
         }
 
 
@@ -131,6 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnected(Bundle connectionHint) {
 
         Toast.makeText(MapsActivity.this, "onConnected() CALLED", Toast.LENGTH_SHORT).show();
+        Log.d("MapsActivity", "onConnected() CALLED");
         showPhoneStatePermission(); // this will call zoomToThisLocation() if the permission is granted
     }
 
@@ -143,17 +145,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
 
-        locationArrayList = DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
-
-        for(CustomLocation location : locationArrayList){
-
-            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(location.mlatitude, location.mlongitude)).title(location.mlocationName);
-            mMap.addMarker(markerOptions).showInfoWindow();
-            markersOptionsList.add(markerOptions);
-
+        if(markersOptionsList.size() != 0){
+            DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
         }
 
-        Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
+        //TODO: to put function below somewhere else
+        //DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
+
+        //Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
+        Log.d("MapsActivity", "onMapReady called()");
     }
 
     // code to grant location tracking permission :
@@ -300,6 +300,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentLocation = location;
         try {
             Toast.makeText(MapsActivity.this, "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
+            Log.d("MapsActivity", "onLocationChanged CALLED");
             mMap.setMyLocationEnabled(true);
         } catch(SecurityException e) {
 
@@ -315,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.LENGTH_LONG).show();
                 */
 
-        if(markersOptionsList.size() < 3) {
+        if(markersOptionsList.size() < 4) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enter Location Name");
 
