@@ -145,9 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
 
-        if(markersOptionsList.size() != 0){
-            DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
-        }
+        DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
+
 
         //TODO: to put function below somewhere else
         //DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
