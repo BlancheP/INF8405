@@ -1,5 +1,6 @@
 package com.example.blanche.orgevents;
 
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -34,8 +35,24 @@ public class OrganizerDashboardActivity extends ActivityWithMenu{
             @Override
             public void onClick(View w){
                 AlertDialog.Builder voteBuilder = new AlertDialog.Builder(OrganizerDashboardActivity.this);
+                voteBuilder.setTitle("Vote for a location");
+                voteBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id){
+
+                    }
+                });
+                voteBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+                voteBuilder.show();
             }
         });
+
+
     }
 
 }
