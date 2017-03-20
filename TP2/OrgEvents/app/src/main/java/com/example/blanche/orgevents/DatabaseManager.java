@@ -3,7 +3,6 @@ package com.example.blanche.orgevents;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -11,7 +10,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -244,6 +245,8 @@ public class DatabaseManager {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        MapsActivity.locationHashMapMarker.clear();
+
                         Map<String, Object> currentGroupLocations =
                                 (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
 
@@ -272,9 +275,11 @@ public class DatabaseManager {
                                         .child("longitude").getValue();
 
                                 MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lgt)).title(locationName);
-                                MapsActivity.mMap.addMarker(markerOptions).showInfoWindow();
-                                MapsActivity.markersOptionsList.add(markerOptions);
+                                Marker marker = MapsActivity.mMap.addMarker(markerOptions);
+                                MapsActivity.locationHashMapMarker.put(locationName, marker);
+                                marker.showInfoWindow();
                             }
+                            Log.d("DatabaseManager", "locationHashMap size: " + MapsActivity.locationHashMapMarker.size());
                         }
                     }
 
@@ -300,45 +305,62 @@ public class DatabaseManager {
     }
 
     //TODO: getter of current group's current users
-
     static void getAllCoordsUsersCurrentGroup(final String groupName){
 
         groupsRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(DataSnapshot groupDataSnapshot) {
+
+                        MapsActivity.userHashMapMarker.clear();
 
                         Map<String, Object> currentGroupUsersLocations =
-                                (Map<String, Object>) dataSnapshot.child(groupName).child("users").getValue();
+                                (Map<String, Object>) groupDataSnapshot.child(groupName).child("users").getValue();
 
                         //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
 
-                        //iterate through each location coordinates, ignoring their names
-                        for (Map.Entry<String, Object> entry : currentGroupUsersLocations.entrySet()) {
+                        if(currentGroupUsersLocations != null){
 
-                            String userName = entry.getKey();
+                            for (final Map.Entry<String, Object> entry : currentGroupUsersLocations.entrySet()) {
 
-                            Log.d("DatabaseManger", "User in " + groupName + ": " + userName);
+                                final String userName = entry.getKey();
 
-                            /*
-                            double lat = (double)dataSnapshot
-                                    .child(groupName)
-                                    .child("users")
-                                    .child(entry.getKey())
-                                    .child("Coords")
-                                    .child("latitude").getValue();
+                                Log.d("DatabaseManger", "User in " + groupName + ": " + userName);
 
-                            double lgt = (double)dataSnapshot
-                                    .child(groupName)
-                                    .child("users")
-                                    .child(entry.getKey())
-                                    .child("Coords")
-                                    .child("longitude").getValue();
+                                usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lgt)).title(userName);
-                            MapsActivity.mMap.addMarker(markerOptions).showInfoWindow();
-                            MapsActivity.markersOptionsList.add(markerOptions);
-                            */
+                                    @Override
+                                    public void onDataChange(DataSnapshot usersDataSnapshot) {
+
+                                        Double lat = (Double) usersDataSnapshot
+                                                .child(userName)
+                                                .child("Coords")
+                                                .child("latitude").getValue();
+
+                                        Double lgt = (Double) usersDataSnapshot
+                                                .child(userName)
+                                                .child("Coords")
+                                                .child("longitude").getValue();
+
+                                        if(lat != null && lgt != null) {
+
+                                            MapsActivity.userHashMapMarker.remove(userName);
+
+                                            MarkerOptions markerOptions = new MarkerOptions().position(
+                                                    new LatLng(lat, lgt)).title(userName).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                                            Marker marker = MapsActivity.mMap.addMarker(markerOptions);
+                                            MapsActivity.userHashMapMarker.put(userName, marker);
+                                            marker.showInfoWindow();
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        //handle databaseError
+                                    }
+                                });
+                            }
                         }
                     }
 

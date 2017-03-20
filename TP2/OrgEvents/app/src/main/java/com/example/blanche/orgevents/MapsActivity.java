@@ -1,45 +1,35 @@
 package com.example.blanche.orgevents;
 
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.Console;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -64,8 +54,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String newLocationName = "";
 
-    public static ArrayList<MarkerOptions> markersOptionsList = new ArrayList<>();
-    private ArrayList<CustomLocation> locationArrayList;
+    public static ArrayList<MarkerOptions> markerOptionsList = new ArrayList<>();
+
+    public static HashMap<String,Marker> locationHashMapMarker = new HashMap<>();
+    public static HashMap<String,Marker> userHashMapMarker = new HashMap<>();
 
     /*
     private final View myContentsView;
@@ -97,11 +89,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         // Create the LocationRequest object
-        //TODO: manage the case where the battery is low
+        //TODO: manage the case where the battery is low; setInterval to 15-20 seconds maybe?
+
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
-                .setInterval(30 * 1000)        // 30 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
+                .setInterval(5 * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
+                .setFastestInterval(5 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
 
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
@@ -147,10 +140,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
 
-
-        //TODO: to put function below somewhere else
-        //DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
-
         //Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
         Log.d("MapsActivity", "onMapReady called()");
     }
@@ -179,6 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             else {
                 zoomToThisLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
         }
     }
@@ -300,6 +290,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             Toast.makeText(MapsActivity.this, "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
             Log.d("MapsActivity", "onLocationChanged CALLED");
+
+            //send my position to Firebase
+            DatabaseManager.sendCurrentUserCoords(LoginActivity.getCurrentUser(), currentLocation.getLatitude(), currentLocation.getLongitude());
+
+            //get position from all members in current group and mark them on the map
+            DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
             mMap.setMyLocationEnabled(true);
         } catch(SecurityException e) {
 
@@ -309,13 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(final LatLng latLng) {
 
-        /*
-        Toast.makeText(MapsActivity.this,
-                "New Marker Added:\n" + latLng.latitude + " : " + latLng.longitude,
-                Toast.LENGTH_LONG).show();
-                */
-
-        if(markersOptionsList.size() < 4) {
+        if(locationHashMapMarker.size() < 3) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enter Location Name");
 
@@ -341,8 +331,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                     //Add marker on LongClick position
                                     MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
-                                    mMap.addMarker(markerOptions).showInfoWindow();
-                                    markersOptionsList.add(markerOptions);
+                                    Marker marker = mMap.addMarker(markerOptions);
+                                    locationHashMapMarker.put(newLocationName, marker);
+                                    marker.showInfoWindow();
 
                                     //send location name and coords to Firebase
                                     DatabaseManager.addLocationToCurrentGroup(
@@ -350,7 +341,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             newLocationName,
                                             latLng.latitude,
                                             latLng.longitude);
-
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -359,8 +349,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             })
                             .show();
-
-
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
