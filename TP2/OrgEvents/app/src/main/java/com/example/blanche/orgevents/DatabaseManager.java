@@ -312,7 +312,11 @@ public class DatabaseManager {
                     @Override
                     public void onDataChange(DataSnapshot groupDataSnapshot) {
 
-                        MapsActivity.userHashMapMarker.clear();
+                        //remove all current markers
+                        for (Map.Entry<String, Marker> entry : MapsActivity.userHashMapMarker.entrySet())
+                        {
+                            entry.getValue().remove();
+                        }
 
                         Map<String, Object> currentGroupUsersLocations =
                                 (Map<String, Object>) groupDataSnapshot.child(groupName).child("users").getValue();
@@ -344,14 +348,11 @@ public class DatabaseManager {
 
                                         if(lat != null && lgt != null) {
 
-                                            MapsActivity.userHashMapMarker.remove(userName);
-
                                             MarkerOptions markerOptions = new MarkerOptions().position(
                                                     new LatLng(lat, lgt)).title(userName).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                                             Marker marker = MapsActivity.mMap.addMarker(markerOptions);
                                             MapsActivity.userHashMapMarker.put(userName, marker);
                                             marker.showInfoWindow();
-
                                         }
                                     }
 
