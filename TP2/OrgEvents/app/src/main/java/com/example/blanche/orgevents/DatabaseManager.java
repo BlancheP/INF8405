@@ -26,6 +26,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class DatabaseManager {
     public static DatabaseReference groupsRef = databaseRef.child("groups");
     private static DatabaseReference eventsRef = databaseRef.child("events");
     final public static List<String> groups = new ArrayList<>();
+    final public static String[] locations = new String[3]; //We should always have 3 locations for the vote
 
     private DatabaseManager(){}
 
@@ -116,12 +118,36 @@ public class DatabaseManager {
                     DatabaseManager.addUserToGroup(LoginActivity.getCurrentUser(), groupName);
                 }
 
-                Intent goToMain = new Intent(context, MapsActivity.class);
-                context.startActivity(goToMain);
+                DatabaseManager.chooseManagerActivity(context);
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    //Fonction qui verifie si un utilisateur est le manager de son groupe et change l'activite pour qu'elle corresponde a la bonne.
+    static void chooseManagerActivity(final Context context) {
+        String group = GroupSelectionActivity.getGroup();
+        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                if(dataSnapshot.exists()){
+                    String user = (String) dataSnapshot.getValue();
+                    if(user.equals(LoginActivity.getCurrentUser())){
+                        Intent goToManagerDash = new Intent(context, OrganizerDashboardActivity.class);
+                        context.startActivity(goToManagerDash);
+                    }
+                    else{
+                        Intent goToMain = new Intent(context, MapsActivity.class);
+                        context.startActivity(goToMain);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError){
 
             }
         });
@@ -187,6 +213,30 @@ public class DatabaseManager {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    static String[] getLocationsName(){
+        DatabaseManager.groupsRef.child("Locations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                Map<String, Object> values = (Map<String, Object>)dataSnapshot.getValue();
+                int counter = 0;
+                for (Map.Entry<String, Object> entry : values.entrySet()) {
+                    locations[counter] = entry.getKey();
+                    counter++;
+                    if(counter >= values.size()){
+                        break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError){
+
+            }
+        });
+        return locations;
     }
 
     // Fonction pour ajouter la photo de profil de l'utilisateur a la BD

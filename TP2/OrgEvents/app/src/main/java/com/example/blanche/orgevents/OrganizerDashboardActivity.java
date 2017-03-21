@@ -35,7 +35,13 @@ public class OrganizerDashboardActivity extends ActivityWithMenu{
             @Override
             public void onClick(View w){
                 AlertDialog.Builder voteBuilder = new AlertDialog.Builder(OrganizerDashboardActivity.this);
-                voteBuilder.setTitle("Vote for a location");
+                voteBuilder.setTitle("Vote for a location").setItems(DatabaseManager.getLocationsName(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+
+                    }
+                });
+
                 voteBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id){
