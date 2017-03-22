@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -34,13 +36,15 @@ import java.util.Map;
 
 public class DatabaseManager {
 
+
+
     private static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
     public static DatabaseReference groupsRef = databaseRef.child("groups");
     private static DatabaseReference eventsRef = databaseRef.child("events");
     final public static List<String> groups = new ArrayList<>();
-    final public static String[] locations = new String[3]; //We should always have 3 locations for the vote
+    final public static List<String> locationNames = new ArrayList<>();
 
     private DatabaseManager(){}
 
@@ -215,19 +219,38 @@ public class DatabaseManager {
         });
     }
 
-    static String[] getLocationsName(){
-        DatabaseManager.groupsRef.child("Locations").addListenerForSingleValueEvent(new ValueEventListener() {
+    static void getLocationsName(final String groupName){
+        groupsRef.addListenerForSingleValueEvent( new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
-                Map<String, Object> values = (Map<String, Object>)dataSnapshot.getValue();
+
+                locationNames.clear();
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
                 int counter = 0;
-                for (Map.Entry<String, Object> entry : values.entrySet()) {
-                    locations[counter] = entry.getKey();
-                    counter++;
-                    if(counter >= values.size()){
-                        break;
+
+                if(currentGroupLocations != null) {
+
+                    //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
+
+                    //iterate through each location coordinates, ignoring their names
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        LocationVoteActivity.myFkingLocationsName.add(entry.getKey());
                     }
+/*
+                    loc1.setText(DatabaseManager.locationNames.get(0));
+                    loc1.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                    loc2.setText(DatabaseManager.locationNames.get(1));
+                    loc2.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                    loc3.setText(DatabaseManager.locationNames.get(2));
+                    loc3.setInputType(InputType.TYPE_CLASS_NUMBER);*/
+
+
                 }
+
 
             }
 
@@ -236,7 +259,6 @@ public class DatabaseManager {
 
             }
         });
-        return locations;
     }
 
     // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
