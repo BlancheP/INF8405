@@ -25,8 +25,7 @@ public class GroupSelectionActivity extends ActivityWithMenu {
         bSelectGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentGroup = actvGroupSelection.getText().toString();
-                DatabaseManager.addGroup(currentGroup, GroupSelectionActivity.this);
+                DatabaseManager.groupSelection(actvGroupSelection.getText().toString(), GroupSelectionActivity.this);
             }
         });
     }

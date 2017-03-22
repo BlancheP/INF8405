@@ -103,6 +103,62 @@ public class DatabaseManager {
         }
     }
 
+    // Fonction qui determine si on peut se joindre au groupe
+    static void groupSelection(final String group, final Context context) {
+        final String currentUser = LoginActivity.getCurrentUser();
+        usersRef.child(currentUser).child("group").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    final String groupName = dataSnapshot.getValue().toString();
+                    Toast r = Toast.makeText(context, group, Toast.LENGTH_SHORT);
+                    r.show();
+                    if (groupName.equals(group)) {
+                        Toast t = Toast.makeText(context, "On est ici", Toast.LENGTH_SHORT);
+                        t.show();
+                        GroupSelectionActivity.setGroup(group);
+                        Intent goToMain = new Intent(context, MapsActivity.class);
+                        context.startActivity(goToMain);
+                    }
+                    else {
+                        groupsRef.child(groupName).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    if (dataSnapshot.getValue().toString().equals(currentUser)) {
+                                        Toast error = Toast.makeText(context, "You have to select the group from which you are the owner.", Toast.LENGTH_SHORT);
+                                        error.show();
+                                    }
+                                    else {
+                                        groupsRef.child(groupName).child("users").child(currentUser).removeValue();
+                                        usersRef.child(currentUser).child("group").setValue(group);
+                                        GroupSelectionActivity.setGroup(group);
+                                        addGroup(group, context);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+                else {
+                    usersRef.child(currentUser).child("group").setValue(group);
+                    GroupSelectionActivity.setGroup(group);
+                    addGroup(group, context);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     // Fonction qui verifie si le groupe existe deja et s'il n'existe pas, l'ajoute a la BD
     static void addGroup(final String groupName, final Context context) {
         groupsRef.child(groupName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -128,26 +184,11 @@ public class DatabaseManager {
 
     // Fonction qui ajoute le user au groupe s'il n'y etait pas deja
     static void addUserToGroup(final String username, final String group) {
-        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+        groupsRef.child(group).child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    String user = (String) dataSnapshot.getValue();
-                    if (!user.equals(username)) {
-                        groupsRef.child(group).child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if (!dataSnapshot.exists()) {
-                                    groupsRef.child(group).child("users").child(username).setValue(username);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
+                if (!dataSnapshot.exists()) {
+                    groupsRef.child(group).child("users").child(username).setValue(username);
                 }
             }
 
@@ -184,6 +225,45 @@ public class DatabaseManager {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    // Fonction appele lorsque le user veut quitter le groupe
+    static void quitGroup(final Context context) {
+        usersRef.child(LoginActivity.getCurrentUser()).child("group").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    final String group = dataSnapshot.getValue().toString();
+                    groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                if (dataSnapshot.getValue().toString().equals(LoginActivity.getCurrentUser())) {
+                                    Toast error = Toast.makeText(context, "You can't quit your own group", Toast.LENGTH_SHORT);
+                                    error.show();
+                                }
+                                else {
+                                    groupsRef.child(group).child("users").child(LoginActivity.getCurrentUser()).removeValue();
+                                    usersRef.child(LoginActivity.getCurrentUser()).child("group").removeValue();
+                                    Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
+                                    context.startActivity(goToGroupSelection);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
