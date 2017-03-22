@@ -98,9 +98,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
-
-        //TODO: check for callback Listener after LocationRequest has been called
-
     }
 
     @Override
