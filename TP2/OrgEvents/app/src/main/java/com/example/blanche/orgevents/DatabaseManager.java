@@ -220,24 +220,22 @@ public class DatabaseManager {
     }
 
     static void getLocationsName(final String groupName){
-        groupsRef.addListenerForSingleValueEvent( new ValueEventListener() {
+        groupsRef.addValueEventListener( new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
-
-                locationNames.clear();
                 Map<String, Object> currentGroupLocations =
                         (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
-                int counter = 0;
 
                 if(currentGroupLocations != null) {
 
                     //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
 
-                    //iterate through each location coordinates, ignoring their names
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
-                        LocationVoteActivity.myFkingLocationsName.add(entry.getKey());
+                        LocationVoteActivity.locationsName.add(entry.getKey());
+                        locationNames.add(entry.getKey());
                     }
+                    
 /*
                     loc1.setText(DatabaseManager.locationNames.get(0));
                     loc1.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -251,6 +249,9 @@ public class DatabaseManager {
 
                 }
 
+                else{
+                }
+
 
             }
 
@@ -259,6 +260,7 @@ public class DatabaseManager {
 
             }
         });
+
     }
 
     // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
