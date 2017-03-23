@@ -16,12 +16,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,13 +45,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener{
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1; // constant for the permission callack
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final String TAG = MapsActivity.class.getSimpleName();
+
+    static final int PREFERENCES_CODE = 5;
 
     public static GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -102,7 +106,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        Button bOrgDash = (Button) findViewById(R.id.bOrgDash);
+
+        bOrgDash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View w){
+                DatabaseManager.chooseManagerActivity(MapsActivity.this);
+                finish();
+            }
+        });
+
         //tvLocInfo = (TextView)findViewById(R.id.locinfo);
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -195,7 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void showPhoneStatePermission() {
 
-        /*
+
         int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -220,8 +235,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
         }
-        */
 
+
+        /*
         int permissionCheck = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
@@ -240,10 +256,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
         }
+        */
 
     }
 
-    /*
+
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
@@ -259,8 +276,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Toast.makeText(MapsActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
         }
-    }*/
+    }
 
+    /*
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -287,6 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+    */
 
     private void showExplanation(String title,
                                  String message,
@@ -435,5 +454,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public View getInfoContents(Marker marker) {
         return null;
     }
-    */
+*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent menuAction = null;
+        boolean preferencesChanged = false;
+        switch (item.getItemId()) {
+            case R.id.preferences:
+                menuAction = new Intent(getApplicationContext(), PreferencesActivity.class);
+                preferencesChanged = true;
+                break;
+            case R.id.leave_group:
+                DatabaseManager.quitGroup(getApplicationContext());
+                break;
+            case R.id.logout:
+                menuAction = new Intent(getApplicationContext(), LoginActivity.class);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        if (menuAction != null) {
+            if (preferencesChanged) {
+                startActivityForResult(menuAction, PREFERENCES_CODE);
+            }
+            else
+                startActivity(menuAction);
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == PREFERENCES_CODE) {
+            Intent restart = new Intent(getApplicationContext(), MapsActivity.class);
+            finish();
+            startActivity(restart);
+        }
+    }
 }

@@ -24,8 +24,8 @@
 
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="portrait"
-            android:label="Login">
+            android:label="Login"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,7 +34,7 @@
         <activity
             android:name=".MainActivity"
             android:label="Main"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".RegisterActivity"
             android:label="Register"
@@ -54,7 +54,7 @@
         <activity
             android:name=".PreferencesActivity"
             android:label="Preferences"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
