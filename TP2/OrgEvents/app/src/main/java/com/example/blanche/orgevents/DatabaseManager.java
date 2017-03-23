@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -177,9 +179,6 @@ public class DatabaseManager {
                 else {
                     DatabaseManager.addUserToGroup(LoginActivity.getCurrentUser(), groupName);
                 }
-
-                DatabaseManager.chooseManagerActivity(context);
-
             }
 
             @Override
@@ -259,8 +258,8 @@ public class DatabaseManager {
             }
         });
     }
-
-    static void getLocationsName(final String groupName) {
+    //Fonction qui va chercher les noms des lieux et les ecrit dans 3 textviews
+    static void getLocationsName(final String groupName, final TextView loc1, final TextView loc2, final TextView loc3) {
         groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -269,28 +268,17 @@ public class DatabaseManager {
 
                 if (currentGroupLocations != null) {
 
-                    //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
-
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
                         LocationVoteActivity.locationsName.add(entry.getKey());
                         locationNames.add(entry.getKey());
                     }
-                    
-/*
-                    loc1.setText(DatabaseManager.locationNames.get(0));
-                    loc1.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-                    loc2.setText(DatabaseManager.locationNames.get(1));
-                    loc2.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    loc1.setText(locationNames.get(0));
+                    loc2.setText(locationNames.get(1));
+                    loc3.setText(locationNames.get(2));
 
-                    loc3.setText(DatabaseManager.locationNames.get(2));
-                    loc3.setInputType(InputType.TYPE_CLASS_NUMBER);*/
-
-
-                } else {
                 }
-
 
             }
 
@@ -379,6 +367,8 @@ public class DatabaseManager {
                                           String locationName,
                                           double latitude,
                                           double longitude) {
+        double initValue = -1.1;
+
         groupsRef.child(groupName)
                 .child("Locations")
                 .child(locationName).child("Coords")
@@ -388,6 +378,10 @@ public class DatabaseManager {
                 .child("Locations")
                 .child(locationName).child("Coords")
                 .child("longitude").setValue(longitude);
+
+        groupsRef.child(groupName)
+                .child("Locations")
+                .child(locationName).child("Note").setValue(initValue);
     }
 
     static void getAllLocationsCurrentGroup(final String groupName){
@@ -524,6 +518,54 @@ public class DatabaseManager {
                 });
 
         Log.d("DatabaseManager", "getAllCoordsUsersCurrentGroup called()");
+    }
+
+    public static void computeNote(final String groupName, final RatingBar rbLoc1, final RatingBar rbLoc2, final RatingBar rbLoc3) {
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+                    int counter =0;
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+                        double newNote = 0.0;
+                        double previousNote = (double) dataSnapshot.child(groupName).child("Locations")
+                                .child(entry.getKey()).child("Note").getValue();
+                        if(previousNote == -1.1) {
+                            if (counter == 0) {
+                                newNote =  rbLoc1.getRating();
+                            } else if (counter == 1) {
+                                newNote = (double) rbLoc2.getRating();
+                            } else if (counter == 2) {
+                                newNote = (double) rbLoc3.getRating();
+                            }
+
+                        }
+                        else{
+                            if (counter == 0) {
+                                newNote = (previousNote + rbLoc1.getRating()) / 2;
+                            } else if (counter == 1) {
+                                newNote = (previousNote + rbLoc2.getRating()) / 2;
+                            } else if (counter == 2) {
+                                newNote = (previousNote + rbLoc3.getRating()) / 2;
+                            }
+                        }
+
+                        groupsRef.child(groupName).child("Locations")
+                                .child(entry.getKey()).child("Note").setValue(newNote);
+
+                        counter++;
+                    }
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError){
+
+            }
+        });
     }
 
 }

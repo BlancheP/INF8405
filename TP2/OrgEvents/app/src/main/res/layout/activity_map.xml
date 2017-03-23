@@ -9,6 +9,12 @@
         android:id="@+id/textView"
         android:text="This is the map activity" />
 
+    <Button
+        android:id="@+id/bOrgDash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dashboard" />
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
