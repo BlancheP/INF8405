@@ -25,7 +25,7 @@ public class ActivityWithMenu extends AppCompatActivity {
         Intent menuAction = null;
         switch (item.getItemId()) {
             case R.id.preferences:
-                menuAction = new Intent(getApplicationContext(), LoginActivity.class);
+                menuAction = new Intent(getApplicationContext(), PreferencesActivity.class);
                 break;
             case R.id.leave_group:
                 DatabaseManager.quitGroup(getApplicationContext());
