@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -36,13 +37,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener, GoogleMap.InfoWindowAdapter{
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1; // constant for the permission callack
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final String TAG = MapsActivity.class.getSimpleName();
+
+    static final int PREFERENCES_CODE = 5;
 
     public static GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -395,5 +398,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public View getInfoContents(Marker marker) {
         return null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent menuAction = null;
+        boolean preferencesChanged = false;
+        switch (item.getItemId()) {
+            case R.id.preferences:
+                menuAction = new Intent(getApplicationContext(), PreferencesActivity.class);
+                preferencesChanged = true;
+                break;
+            case R.id.leave_group:
+                DatabaseManager.quitGroup(getApplicationContext());
+                break;
+            case R.id.logout:
+                menuAction = new Intent(getApplicationContext(), LoginActivity.class);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        if (menuAction != null) {
+            if (preferencesChanged) {
+                startActivityForResult(menuAction, PREFERENCES_CODE);
+            }
+            else
+                startActivity(menuAction);
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == PREFERENCES_CODE) {
+            Intent restart = new Intent(getApplicationContext(), MapsActivity.class);
+            finish();
+            startActivity(restart);
+        }
     }
 }
