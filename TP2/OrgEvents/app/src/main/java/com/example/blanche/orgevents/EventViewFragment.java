@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
-
 public class EventViewFragment extends Fragment {
 
     @Override

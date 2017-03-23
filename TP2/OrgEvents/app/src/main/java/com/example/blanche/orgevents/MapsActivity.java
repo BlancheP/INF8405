@@ -2,6 +2,8 @@ package com.example.blanche.orgevents;
 
 import android.*;
 import android.Manifest;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -104,18 +106,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        Button bOrgDash = (Button) findViewById(R.id.bOrgDash);
-
-        bOrgDash.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View w){
-                DatabaseManager.chooseManagerActivity(MapsActivity.this);
-                finish();
-            }
-        });
-
         //tvLocInfo = (TextView)findViewById(R.id.locinfo);
-
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -128,8 +119,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-            Toast.makeText(MapsActivity.this, "API CLIENT BUILT", Toast.LENGTH_SHORT).show();
-            Log.d("MapsActivity", "API CLIENT BUILT");
+            //Toast.makeText(MapsActivity.this, "API CLIENT BUILT", Toast.LENGTH_SHORT).show();
+            //Log.d("MapsActivity", "API CLIENT BUILT");
         }
 
 
@@ -143,13 +134,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
+        fragmentTransaction.commit();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mGoogleApiClient.connect();
-        Toast.makeText(MapsActivity.this, "API CLIENT CONNECTED", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MapsActivity.this, "API CLIENT CONNECTED", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -158,7 +154,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
-            Toast.makeText(MapsActivity.this, "API CLIENT DISCONNECTED", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MapsActivity.this, "API CLIENT DISCONNECTED", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -184,7 +180,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
 
         //Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
-        Log.d("MapsActivity", "onMapReady called()");
+        //Log.d("MapsActivity", "onMapReady called()");
     }
 
 
@@ -211,7 +207,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (mLastLocation == null) {
 
-                Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
             else {
