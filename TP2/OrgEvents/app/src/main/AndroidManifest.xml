@@ -24,29 +24,37 @@
 
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:label="Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" />
+            android:label="Main"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RegisterActivity"
+            android:label="Register"
             android:screenOrientation="portrait" />
         <activity
             android:name=".GroupSelectionActivity"
+            android:label="Group Selection"
             android:screenOrientation="portrait" />
         <activity
             android:name=".OrganizerDashboardActivity"
+            android:label="Dashboard"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MapsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".LocationVoteActivity"></activity>
+        <activity android:name=".LocationVoteActivity" />
+        <activity
+            android:name=".PreferencesActivity"
+            android:label="Preferences"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -1,20 +1,28 @@
 package com.example.blanche.orgevents;
 
+import android.*;
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,7 +44,7 @@ import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener, GoogleMap.InfoWindowAdapter{
+        GoogleMap.OnMarkerClickListener{
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1; // constant for the permission callack
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -52,22 +60,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location currentLocation;
     private Location previousLocation;
     private Location mLastLocation;
-    private LocationRequest mLocationRequest;
+    private static LocationRequest mLocationRequest;
 
     private String newLocationName = "";
-
-    public static ArrayList<MarkerOptions> markerOptionsList = new ArrayList<>();
 
     public static HashMap<String,Marker> locationHashMapMarker = new HashMap<>();
     public static HashMap<String,Marker> userHashMapMarker = new HashMap<>();
 
-    /*
-    private final View myContentsView;
 
-    MapsActivity(){
-        myContentsView = getLayoutInflater().inflate(R.layout.custom_info_window_contents, null);
+    /*
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        private final View mymarkerview;
+
+        CustomInfoWindowAdapter() {
+            mymarkerview = getLayoutInflater()
+                    .inflate(R.layout.custom_info_window_contents, null);
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            render(marker, mymarkerview);
+            return mymarkerview;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
+
+        private void render(Marker marker, View view) {
+            // Add the code to set the required values
+            // for each element in your custominfowindow layout file
+        }
     }
     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +110,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 finish();
             }
         });
+
+        //tvLocInfo = (TextView)findViewById(R.id.locinfo);
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -105,11 +135,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
-                .setInterval(5 * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
-                .setFastestInterval(5 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
-
+                .setInterval(PreferencesActivity.getFrequency() * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
+                .setFastestInterval(PreferencesActivity.getFrequency() * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
+        //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
     }
 
     @Override
@@ -130,6 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // google play service onConnected method (google play service provides location tracking)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onConnected(Bundle connectionHint) {
 
@@ -153,8 +184,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("MapsActivity", "onMapReady called()");
     }
 
+
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+
     // code to grant location tracking permission :
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void showPhoneStatePermission() {
+
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -180,7 +216,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
         }
+
+
+        /*
+        int permissionCheck = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_CODE_ASK_PERMISSIONS);
+            return;
+        }
+        else {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            if (mLastLocation == null) {
+
+                Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            } else {
+                zoomToThisLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            }
+        }
+        */
+
     }
+
 
     @Override
     public void onRequestPermissionsResult(
@@ -198,6 +258,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
         }
     }
+
+    /*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+                    if (mLastLocation == null) {
+
+                        Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
+                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                    } else {
+                        zoomToThisLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                    }
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MapsActivity.this, "FINE_LOCATION Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+    */
 
     private void showExplanation(String title,
                                  String message,
@@ -306,6 +395,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //get position from all members in current group and mark them on the map
             DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
             mMap.setMyLocationEnabled(true);
+
         } catch(SecurityException e) {
 
         }
@@ -314,72 +404,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(final LatLng latLng) {
 
-        if(locationHashMapMarker.size() < 3) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enter Location Name");
-
-            // Set up the input
-            final EditText input = new EditText(this);
-
-            // Specify the type of input expected
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-
-            // Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    newLocationName = input.getText().toString();
-
-                    new AlertDialog.Builder(MapsActivity.this)
-                            .setTitle("Confirmation")
-                            .setMessage("Would you like to send this location to your guests?")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    //Add marker on LongClick position
-                                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(newLocationName);
-                                    Marker marker = mMap.addMarker(markerOptions);
-                                    locationHashMapMarker.put(newLocationName, marker);
-                                    marker.showInfoWindow();
-
-                                    //send location name and coords to Firebase
-                                    DatabaseManager.addLocationToCurrentGroup(
-                                            GroupSelectionActivity.getGroup(),
-                                            newLocationName,
-                                            latLng.latitude,
-                                            latLng.longitude);
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //do nothing
-                                }
-                            })
-                            .show();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            builder.show();
-
-        } else {
-            new AlertDialog.Builder(MapsActivity.this)
-                    .setTitle("Alert")
-                    .setMessage("You cannot add more than 3 locations")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        }
+        DatabaseManager.addNewLocationToMap(latLng, this);
 
         //TODO: Ajout éventuel d'une photo pour un lieu
     }
@@ -390,8 +415,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
+        //TODO: afficher une InfoWindow avec l'image du lieu
+
         return false;
     }
+
+    /*
 
     //permet de fournir une vue qui peut être utilisée pour l'intégralité de la fenêtre d'info
     @Override
@@ -405,6 +435,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public View getInfoContents(Marker marker) {
         return null;
     }
-
-
+    */
 }
