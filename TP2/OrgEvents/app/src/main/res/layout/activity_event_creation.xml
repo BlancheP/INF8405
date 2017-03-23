@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.blanche.orgevents.EventCreationActivity">
+
+    <EditText
+        android:id="@+id/etEventName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="170dp"
+        android:ems="10"
+        android:hint="Event Name"
+        android:inputType="textPersonName" />
+
+    <Spinner
+        android:id="@+id/sLocNames"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/etEventName"
+        android:layout_marginTop="35dp" />
+
+    <EditText
+        android:id="@+id/tmDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/sLocNames"
+        android:layout_alignStart="@+id/etStartDate" />
+
+    <EditText
+        android:id="@+id/etStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tmDesc"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="43dp"
+        android:ems="10"
+        android:hint="Start Date (yyyy-mm-dd)"
+        android:inputType="datetime" />
+
+    <EditText
+        android:id="@+id/etEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/etStartDate"
+        android:layout_below="@+id/etStartDate"
+        android:layout_marginTop="61dp"
+        android:ems="10"
+        android:hint="End Date (yyyy-mm-dd)"
+        android:inputType="datetime" />
+
+    <Button
+        android:id="@+id/bCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etEndDate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="123dp"
+        android:text="Create" />
+
+    <EditText
+        android:id="@+id/etStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/etStartDate"
+        android:layout_below="@+id/etStartDate"
+        android:ems="10"
+        android:hint="Start time (hh:mm)"
+        android:inputType="time" />
+
+    <EditText
+        android:id="@+id/etEndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/etEndDate"
+        android:layout_below="@+id/etEndDate"
+        android:ems="10"
+        android:hint="End time (hh:mm)"
+        android:inputType="time" />
+
+</RelativeLayout>

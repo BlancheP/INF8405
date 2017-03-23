@@ -35,8 +35,8 @@ public class LocationVoteActivity extends AppCompatActivity {
             @Override
             public void onClick(View w){
                 DatabaseManager.computeNote(GroupSelectionActivity.getGroup(),rbLoc1, rbLoc2, rbLoc3);
-                Intent goToDash = new Intent(LocationVoteActivity.this, OrganizerDashboardActivity.class);
-                LocationVoteActivity.this.startActivity(goToDash);
+                Intent goToMap = new Intent(LocationVoteActivity.this, MapsActivity.class);
+                LocationVoteActivity.this.startActivity(goToMap);
                 finish();
             }
         });

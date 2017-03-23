@@ -101,7 +101,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        Button bVote = (Button) findViewById(R.id.bVote);
         Button bOrgDash = (Button) findViewById(R.id.bOrgDash);
+
+        bVote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View w){
+                Intent goToVote = new Intent(MapsActivity.this, LocationVoteActivity.class);
+                MapsActivity.this.startActivity(goToVote);
+                finish();
+            }
+        });
 
         bOrgDash.setOnClickListener(new View.OnClickListener() {
             @Override

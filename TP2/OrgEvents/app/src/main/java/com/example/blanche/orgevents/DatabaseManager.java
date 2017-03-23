@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -358,6 +360,7 @@ public class DatabaseManager {
     }
     //Fonction qui va chercher les noms des lieux et les ecrit dans 3 textviews
     static void getLocationsName(final String groupName, final TextView loc1, final TextView loc2, final TextView loc3) {
+        locationNames.clear();
         groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -378,6 +381,34 @@ public class DatabaseManager {
 
                 }
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    static void getLocationsSpinner(final String groupName, final Context context, final Spinner spinner){
+        locationNames.clear();
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        LocationVoteActivity.locationsName.add(entry.getKey());
+                        locationNames.add(entry.getKey());
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                            android.R.layout.simple_dropdown_item_1line, locationNames);
+                    spinner.setAdapter(adapter);
+                }
             }
 
             @Override
@@ -444,21 +475,40 @@ public class DatabaseManager {
             }
         });
     }
+
+
     //fonction pour sauvegarder un evenement dans la base de donnees.
     //TODO: probablement ajouter la liste des participants a l'evenement.
-    static void addEventToBD(String eventName, String location, String description,String startDate, String endDate) {
-        eventsRef.child(eventName)
+    static void addEventToBD(String groupName, String eventName, String location, String description,
+                             String startDate, String startTime, String endDate, String endTime) {
+        groupsRef.child(groupName)
+                .child("event")
+                .child("Name")
+                .setValue(eventName);
+        groupsRef.child(groupName)
+                .child("event")
                 .child("Location")
                 .setValue(location);
-        eventsRef.child(eventName)
+        groupsRef.child(groupName)
+                .child("event")
                 .child("description")
                 .setValue(description);
-        eventsRef.child(eventName)
+        groupsRef.child(groupName)
+                .child("event")
                 .child("startDate")
                 .setValue(startDate);
-        eventsRef.child(eventName)
+        groupsRef.child(groupName)
+                .child("event")
+                .child("startTime")
+                .setValue(startTime);
+        groupsRef.child(groupName)
+                .child("event")
                 .child("endDate")
                 .setValue(endDate);
+        groupsRef.child(groupName)
+                .child("event")
+                .child("endTime")
+                .setValue(endTime);
     }
 
     static void addLocationToCurrentGroup(String groupName,
