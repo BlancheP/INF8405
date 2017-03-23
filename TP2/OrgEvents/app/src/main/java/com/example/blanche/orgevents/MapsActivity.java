@@ -97,14 +97,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
-                .setInterval(5 * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
-                .setFastestInterval(5 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
+                .setInterval(PreferencesActivity.getFrequency() * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
+                .setFastestInterval(PreferencesActivity.getFrequency() * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
-    }
-
-    public static void setUpdateInterval(int interval) {
-        mLocationRequest.setInterval(interval * 1000).setFastestInterval(interval * 1000);
     }
 
     @Override

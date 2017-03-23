@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 public class PreferencesActivity extends AppCompatActivity {
 
-    private static int frequency;
+    private static int frequency = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,6 @@ public class PreferencesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int interval = Integer.parseInt(etFrequency.getText().toString());
                 setFrequency(interval);
-                //MapsActivity.setUpdateInterval(interval);
                 finish();
             }
         });
@@ -66,11 +65,11 @@ public class PreferencesActivity extends AppCompatActivity {
         return true;
     }
 
-    public void setFrequency(int f) {
+    public static void setFrequency(int f) {
         frequency = f;
     }
 
-    public int getFrequency() {
+    public static int getFrequency() {
         return frequency;
     }
 }
