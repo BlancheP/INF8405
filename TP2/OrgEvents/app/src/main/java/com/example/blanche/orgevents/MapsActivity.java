@@ -13,6 +13,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,7 +35,7 @@ import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener, GoogleMap.InfoWindowAdapter{
+        GoogleMap.OnMarkerClickListener{
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1; // constant for the permission callack
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -54,23 +55,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String newLocationName = "";
 
-    public static ArrayList<MarkerOptions> markerOptionsList = new ArrayList<>();
-
     public static HashMap<String,Marker> locationHashMapMarker = new HashMap<>();
     public static HashMap<String,Marker> userHashMapMarker = new HashMap<>();
 
-    /*
-    private final View myContentsView;
 
-    MapsActivity(){
-        myContentsView = getLayoutInflater().inflate(R.layout.custom_info_window_contents, null);
+    /*
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        private final View mymarkerview;
+
+        CustomInfoWindowAdapter() {
+            mymarkerview = getLayoutInflater()
+                    .inflate(R.layout.custom_info_window_contents, null);
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            render(marker, mymarkerview);
+            return mymarkerview;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
+
+        private void render(Marker marker, View view) {
+            // Add the code to set the required values
+            // for each element in your custominfowindow layout file
+        }
     }
     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        //tvLocInfo = (TextView)findViewById(R.id.locinfo);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -93,14 +115,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
-                .setInterval(5 * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
-                .setFastestInterval(5 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
+                .setInterval(5 * 1000)        // 5 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
+                .setFastestInterval(5 * 1000); // 5 seconds, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
 
-        //mMap.setInfoWindowAdapter(new MapsActivity());
-
-
-        //TODO: check for callback Listener after LocationRequest has been called
-
+        //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
     }
 
     @Override
@@ -297,6 +315,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //get position from all members in current group and mark them on the map
             DatabaseManager.getAllCoordsUsersCurrentGroup(GroupSelectionActivity.getGroup());
             mMap.setMyLocationEnabled(true);
+
         } catch(SecurityException e) {
 
         }
@@ -381,8 +400,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
+        //TODO: afficher une InfoWindow avec l'image du lieu
+
         return false;
     }
+
+    /*
 
     //permet de fournir une vue qui peut être utilisée pour l'intégralité de la fenêtre d'info
     @Override
@@ -396,6 +420,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public View getInfoContents(Marker marker) {
         return null;
     }
+
+    */
 
 
 }
