@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.security.acl.Group;
+
 /**
  * Created by Blanche on 3/14/2017.
  */
@@ -20,13 +22,13 @@ public class ActivityWithMenu extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent menuAction;
+        Intent menuAction = null;
         switch (item.getItemId()) {
             case R.id.preferences:
                 menuAction = new Intent(getApplicationContext(), LoginActivity.class);
                 break;
             case R.id.leave_group:
-                menuAction = new Intent(getApplicationContext(), GroupSelectionActivity.class);
+                DatabaseManager.quitGroup(getApplicationContext());
                 break;
             case R.id.logout:
                 menuAction = new Intent(getApplicationContext(), LoginActivity.class);
@@ -34,7 +36,8 @@ public class ActivityWithMenu extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-        getApplicationContext().startActivity(menuAction);
+        if (menuAction != null)
+            getApplicationContext().startActivity(menuAction);
         return true;
     }
 }

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -26,18 +28,23 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 public class DatabaseManager {
+
+
+
     private static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
     public static DatabaseReference groupsRef = databaseRef.child("groups");
     private static DatabaseReference eventsRef = databaseRef.child("events");
     final public static List<String> groups = new ArrayList<>();
+    final public static List<String> locationNames = new ArrayList<>();
 
     private DatabaseManager(){}
 
@@ -103,6 +110,62 @@ public class DatabaseManager {
         }
     }
 
+    // Fonction qui determine si on peut se joindre au groupe
+    static void groupSelection(final String group, final Context context) {
+        final String currentUser = LoginActivity.getCurrentUser();
+        usersRef.child(currentUser).child("group").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    final String groupName = dataSnapshot.getValue().toString();
+                    Toast r = Toast.makeText(context, group, Toast.LENGTH_SHORT);
+                    r.show();
+                    if (groupName.equals(group)) {
+                        Toast t = Toast.makeText(context, "On est ici", Toast.LENGTH_SHORT);
+                        t.show();
+                        GroupSelectionActivity.setGroup(group);
+                        Intent goToMain = new Intent(context, MapsActivity.class);
+                        context.startActivity(goToMain);
+                    }
+                    else {
+                        groupsRef.child(groupName).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    if (dataSnapshot.getValue().toString().equals(currentUser)) {
+                                        Toast error = Toast.makeText(context, "You have to select the group from which you are the owner.", Toast.LENGTH_SHORT);
+                                        error.show();
+                                    }
+                                    else {
+                                        groupsRef.child(groupName).child("users").child(currentUser).removeValue();
+                                        usersRef.child(currentUser).child("group").setValue(group);
+                                        GroupSelectionActivity.setGroup(group);
+                                        addGroup(group, context);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+                else {
+                    usersRef.child(currentUser).child("group").setValue(group);
+                    GroupSelectionActivity.setGroup(group);
+                    addGroup(group, context);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     // Fonction qui verifie si le groupe existe deja et s'il n'existe pas, l'ajoute a la BD
     static void addGroup(final String groupName, final Context context) {
         groupsRef.child(groupName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -115,8 +178,8 @@ public class DatabaseManager {
                     DatabaseManager.addUserToGroup(LoginActivity.getCurrentUser(), groupName);
                 }
 
-                Intent goToMain = new Intent(context, MapsActivity.class);
-                context.startActivity(goToMain);
+                DatabaseManager.chooseManagerActivity(context);
+
             }
 
             @Override
@@ -125,29 +188,38 @@ public class DatabaseManager {
             }
         });
     }
+    //Fonction qui verifie si un utilisateur est le manager de son groupe et change l'activite pour qu'elle corresponde a la bonne.
+    static void chooseManagerActivity(final Context context) {
+        String group = GroupSelectionActivity.getGroup();
+        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                if(dataSnapshot.exists()){
+                    String user = (String) dataSnapshot.getValue();
+                    if(user.equals(LoginActivity.getCurrentUser())){
+                        Intent goToManagerDash = new Intent(context, OrganizerDashboardActivity.class);
+                        context.startActivity(goToManagerDash);
+                    }
+                    else{
+                        Intent goToMain = new Intent(context, MapsActivity.class);
+                        context.startActivity(goToMain);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError){
+
+            }
+        });
+    }
 
     // Fonction qui ajoute le user au groupe s'il n'y etait pas deja
     static void addUserToGroup(final String username, final String group) {
-        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+        groupsRef.child(group).child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    String user = (String) dataSnapshot.getValue();
-                    if (!user.equals(username)) {
-                        groupsRef.child(group).child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if (!dataSnapshot.exists()) {
-                                    groupsRef.child(group).child("users").child(username).setValue(username);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
+                if (!dataSnapshot.exists()) {
+                    groupsRef.child(group).child("users").child(username).setValue(username);
                 }
             }
 
@@ -184,6 +256,86 @@ public class DatabaseManager {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    static void getLocationsName(final String groupName) {
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    //Log.d("DatabaseManager", "CURRENT GROUP OBJECT " + currentGroupLocations.toString());
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        LocationVoteActivity.locationsName.add(entry.getKey());
+                        locationNames.add(entry.getKey());
+                    }
+                    
+/*
+                    loc1.setText(DatabaseManager.locationNames.get(0));
+                    loc1.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                    loc2.setText(DatabaseManager.locationNames.get(1));
+                    loc2.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                    loc3.setText(DatabaseManager.locationNames.get(2));
+                    loc3.setInputType(InputType.TYPE_CLASS_NUMBER);*/
+
+
+                } else {
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    // Fonction appele lorsque le user veut quitter le groupe
+    static void quitGroup(final Context context) {
+        usersRef.child(LoginActivity.getCurrentUser()).child("group").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    final String group = dataSnapshot.getValue().toString();
+                    groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                if (dataSnapshot.getValue().toString().equals(LoginActivity.getCurrentUser())) {
+                                    Toast error = Toast.makeText(context, "You can't quit your own group", Toast.LENGTH_SHORT);
+                                    error.show();
+                                }
+                                else {
+                                    groupsRef.child(group).child("users").child(LoginActivity.getCurrentUser()).removeValue();
+                                    usersRef.child(LoginActivity.getCurrentUser()).child("group").removeValue();
+                                    Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
+                                    context.startActivity(goToGroupSelection);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
@@ -312,7 +464,11 @@ public class DatabaseManager {
                     @Override
                     public void onDataChange(DataSnapshot groupDataSnapshot) {
 
-                        MapsActivity.userHashMapMarker.clear();
+                        //remove all current markers
+                        for (Map.Entry<String, Marker> entry : MapsActivity.userHashMapMarker.entrySet())
+                        {
+                            entry.getValue().remove();
+                        }
 
                         Map<String, Object> currentGroupUsersLocations =
                                 (Map<String, Object>) groupDataSnapshot.child(groupName).child("users").getValue();
@@ -344,14 +500,11 @@ public class DatabaseManager {
 
                                         if(lat != null && lgt != null) {
 
-                                            MapsActivity.userHashMapMarker.remove(userName);
-
                                             MarkerOptions markerOptions = new MarkerOptions().position(
                                                     new LatLng(lat, lgt)).title(userName).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                                             Marker marker = MapsActivity.mMap.addMarker(markerOptions);
                                             MapsActivity.userHashMapMarker.put(userName, marker);
                                             marker.showInfoWindow();
-
                                         }
                                     }
 
