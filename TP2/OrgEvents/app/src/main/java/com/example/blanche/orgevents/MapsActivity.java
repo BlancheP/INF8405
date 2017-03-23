@@ -2,6 +2,8 @@ package com.example.blanche.orgevents;
 
 import android.*;
 import android.Manifest;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -128,6 +130,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+
+        /*
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentTest fragmentTest = new FragmentTest();
+        fragmentTransaction.add(R.id.fragment_container, fragmentTest);
+        fragmentTransaction.commit();
+        */
+
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new FragmentTest());
+        fragmentTransaction.commit();
+
     }
 
     @Override
