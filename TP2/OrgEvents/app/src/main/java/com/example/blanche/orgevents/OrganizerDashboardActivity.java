@@ -35,7 +35,6 @@ import java.util.List;
 
 public class OrganizerDashboardActivity extends ActivityWithMenu{
 
-    private static final int CONTENT_VIEW_ID = 10101010;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +45,19 @@ public class OrganizerDashboardActivity extends ActivityWithMenu{
         TextView tvDashLoc2 = (TextView) findViewById(R.id.tvDashLoc2);
         TextView tvDashLoc3 = (TextView) findViewById(R.id.tvDashLoc3);
 
+        TextView  locNote1 = (TextView) findViewById(R.id.locNote1);
+        TextView  locNote2 = (TextView) findViewById(R.id.locNote2);
+        TextView  locNote3 = (TextView) findViewById(R.id.locNote3);
+
+        DatabaseManager.showLocNote(GroupSelectionActivity.getGroup(), locNote1, locNote2, locNote3);
+
         DatabaseManager.getLocationsName(GroupSelectionActivity.getGroup(),tvDashLoc1, tvDashLoc2, tvDashLoc3);
 
         Button bMap = (Button) findViewById(R.id.bMap);
         Button bCreateEvent = (Button) findViewById(R.id.bCreateEvent);
         Button bVote = (Button) findViewById(R.id.bVote);
+
+
 
         bMap.setOnClickListener(new View.OnClickListener() {
         @Override

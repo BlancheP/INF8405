@@ -47,6 +47,7 @@ public class DatabaseManager {
     private static DatabaseReference eventsRef = databaseRef.child("events");
     final public static List<String> groups = new ArrayList<>();
     final public static List<String> locationNames = new ArrayList<>();
+    final public static List<String> locNotes = new ArrayList<>();
 
     private DatabaseManager(){}
 
@@ -564,6 +565,36 @@ public class DatabaseManager {
             }
             @Override
             public void onCancelled(DatabaseError databaseError){
+
+            }
+        });
+    }
+
+    static void showLocNote(final String groupName, final TextView loc1, final TextView loc2, final TextView loc3) {
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        locNotes.add(dataSnapshot.child(groupName).child("Locations")
+                                .child(entry.getKey()).child("Note").getValue().toString());
+                    }
+
+                    loc1.setText(" : " + locNotes.get(0));
+                    loc2.setText(" : " + locNotes.get(1));
+                    loc3.setText(" : " + locNotes.get(2));
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });

@@ -42,18 +42,18 @@
         android:id="@+id/tvDashLoc1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="56dp"
+
         android:text="TextView" />
 
     <TextView
         android:id="@+id/tvDashLoc2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="TextView"
         android:layout_alignBottom="@+id/bMap"
-        android:layout_alignStart="@+id/tvDashLoc1"
-        android:text="TextView" />
+        android:layout_alignStart="@+id/tvDashLoc1" />
 
     <TextView
         android:id="@+id/tvDashLoc3"
@@ -63,5 +63,29 @@
         android:layout_below="@+id/tvDashLoc2"
         android:layout_marginTop="14dp"
         android:text="TextView" />
+
+    <TextView
+        android:id="@+id/locNote1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tvDashLoc1"
+        android:layout_alignBottom="@+id/tvDashLoc1"
+        android:text="2" />
+
+    <TextView
+        android:id="@+id/locNote2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvDashLoc2"
+        android:layout_toRightOf="@+id/tvDashLoc2"
+        android:text="5" />
+
+    <TextView
+        android:id="@+id/locNote3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvDashLoc3"
+        android:layout_toRightOf="@+id/tvDashLoc3"
+        android:text="5" />
 
 </RelativeLayout>
