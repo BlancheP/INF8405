@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.example.blanche.orgevents.MapsActivity.mMap;
 
 
@@ -83,6 +85,8 @@ public class DatabaseManager {
             }
         });
     }
+
+
 
     // Fonction pour ajouter un user a la base de donnee
     static void addUserToBD(String userName, String password){
@@ -688,6 +692,128 @@ public class DatabaseManager {
 
                 }
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void isGoing() {
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("participants")
+                .child("going")
+                .child(LoginActivity.getCurrentUser())
+                .setValue(LoginActivity.getCurrentUser());
+    }
+
+    public static void isNotGoing() {
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("participants")
+                .child("not_going")
+                .child(LoginActivity.getCurrentUser())
+                .setValue(LoginActivity.getCurrentUser());
+    }
+
+    public static void isMaybeGoing() {
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("participants")
+                .child("maybe")
+                .child(LoginActivity.getCurrentUser())
+                .setValue(LoginActivity.getCurrentUser());
+    }
+
+    public static void populateEvent(final View v) {
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvName = (TextView) v.findViewById(R.id.tvName);
+                    tvName.setText(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("description").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvDescription = (TextView) v.findViewById(R.id.tvDescription);
+                    tvDescription.setText(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("startDate").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvStart = (TextView) v.findViewById(R.id.tvStart);
+                    tvStart.setText(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("startTime").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvStart = (TextView) v.findViewById(R.id.tvStart);
+                    tvStart.append(" " + dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("endDate").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvEnd = (TextView) v.findViewById(R.id.tvEnd);
+                    tvEnd.setText(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("endTime").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvEnd = (TextView) v.findViewById(R.id.tvEnd);
+                    tvEnd.append(" " + dataSnapshot.getValue().toString());
+                }
             }
 
             @Override
