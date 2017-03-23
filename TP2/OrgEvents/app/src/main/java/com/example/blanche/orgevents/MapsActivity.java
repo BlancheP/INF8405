@@ -1,6 +1,7 @@
 package com.example.blanche.orgevents;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,6 +12,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -50,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location currentLocation;
     private Location previousLocation;
     private Location mLastLocation;
-    private LocationRequest mLocationRequest;
+    private static LocationRequest mLocationRequest;
 
     private String newLocationName = "";
 
@@ -95,9 +99,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
                 .setInterval(5 * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
                 .setFastestInterval(5 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
-
         //mMap.setInfoWindowAdapter(new MapsActivity());
 
+    }
+
+    public static void setUpdateInterval(int interval) {
+        mLocationRequest.setInterval(interval * 1000).setFastestInterval(interval * 1000);
     }
 
     @Override
@@ -393,6 +400,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public View getInfoContents(Marker marker) {
         return null;
     }
-
-
 }

@@ -124,8 +124,7 @@ public class DatabaseManager {
                         Toast t = Toast.makeText(context, "On est ici", Toast.LENGTH_SHORT);
                         t.show();
                         GroupSelectionActivity.setGroup(group);
-                        Intent goToMain = new Intent(context, MapsActivity.class);
-                        context.startActivity(goToMain);
+                        chooseManagerActivity(context);
                     }
                     else {
                         groupsRef.child(groupName).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
