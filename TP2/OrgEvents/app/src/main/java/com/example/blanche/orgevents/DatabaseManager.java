@@ -367,7 +367,6 @@ public class DatabaseManager {
                                           String locationName,
                                           double latitude,
                                           double longitude) {
-        double initValue = -1.1;
 
         groupsRef.child(groupName)
                 .child("Locations")
@@ -381,7 +380,7 @@ public class DatabaseManager {
 
         groupsRef.child(groupName)
                 .child("Locations")
-                .child(locationName).child("Note").setValue(initValue);
+                .child(locationName).child("Note").setValue(-1);
     }
 
     static void getAllLocationsCurrentGroup(final String groupName){
@@ -530,26 +529,28 @@ public class DatabaseManager {
                 if (currentGroupLocations != null) {
                     int counter =0;
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
-                        double newNote = 0.0;
-                        double previousNote = (double) dataSnapshot.child(groupName).child("Locations")
+
+                        Long newNote = 0L;
+                        Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
                                 .child(entry.getKey()).child("Note").getValue();
-                        if(previousNote == -1.1) {
+
+                        if(previousNote == -1) {
                             if (counter == 0) {
-                                newNote =  rbLoc1.getRating();
+                                newNote =  (new Float (rbLoc1.getRating())).longValue();
                             } else if (counter == 1) {
-                                newNote = (double) rbLoc2.getRating();
+                                newNote =  (new Float (rbLoc2.getRating())).longValue();
                             } else if (counter == 2) {
-                                newNote = (double) rbLoc3.getRating();
+                                newNote =  (new Float (rbLoc3.getRating())).longValue();
                             }
 
                         }
                         else{
                             if (counter == 0) {
-                                newNote = (previousNote + rbLoc1.getRating()) / 2;
+                                newNote = (previousNote + (new Float (rbLoc1.getRating())).longValue() ) / 2;
                             } else if (counter == 1) {
-                                newNote = (previousNote + rbLoc2.getRating()) / 2;
+                                newNote = (previousNote + (new Float (rbLoc2.getRating())).longValue()) / 2;
                             } else if (counter == 2) {
-                                newNote = (previousNote + rbLoc3.getRating()) / 2;
+                                newNote = (previousNote + (new Float (rbLoc3.getRating())).longValue()) / 2;
                             }
                         }
 
