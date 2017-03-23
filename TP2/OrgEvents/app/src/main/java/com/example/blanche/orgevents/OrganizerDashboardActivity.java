@@ -1,35 +1,19 @@
 package com.example.blanche.orgevents;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
-import java.text.StringCharacterIterator;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by alain.trandang on 2017-03-09.
  */
 
-public class OrganizerDashboardActivity extends ActivityWithMenu{
+public class OrganizerDashboardActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +33,35 @@ public class OrganizerDashboardActivity extends ActivityWithMenu{
         });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent menuAction = null;
+        switch (item.getItemId()) {
+            case R.id.preferences:
+                menuAction = new Intent(getApplicationContext(), PreferencesActivity.class);
+                break;
+            case R.id.leave_group:
+                DatabaseManager.quitGroup(getApplicationContext());
+                break;
+            case R.id.logout:
+                menuAction = new Intent(getApplicationContext(), LoginActivity.class);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        if (menuAction != null)
+            startActivity(menuAction);
+        return true;
     }
 
 }

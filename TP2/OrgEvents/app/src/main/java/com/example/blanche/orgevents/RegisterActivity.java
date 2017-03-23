@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,7 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class RegisterActivity extends ActivityWithMenu {
+public class RegisterActivity extends AppCompatActivity {
 
     private Bitmap bitmap;
 
@@ -58,6 +59,22 @@ public class RegisterActivity extends ActivityWithMenu {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.simple_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent menuAction = null;
+        switch (item.getItemId()) {
+            case R.id.preferences:
+                menuAction = new Intent(getApplicationContext(), PreferencesActivity.class);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        if (menuAction != null)
+            startActivity(menuAction);
         return true;
     }
 

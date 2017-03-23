@@ -128,8 +128,7 @@ public class DatabaseManager {
                         Toast t = Toast.makeText(context, "On est ici", Toast.LENGTH_SHORT);
                         t.show();
                         GroupSelectionActivity.setGroup(group);
-                        Intent goToMain = new Intent(context, MapsActivity.class);
-                        context.startActivity(goToMain);
+                        chooseManagerActivity(context);
                     }
                     else {
                         groupsRef.child(groupName).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -330,7 +329,9 @@ public class DatabaseManager {
         groupsRef.child(groupName)
                 .child("managerName")
                 .setValue(userName);
-
+        groupsRef.child(groupName)
+                .child("users")
+                .child(userName).setValue(userName);
     }
 
     // Fonction qui permet de recuperer tous les groupes existants
