@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.List;
 public class LocationVoteActivity extends AppCompatActivity {
 
     public static List<String> locationsName = new ArrayList<>();
+
+    private static boolean hasVoted =false;
 
 
     @Override
@@ -34,10 +37,11 @@ public class LocationVoteActivity extends AppCompatActivity {
         bSendVote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w){
-                DatabaseManager.computeNote(GroupSelectionActivity.getGroup(),rbLoc1, rbLoc2, rbLoc3);
+                DatabaseManager.computeNote(LocationVoteActivity.this, LoginActivity.getCurrentUser(), GroupSelectionActivity.getGroup(),rbLoc1, rbLoc2, rbLoc3);
                 Intent goToMap = new Intent(LocationVoteActivity.this, MapsActivity.class);
                 LocationVoteActivity.this.startActivity(goToMap);
                 finish();
+
             }
         });
 

@@ -316,7 +316,7 @@ public class DatabaseManager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    groupsRef.child(group).child("users").child(username).setValue(username);
+                    groupsRef.child(group).child("users").child(username).child("hasVoted").setValue(false);
                 }
             }
 
@@ -334,7 +334,7 @@ public class DatabaseManager {
                 .setValue(userName);
         groupsRef.child(groupName)
                 .child("users")
-                .child(userName).setValue(userName);
+                .child(userName).child("hasVoted").setValue(false);
     }
 
     // Fonction qui permet de recuperer tous les groupes existants
@@ -667,47 +667,57 @@ public class DatabaseManager {
         Log.d("DatabaseManager", "getAllCoordsUsersCurrentGroup called()");
     }
 
-    public static void computeNote(final String groupName, final RatingBar rbLoc1, final RatingBar rbLoc2, final RatingBar rbLoc3) {
+    public static void computeNote(final Context context, final String userName, final String groupName, final RatingBar rbLoc1, final RatingBar rbLoc2, final RatingBar rbLoc3) {
+
         groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> currentGroupLocations =
-                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+                //si le user n'a pas deja voté
+                if(dataSnapshot.child(groupName).child("users").child(userName).child("hasVoted").getValue().equals(false)){
+                    Map<String, Object> currentGroupLocations =
+                            (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
 
-                if (currentGroupLocations != null) {
-                    int counter =0;
-                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+                    if (currentGroupLocations != null) {
+                        int counter =0;
+                        for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
-                        Long newNote = 0L;
-                        Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
-                                .child(entry.getKey()).child("Note").getValue();
+                            Long newNote = 0L;
+                            Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
+                                    .child(entry.getKey()).child("Note").getValue();
 
-                        if(previousNote == -1) {
-                            if (counter == 0) {
-                                newNote =  (new Float (rbLoc1.getRating())).longValue();
-                            } else if (counter == 1) {
-                                newNote =  (new Float (rbLoc2.getRating())).longValue();
-                            } else if (counter == 2) {
-                                newNote =  (new Float (rbLoc3.getRating())).longValue();
+                            if(previousNote == -1) {
+                                if (counter == 0) {
+                                    newNote =  (new Float (rbLoc1.getRating())).longValue();
+                                } else if (counter == 1) {
+                                    newNote =  (new Float (rbLoc2.getRating())).longValue();
+                                } else if (counter == 2) {
+                                    newNote =  (new Float (rbLoc3.getRating())).longValue();
+                                }
+
+                            }
+                            else{
+                                if (counter == 0) {
+                                    newNote = (previousNote + (new Float (rbLoc1.getRating())).longValue() ) / 2;
+                                } else if (counter == 1) {
+                                    newNote = (previousNote + (new Float (rbLoc2.getRating())).longValue()) / 2;
+                                } else if (counter == 2) {
+                                    newNote = (previousNote + (new Float (rbLoc3.getRating())).longValue()) / 2;
+                                }
                             }
 
-                        }
-                        else{
-                            if (counter == 0) {
-                                newNote = (previousNote + (new Float (rbLoc1.getRating())).longValue() ) / 2;
-                            } else if (counter == 1) {
-                                newNote = (previousNote + (new Float (rbLoc2.getRating())).longValue()) / 2;
-                            } else if (counter == 2) {
-                                newNote = (previousNote + (new Float (rbLoc3.getRating())).longValue()) / 2;
-                            }
-                        }
+                            groupsRef.child(groupName).child("Locations")
+                                    .child(entry.getKey()).child("Note").setValue(newNote);
 
-                        groupsRef.child(groupName).child("Locations")
-                                .child(entry.getKey()).child("Note").setValue(newNote);
-
-                        counter++;
+                            counter++;
+                        }
                     }
+                    groupsRef.child(groupName).child("users").child(userName).child("hasVoted").setValue(true);
                 }
+                else{
+                    Toast message = Toast.makeText(context, "You have already voted!", Toast.LENGTH_SHORT);
+                    message.show();
+                }
+
 
             }
             @Override
