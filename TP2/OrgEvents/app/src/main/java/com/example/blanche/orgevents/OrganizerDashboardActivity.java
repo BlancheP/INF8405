@@ -43,7 +43,7 @@ public class OrganizerDashboardActivity extends AppCompatActivity{
 
         Button bMap = (Button) findViewById(R.id.bMap);
         Button bCreateEvent = (Button) findViewById(R.id.bCreateEvent);
-        Button bVote = (Button) findViewById(R.id.bVote);
+
 
 
 
@@ -56,11 +56,11 @@ public class OrganizerDashboardActivity extends AppCompatActivity{
         }
         });
 
-        bVote.setOnClickListener(new View.OnClickListener() {
+        bCreateEvent.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View w){
-                Intent goToVote = new Intent(OrganizerDashboardActivity.this, LocationVoteActivity.class);
-                OrganizerDashboardActivity.this.startActivity(goToVote);
+                Intent goToEventCreation = new Intent(OrganizerDashboardActivity.this, EventCreationActivity.class);
+                OrganizerDashboardActivity.this.startActivity(goToEventCreation);
                 finish();
             }
         });
