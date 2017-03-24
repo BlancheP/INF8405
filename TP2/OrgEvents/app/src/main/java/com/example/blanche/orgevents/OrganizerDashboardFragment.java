@@ -65,7 +65,7 @@ public class OrganizerDashboardFragment extends Fragment {
 
                 if (MapsActivity.locationHashMapMarker.size() == 3) {
                     Intent goToEventCreation = new Intent(getActivity(), EventCreationActivity.class);
-                    OrganizerDashboardFragment.this.startActivity(goToEventCreation);
+                    getActivity().startActivityForResult(goToEventCreation, 8);
                 }
                 else
                 {

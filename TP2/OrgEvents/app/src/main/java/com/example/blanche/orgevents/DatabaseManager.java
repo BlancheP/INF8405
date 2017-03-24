@@ -510,6 +510,8 @@ public class DatabaseManager {
                 .child("event")
                 .child("endTime")
                 .setValue(endTime);
+
+        MapsActivity.changeFragment = true;
     }
 
     static void addLocationToCurrentGroup(String groupName,

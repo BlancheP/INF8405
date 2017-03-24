@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -72,6 +73,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public static HashMap<String,Marker> locationHashMapMarker = new HashMap<>();
     public static HashMap<String,Marker> userHashMapMarker = new HashMap<>();
+
+    public static boolean changeFragment = false;
 
 
     /*
@@ -136,9 +139,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
-        fragmentTransaction.commit();
+        if(!changeFragment)
+        {
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
+            fragmentTransaction.commit();
+        }
+        else{
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, new EventViewFragment());
+            fragmentTransaction.commit();
+        }
+
 
     }
 
@@ -478,6 +490,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == PREFERENCES_CODE) {
+            Intent restart = new Intent(getApplicationContext(), MapsActivity.class);
+            finish();
+            startActivity(restart);
+        }
+        else if (requestCode == 8){
+
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Intent restart = new Intent(getApplicationContext(), MapsActivity.class);
             finish();
             startActivity(restart);

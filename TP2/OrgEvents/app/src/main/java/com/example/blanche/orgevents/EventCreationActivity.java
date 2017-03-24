@@ -41,8 +41,12 @@ public class EventCreationActivity extends AppCompatActivity {
                         etStartDate.getText().toString(), etStartTime.getText().toString(),
                         etEndDate.getText().toString(), etEndTime.getText().toString());
 
-                Intent goToMap = new Intent(EventCreationActivity.this, MapsActivity.class);
-                EventCreationActivity.this.startActivity(goToMap);
+                //android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                //fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
+                //fragmentTransaction.commit();
+
+                //Intent goToMap = new Intent(EventCreationActivity.this, MapsActivity.class);
+                //EventCreationActivity.this.startActivity(goToMap);
                 finish();
             }
         });
