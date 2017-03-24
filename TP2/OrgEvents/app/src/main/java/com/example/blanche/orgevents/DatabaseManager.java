@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -131,11 +133,7 @@ public class DatabaseManager {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     final String groupName = dataSnapshot.getValue().toString();
-                    Toast r = Toast.makeText(context, group, Toast.LENGTH_SHORT);
-                    r.show();
                     if (groupName.equals(group)) {
-                        Toast t = Toast.makeText(context, "On est ici", Toast.LENGTH_SHORT);
-                        t.show();
                         GroupSelectionActivity.setGroup(group);
                         Intent goToMain = new Intent(context, MapsActivity.class);
                         context.startActivity(goToMain);
@@ -270,7 +268,8 @@ public class DatabaseManager {
                                                             GroupSelectionActivity.getGroup(),
                                                             finalNewLocationName,
                                                             latLng.latitude,
-                                                            latLng.longitude);
+                                                            latLng.longitude,
+                                                            0);
                                                 }
                                             })
                                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -440,8 +439,6 @@ public class DatabaseManager {
                                 else {
                                     groupsRef.child(group).child("users").child(LoginActivity.getCurrentUser()).removeValue();
                                     usersRef.child(LoginActivity.getCurrentUser()).child("group").removeValue();
-                                    Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
-                                    context.startActivity(goToGroupSelection);
                                 }
                             }
                         }
@@ -518,7 +515,8 @@ public class DatabaseManager {
     static void addLocationToCurrentGroup(String groupName,
                                           String locationName,
                                           double latitude,
-                                          double longitude) {
+                                          double longitude,
+                                          int note) {
 
         groupsRef.child(groupName)
                 .child("Locations")
@@ -532,7 +530,8 @@ public class DatabaseManager {
 
         groupsRef.child(groupName)
                 .child("Locations")
-                .child(locationName).child("Note").setValue(-1);
+                .child(locationName)
+                .child("Note").setValue(note);
     }
 
     static void getAllLocationsCurrentGroup(final String groupName){
@@ -688,7 +687,7 @@ public class DatabaseManager {
                             Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
                                     .child(entry.getKey()).child("Note").getValue();
 
-                            if(previousNote == -1) {
+                            if(previousNote == 0) {
                                 if (counter == 0) {
                                     newNote =  (new Float (rbLoc1.getRating())).longValue();
                                 } else if (counter == 1) {
@@ -760,7 +759,7 @@ public class DatabaseManager {
         });
     }
 
-    static void getAllInfoForOrganizerDashboard(View view){
+    static void getAllInfoForOrganizerDashboard(final View view){
 
         final TextView tvDashLoc1 = (TextView) view.findViewById(R.id.tvDashLoc1);
         final TextView tvDashLoc2 = (TextView) view.findViewById(R.id.tvDashLoc2);
@@ -770,13 +769,14 @@ public class DatabaseManager {
         final TextView  locNote2 = (TextView) view.findViewById(R.id.locNote2);
         final TextView  locNote3 = (TextView) view.findViewById(R.id.locNote3);
 
-        groupsRef.addValueEventListener(new ValueEventListener() {
+
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> currentGroupLocations =
                         (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
 
-                if (currentGroupLocations != null) {
+                if (currentGroupLocations != null && MapsActivity.locationHashMapMarker.size() == 3) {
 
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
@@ -785,8 +785,16 @@ public class DatabaseManager {
                     }
 
                     locNote1.setText(" : " + locNotes.get(0));
+                    locNote1.setVisibility(TextView.VISIBLE);
                     locNote2.setText(" : " + locNotes.get(1));
+                    locNote2.setVisibility(TextView.VISIBLE);
                     locNote3.setText(" : " + locNotes.get(2));
+                    locNote3.setVisibility(TextView.VISIBLE);
+                }
+                else{
+                    locNote1.setText("");
+                    locNote2.setText("");
+                    locNote3.setText("");
                 }
             }
 
@@ -796,13 +804,13 @@ public class DatabaseManager {
             }
         });
 
-        groupsRef.addValueEventListener(new ValueEventListener() {
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> currentGroupLocations =
                         (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
 
-                if (currentGroupLocations != null) {
+                if (currentGroupLocations != null && MapsActivity.locationHashMapMarker.size() == 3) {
 
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
@@ -811,9 +819,17 @@ public class DatabaseManager {
                     }
 
                     tvDashLoc1.setText(locationNames.get(0));
+                    tvDashLoc1.setVisibility(TextView.VISIBLE);
                     tvDashLoc2.setText(locationNames.get(1));
+                    tvDashLoc2.setVisibility(TextView.VISIBLE);
                     tvDashLoc3.setText(locationNames.get(2));
+                    tvDashLoc3.setVisibility(TextView.VISIBLE);
 
+                }
+                else{
+                    tvDashLoc1.setText("");
+                    tvDashLoc2.setText("");
+                    tvDashLoc3.setText("");
                 }
 
             }
@@ -828,25 +844,22 @@ public class DatabaseManager {
     public static void isGoing() {
         groupsRef.child(GroupSelectionActivity.getGroup())
                 .child("event").child("participants")
-                .child("going")
                 .child(LoginActivity.getCurrentUser())
-                .setValue(LoginActivity.getCurrentUser());
+                .setValue("Going");
     }
 
     public static void isNotGoing() {
         groupsRef.child(GroupSelectionActivity.getGroup())
                 .child("event").child("participants")
-                .child("not_going")
                 .child(LoginActivity.getCurrentUser())
-                .setValue(LoginActivity.getCurrentUser());
+                .setValue("Not going");
     }
 
     public static void isMaybeGoing() {
         groupsRef.child(GroupSelectionActivity.getGroup())
                 .child("event").child("participants")
-                .child("maybe")
                 .child(LoginActivity.getCurrentUser())
-                .setValue(LoginActivity.getCurrentUser());
+                .setValue("Maybe going");
     }
 
     public static void populateEvent(final View v) {
@@ -857,6 +870,7 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     TextView tvName = (TextView) v.findViewById(R.id.tvName);
                     tvName.setText(dataSnapshot.getValue().toString());
+                    EventViewFragment.setName(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -873,6 +887,7 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     TextView tvDescription = (TextView) v.findViewById(R.id.tvDescription);
                     tvDescription.setText(dataSnapshot.getValue().toString());
+                    EventViewFragment.setDescription(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -889,6 +904,7 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     TextView tvStart = (TextView) v.findViewById(R.id.tvStart);
                     tvStart.setText(dataSnapshot.getValue().toString());
+                    EventViewFragment.setStartDate(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -905,6 +921,7 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     TextView tvStart = (TextView) v.findViewById(R.id.tvStart);
                     tvStart.append(" " + dataSnapshot.getValue().toString());
+                    EventViewFragment.setStartTime(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -921,6 +938,7 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     TextView tvEnd = (TextView) v.findViewById(R.id.tvEnd);
                     tvEnd.setText(dataSnapshot.getValue().toString());
+                    EventViewFragment.setEndDate(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -937,6 +955,51 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     TextView tvEnd = (TextView) v.findViewById(R.id.tvEnd);
                     tvEnd.append(" " + dataSnapshot.getValue().toString());
+                    EventViewFragment.setEndTime(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    EventViewFragment.setLocation(dataSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.child(GroupSelectionActivity.getGroup())
+                .child("event").child("participants")
+                .child(LoginActivity.getCurrentUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    TextView tvParticipation = (TextView) v.findViewById(R.id.tvParticipation);
+                    tvParticipation.setText(dataSnapshot.getValue().toString());
+                    if (dataSnapshot.getValue().toString().equals("Going")) {
+                        Button bGoing = (Button) v.findViewById(R.id.bGoing);
+                        bGoing.setTextColor(Color.BLUE);
+                    }
+                    else if (dataSnapshot.getValue().toString().equals("Not going")) {
+                        Button bNotGoing = (Button) v.findViewById(R.id.bNotGoing);
+                        bNotGoing.setTextColor(Color.BLUE);
+                    }
+                    else {
+                        Button bMaybeGoing = (Button) v.findViewById(R.id.bMaybeGoing);
+                        bMaybeGoing.setTextColor(Color.BLUE);
+                    }
                 }
             }
 

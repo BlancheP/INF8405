@@ -1,12 +1,8 @@
 package com.example.blanche.orgevents;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by Blanche on 3/22/2017.
@@ -40,6 +36,36 @@ public class DBHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME);
         onCreate(db);
+    }
+
+    public void addUser(String username, String password) {
+        String strSQL = "INSERT INTO " + PROFILE_TABLE_NAME + " VALUES (0, " + username + ", " + password + ", '')";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(strSQL);
+    }
+
+    public void updateGroup(String groupname) {
+        String strSQL = "UPDATE " + PROFILE_TABLE_NAME + " SET " + PROFILE_COLUMN_GROUP + " = " + groupname + " WHERE " + PROFILE_COLUMN_ID + " = 0";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(strSQL);
+    }
+
+    public void getCurrentUser() {
+        String strSQL = "SELECT " + PROFILE_COLUMN_USERNAME + " FROM " + PROFILE_TABLE_NAME + " WHERE _ID = 0";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(strSQL);
+    }
+
+    public void getCurrentGroup() {
+        String strSQL = "SELECT " + PROFILE_COLUMN_GROUP + " FROM " + PROFILE_TABLE_NAME + " WHERE _ID = 0";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(strSQL);
+    }
+
+    public void removeCurrentUser() {
+        String strSQL = "REMOVE FROM " + PROFILE_TABLE_NAME + " WHERE _id = 0";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(strSQL);
     }
 
 }

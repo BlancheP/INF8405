@@ -17,11 +17,13 @@ import android.widget.Toast;
 
 public class OrganizerDashboardFragment extends Fragment {
 
+    //static View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //Inflating the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_organizerdashboard, null);
+       final View view = inflater.inflate(R.layout.fragment_organizerdashboard, null);
 
         /*
 
@@ -45,8 +47,15 @@ public class OrganizerDashboardFragment extends Fragment {
         bVote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w){
-                Intent goToVote = new Intent(getActivity(), LocationVoteActivity.class);
-                OrganizerDashboardFragment.this.startActivity(goToVote);
+                if(MapsActivity.locationHashMapMarker.size() == 3) {
+                    //DatabaseManager.getAllInfoForOrganizerDashboard(view);
+                    Intent goToVote = new Intent(getActivity(), LocationVoteActivity.class);
+                    startActivityForResult(goToVote, 7);
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "You must have 3 locations before you can vote", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -65,9 +74,12 @@ public class OrganizerDashboardFragment extends Fragment {
             }
         });
 
-        DatabaseManager.getAllInfoForOrganizerDashboard(view);
         return view;
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        DatabaseManager.getAllInfoForOrganizerDashboard(this.getView());
+        this.getView().findViewById(R.id.bVote).setVisibility(Button.GONE);
+    }
 }
