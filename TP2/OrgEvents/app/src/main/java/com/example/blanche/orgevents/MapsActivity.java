@@ -136,7 +136,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new EventViewFragment());
         fragmentTransaction.commit();
 
     }
@@ -454,6 +454,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             case R.id.leave_group:
                 DatabaseManager.quitGroup(getApplicationContext());
+                menuAction = new Intent(getApplicationContext(), GroupSelectionActivity.class);
                 break;
             case R.id.logout:
                 menuAction = new Intent(getApplicationContext(), LoginActivity.class);

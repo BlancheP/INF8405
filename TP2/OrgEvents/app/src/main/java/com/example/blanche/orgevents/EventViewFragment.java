@@ -1,6 +1,7 @@
 package com.example.blanche.orgevents;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -10,9 +11,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class EventViewFragment extends Fragment {
+
+    private static String name;
+    private static String description;
+    private static String location;
+    private static String startDate;
+    private static String startTime;
+    private static String endDate;
+    private static String endTime;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,10 +41,10 @@ public class EventViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DatabaseManager.isGoing();
-                bGoing.setVisibility(View.GONE);
-                bNotGoing.setVisibility(View.GONE);
-                bMaybeGoing.setVisibility(View.GONE);
                 tvParticipation.setText("Going");
+                bGoing.setTextColor(Color.BLUE);
+                bNotGoing.setTextColor(Color.BLACK);
+                bMaybeGoing.setTextColor(Color.BLACK);
                 addEventToCalendar(v);
             }
         });
@@ -41,10 +53,10 @@ public class EventViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DatabaseManager.isNotGoing();
-                bGoing.setVisibility(View.GONE);
-                bNotGoing.setVisibility(View.GONE);
-                bMaybeGoing.setVisibility(View.GONE);
                 tvParticipation.setText("Not going");
+                bGoing.setTextColor(Color.BLACK);
+                bNotGoing.setTextColor(Color.BLUE);
+                bMaybeGoing.setTextColor(Color.BLACK);
             }
         });
 
@@ -52,10 +64,10 @@ public class EventViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DatabaseManager.isMaybeGoing();
-                bGoing.setVisibility(View.GONE);
-                bNotGoing.setVisibility(View.GONE);
-                bMaybeGoing.setVisibility(View.GONE);
                 tvParticipation.setText("Maybe going");
+                bGoing.setTextColor(Color.BLACK);
+                bNotGoing.setTextColor(Color.BLACK);
+                bMaybeGoing.setTextColor(Color.BLUE);
             }
         });
 
@@ -63,16 +75,59 @@ public class EventViewFragment extends Fragment {
         return v;
     }
 
-    private static void addEventToCalendar(View v) {
+    public static void setName(String n) {
+        name = n;
+    }
+
+    public static void setDescription(String des) {
+        description = des;
+    }
+
+    public static void setLocation(String loc) {
+        location = loc;
+    }
+
+    public static void setStartDate(String s) {
+        startDate = s;
+    }
+
+    public static void setStartTime(String t) {
+        startTime = t;
+    }
+
+    public static void setEndDate(String e) {
+        endDate = e;
+    }
+
+    public static void setEndTime(String t) {
+        endTime = t;
+    }
+
+    private void addEventToCalendar(View v) {
         Calendar cal = Calendar.getInstance();
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
-        intent.putExtra("beginTime", cal.getTimeInMillis());
         intent.putExtra("allDay", false);
-        intent.putExtra("description", "Reminder description");
-        intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-        intent.putExtra("title", "Un event");
-        intent.putExtra("eventLocation", "ici");
+        intent.putExtra("description", description);
+        intent.putExtra("title", name);
+        intent.putExtra("eventLocation", location);
+
+        String start = startDate.concat(" ").concat(startTime);
+        String end = endDate.concat(" ").concat(endTime);
+        Long startT = null, endT = null;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try {
+            Date date = format.parse(start);
+            startT = date.getTime();
+            date = format.parse(end);
+            endT = date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        intent.putExtra("beginTime", startT);
+        intent.putExtra("endTime", endT);
+
         v.getContext().startActivity(intent);
     }
 }

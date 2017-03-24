@@ -12,14 +12,6 @@
         android:layout_height="389dp"
         android:layout_weight="0.25" ></FrameLayout>
 
-    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_container"
-        android:name="com.example.blanche.orgevents.FragmentTest"
-        android:layout_width="match_parent"
-        android:layout_height="389dp"
-        android:layout_weight="0.25" />-->
-
-
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
