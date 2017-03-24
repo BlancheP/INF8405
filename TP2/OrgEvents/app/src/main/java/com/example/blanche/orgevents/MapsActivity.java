@@ -455,6 +455,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             case R.id.leave_group:
                 DatabaseManager.quitGroup(getApplicationContext());
+                menuAction = new Intent(getApplicationContext(), GroupSelectionActivity.class);
                 break;
             case R.id.logout:
                 menuAction = new Intent(getApplicationContext(), LoginActivity.class);
