@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:text="This is the map activity" />
 
-    <Button
-        android:id="@+id/bOrgDash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dashboard" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/fragment_container"
+        android:layout_height="389dp"
+        android:layout_weight="0.25" ></FrameLayout>
+
+    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
+        android:name="com.example.blanche.orgevents.FragmentTest"
+        android:layout_width="match_parent"
+        android:layout_height="389dp"
+        android:layout_weight="0.25" />-->
+
 
     <Button
         android:id="@+id/bVote"
@@ -27,9 +32,8 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.example.blanche.orgevents.MapsActivity" />
-
-
+        android:layout_height="389dp"
+        tools:context="com.example.blanche.orgevents.MapsActivity"
+        android:layout_weight="0.25" />
 
 </LinearLayout>

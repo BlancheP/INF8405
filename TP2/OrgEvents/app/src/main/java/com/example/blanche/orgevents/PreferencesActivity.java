@@ -18,11 +18,12 @@ public class PreferencesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
-        frequency = 5;
 
         final Button bSave = (Button) findViewById(R.id.bSavePreferences);
         final Button bReset = (Button) findViewById(R.id.bResetPreferences);
         final EditText etFrequency = (EditText) findViewById(R.id.etFrequency);
+
+        etFrequency.setText(String.valueOf(frequency));
 
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
