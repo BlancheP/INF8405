@@ -596,7 +596,6 @@ public class DatabaseManager {
                 .child("longitude").setValue(longitude);
     }
 
-    //TODO: getter of current group's current users
     static void getAllCoordsUsersCurrentGroup(final String groupName){
 
         groupsRef.addListenerForSingleValueEvent(

@@ -47,6 +47,21 @@ public class OrganizerDashboardFragment extends Fragment {
             }
         });
 
+        bCreateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View w) {
+
+                if (MapsActivity.locationHashMapMarker.size() == 3) {
+                    Intent goToEventCreation = new Intent(getActivity(), EventCreationActivity.class);
+                    OrganizerDashboardFragment.this.startActivity(goToEventCreation);
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "Please enter 3 locations before creating an event", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         return view;
     }
 
