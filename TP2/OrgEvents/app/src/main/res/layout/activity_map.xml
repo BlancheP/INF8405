@@ -11,7 +11,7 @@
         android:id="@+id/fragment_container"
         android:layout_height="389dp"
         android:layout_weight="0.25" ></FrameLayout>
-
+    
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"

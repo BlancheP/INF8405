@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -316,7 +318,7 @@ public class DatabaseManager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    groupsRef.child(group).child("users").child(username).setValue(username);
+                    groupsRef.child(group).child("users").child(username).child("hasVoted").setValue(false);
                 }
             }
 
@@ -334,7 +336,7 @@ public class DatabaseManager {
                 .setValue(userName);
         groupsRef.child(groupName)
                 .child("users")
-                .child(userName).setValue(userName);
+                .child(userName).child("hasVoted").setValue(false);
     }
 
     // Fonction qui permet de recuperer tous les groupes existants
@@ -360,6 +362,7 @@ public class DatabaseManager {
     }
     //Fonction qui va chercher les noms des lieux et les ecrit dans 3 textviews
     static void getLocationsName(final String groupName, final TextView loc1, final TextView loc2, final TextView loc3) {
+        locationNames.clear();
         groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -380,6 +383,34 @@ public class DatabaseManager {
 
                 }
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    static void getLocationsSpinner(final String groupName, final Context context, final Spinner spinner){
+        locationNames.clear();
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        LocationVoteActivity.locationsName.add(entry.getKey());
+                        locationNames.add(entry.getKey());
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                            android.R.layout.simple_dropdown_item_1line, locationNames);
+                    spinner.setAdapter(adapter);
+                }
             }
 
             @Override
@@ -444,21 +475,40 @@ public class DatabaseManager {
             }
         });
     }
+
+
     //fonction pour sauvegarder un evenement dans la base de donnees.
     //TODO: probablement ajouter la liste des participants a l'evenement.
-    static void addEventToBD(String eventName, String location, String description,String startDate, String endDate) {
-        eventsRef.child(eventName)
+    static void addEventToBD(String groupName, String eventName, String location, String description,
+                             String startDate, String startTime, String endDate, String endTime) {
+        groupsRef.child(groupName)
+                .child("event")
+                .child("Name")
+                .setValue(eventName);
+        groupsRef.child(groupName)
+                .child("event")
                 .child("Location")
                 .setValue(location);
-        eventsRef.child(eventName)
+        groupsRef.child(groupName)
+                .child("event")
                 .child("description")
                 .setValue(description);
-        eventsRef.child(eventName)
+        groupsRef.child(groupName)
+                .child("event")
                 .child("startDate")
                 .setValue(startDate);
-        eventsRef.child(eventName)
+        groupsRef.child(groupName)
+                .child("event")
+                .child("startTime")
+                .setValue(startTime);
+        groupsRef.child(groupName)
+                .child("event")
                 .child("endDate")
                 .setValue(endDate);
+        groupsRef.child(groupName)
+                .child("event")
+                .child("endTime")
+                .setValue(endTime);
     }
 
     static void addLocationToCurrentGroup(String groupName,
@@ -617,47 +667,57 @@ public class DatabaseManager {
         Log.d("DatabaseManager", "getAllCoordsUsersCurrentGroup called()");
     }
 
-    public static void computeNote(final String groupName, final RatingBar rbLoc1, final RatingBar rbLoc2, final RatingBar rbLoc3) {
+    public static void computeNote(final Context context, final String userName, final String groupName, final RatingBar rbLoc1, final RatingBar rbLoc2, final RatingBar rbLoc3) {
+
         groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> currentGroupLocations =
-                        (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
+                //si le user n'a pas deja voté
+                if(dataSnapshot.child(groupName).child("users").child(userName).child("hasVoted").getValue().equals(false)){
+                    Map<String, Object> currentGroupLocations =
+                            (Map<String, Object>) dataSnapshot.child(groupName).child("Locations").getValue();
 
-                if (currentGroupLocations != null) {
-                    int counter =0;
-                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+                    if (currentGroupLocations != null) {
+                        int counter =0;
+                        for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
-                        Long newNote = 0L;
-                        Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
-                                .child(entry.getKey()).child("Note").getValue();
+                            Long newNote = 0L;
+                            Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
+                                    .child(entry.getKey()).child("Note").getValue();
 
-                        if(previousNote == -1) {
-                            if (counter == 0) {
-                                newNote =  (new Float (rbLoc1.getRating())).longValue();
-                            } else if (counter == 1) {
-                                newNote =  (new Float (rbLoc2.getRating())).longValue();
-                            } else if (counter == 2) {
-                                newNote =  (new Float (rbLoc3.getRating())).longValue();
+                            if(previousNote == -1) {
+                                if (counter == 0) {
+                                    newNote =  (new Float (rbLoc1.getRating())).longValue();
+                                } else if (counter == 1) {
+                                    newNote =  (new Float (rbLoc2.getRating())).longValue();
+                                } else if (counter == 2) {
+                                    newNote =  (new Float (rbLoc3.getRating())).longValue();
+                                }
+
+                            }
+                            else{
+                                if (counter == 0) {
+                                    newNote = (previousNote + (new Float (rbLoc1.getRating())).longValue() ) / 2;
+                                } else if (counter == 1) {
+                                    newNote = (previousNote + (new Float (rbLoc2.getRating())).longValue()) / 2;
+                                } else if (counter == 2) {
+                                    newNote = (previousNote + (new Float (rbLoc3.getRating())).longValue()) / 2;
+                                }
                             }
 
-                        }
-                        else{
-                            if (counter == 0) {
-                                newNote = (previousNote + (new Float (rbLoc1.getRating())).longValue() ) / 2;
-                            } else if (counter == 1) {
-                                newNote = (previousNote + (new Float (rbLoc2.getRating())).longValue()) / 2;
-                            } else if (counter == 2) {
-                                newNote = (previousNote + (new Float (rbLoc3.getRating())).longValue()) / 2;
-                            }
-                        }
+                            groupsRef.child(groupName).child("Locations")
+                                    .child(entry.getKey()).child("Note").setValue(newNote);
 
-                        groupsRef.child(groupName).child("Locations")
-                                .child(entry.getKey()).child("Note").setValue(newNote);
-
-                        counter++;
+                            counter++;
+                        }
                     }
+                    groupsRef.child(groupName).child("users").child(userName).child("hasVoted").setValue(true);
                 }
+                else{
+                    Toast message = Toast.makeText(context, "You have already voted!", Toast.LENGTH_SHORT);
+                    message.show();
+                }
+
 
             }
             @Override
@@ -685,6 +745,71 @@ public class DatabaseManager {
                     loc1.setText(" : " + locNotes.get(0));
                     loc2.setText(" : " + locNotes.get(1));
                     loc3.setText(" : " + locNotes.get(2));
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    static void getAllInfoForOrganizerDashboard(View view){
+
+        final TextView tvDashLoc1 = (TextView) view.findViewById(R.id.tvDashLoc1);
+        final TextView tvDashLoc2 = (TextView) view.findViewById(R.id.tvDashLoc2);
+        final TextView tvDashLoc3 = (TextView) view.findViewById(R.id.tvDashLoc3);
+
+        final TextView  locNote1 = (TextView) view.findViewById(R.id.locNote1);
+        final TextView  locNote2 = (TextView) view.findViewById(R.id.locNote2);
+        final TextView  locNote3 = (TextView) view.findViewById(R.id.locNote3);
+
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        locNotes.add(dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations")
+                                .child(entry.getKey()).child("Note").getValue().toString());
+                    }
+
+                    locNote1.setText(" : " + locNotes.get(0));
+                    locNote2.setText(" : " + locNotes.get(1));
+                    locNote3.setText(" : " + locNotes.get(2));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        LocationVoteActivity.locationsName.add(entry.getKey());
+                        locationNames.add(entry.getKey());
+                    }
+
+                    tvDashLoc1.setText(locationNames.get(0));
+                    tvDashLoc2.setText(locationNames.get(1));
+                    tvDashLoc3.setText(locationNames.get(2));
 
                 }
 
