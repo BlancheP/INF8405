@@ -136,7 +136,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new EventViewFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
         fragmentTransaction.commit();
 
     }

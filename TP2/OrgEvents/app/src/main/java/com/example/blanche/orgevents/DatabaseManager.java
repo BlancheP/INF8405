@@ -973,7 +973,7 @@ public class DatabaseManager {
                         Button bGoing = (Button) v.findViewById(R.id.bGoing);
                         bGoing.setTextColor(Color.BLUE);
                     }
-                    else if (dataSnapshot.getValue().toString().equals("Going")) {
+                    else if (dataSnapshot.getValue().toString().equals("Not going")) {
                         Button bNotGoing = (Button) v.findViewById(R.id.bNotGoing);
                         bNotGoing.setTextColor(Color.BLUE);
                     }
