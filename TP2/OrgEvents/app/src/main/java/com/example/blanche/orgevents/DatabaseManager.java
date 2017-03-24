@@ -135,6 +135,22 @@ public class DatabaseManager {
                     final String groupName = dataSnapshot.getValue().toString();
                     if (groupName.equals(group)) {
                         GroupSelectionActivity.setGroup(group);
+                        groupsRef.child(group).child("event").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    MapsActivity.changeFragment=true;
+                                }
+                                else{
+                                    MapsActivity.changeFragment = false;
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                         Intent goToMain = new Intent(context, MapsActivity.class);
                         context.startActivity(goToMain);
                     }
@@ -151,6 +167,23 @@ public class DatabaseManager {
                                         groupsRef.child(groupName).child("users").child(currentUser).removeValue();
                                         usersRef.child(currentUser).child("group").setValue(group);
                                         GroupSelectionActivity.setGroup(group);
+
+                                        groupsRef.child(group).child("event").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                if(dataSnapshot.exists()){
+                                                    MapsActivity.changeFragment=true;
+                                                }
+                                                else{
+                                                    MapsActivity.changeFragment = false;
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
                                         addGroup(group, context);
                                     }
                                 }
@@ -166,6 +199,22 @@ public class DatabaseManager {
                 else {
                     usersRef.child(currentUser).child("group").setValue(group);
                     GroupSelectionActivity.setGroup(group);
+                    groupsRef.child(group).child("event").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                MapsActivity.changeFragment=true;
+                            }
+                            else{
+                                MapsActivity.changeFragment = false;
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     addGroup(group, context);
                 }
             }
