@@ -37,11 +37,11 @@ public class LocationVoteActivity extends AppCompatActivity {
         bSendVote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w){
-                DatabaseManager.computeNote(LocationVoteActivity.this, LoginActivity.getCurrentUser(), GroupSelectionActivity.getGroup(),rbLoc1, rbLoc2, rbLoc3);
-                Intent goToMap = new Intent(LocationVoteActivity.this, MapsActivity.class);
-                LocationVoteActivity.this.startActivity(goToMap);
-                finish();
 
+                DatabaseManager.computeNote(LocationVoteActivity.this, LoginActivity.getCurrentUser(), GroupSelectionActivity.getGroup(),rbLoc1, rbLoc2, rbLoc3);
+                //Intent goToMap = new Intent(LocationVoteActivity.this, MapsActivity.class);
+                //LocationVoteActivity.this.startActivity(goToMap);
+                finish();
             }
         });
 

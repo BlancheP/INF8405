@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-
+        android:visibility="invisible"
         android:text="TextView" />
 
     <TextView
@@ -40,7 +40,8 @@
         android:text="TextView"
         android:layout_below="@+id/tvDashLoc1"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="31dp" />
+        android:layout_marginTop="31dp"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/tvDashLoc3"
@@ -49,7 +50,8 @@
         android:layout_marginTop="80dp"
         android:text="TextView"
         android:layout_below="@+id/tvDashLoc1"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/locNote1"
@@ -57,7 +59,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tvDashLoc1"
         android:layout_alignBottom="@+id/tvDashLoc1"
-        android:text="2" />
+        android:text="2"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/locNote2"
@@ -65,7 +68,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvDashLoc2"
         android:layout_toRightOf="@+id/tvDashLoc2"
-        android:text="5" />
+        android:text="5"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/locNote3"
@@ -73,7 +77,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvDashLoc3"
         android:layout_toRightOf="@+id/tvDashLoc3"
-        android:text="5" />
+        android:text="5"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>

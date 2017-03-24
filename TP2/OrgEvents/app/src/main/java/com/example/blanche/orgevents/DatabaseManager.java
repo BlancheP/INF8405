@@ -270,7 +270,8 @@ public class DatabaseManager {
                                                             GroupSelectionActivity.getGroup(),
                                                             finalNewLocationName,
                                                             latLng.latitude,
-                                                            latLng.longitude);
+                                                            latLng.longitude,
+                                                            0);
                                                 }
                                             })
                                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -518,7 +519,8 @@ public class DatabaseManager {
     static void addLocationToCurrentGroup(String groupName,
                                           String locationName,
                                           double latitude,
-                                          double longitude) {
+                                          double longitude,
+                                          int note) {
 
         groupsRef.child(groupName)
                 .child("Locations")
@@ -532,7 +534,8 @@ public class DatabaseManager {
 
         groupsRef.child(groupName)
                 .child("Locations")
-                .child(locationName).child("Note").setValue(-1);
+                .child(locationName)
+                .child("Note").setValue(note);
     }
 
     static void getAllLocationsCurrentGroup(final String groupName){
@@ -689,7 +692,7 @@ public class DatabaseManager {
                             Long previousNote = (Long) dataSnapshot.child(groupName).child("Locations")
                                     .child(entry.getKey()).child("Note").getValue();
 
-                            if(previousNote == -1) {
+                            if(previousNote == 0) {
                                 if (counter == 0) {
                                     newNote =  (new Float (rbLoc1.getRating())).longValue();
                                 } else if (counter == 1) {
@@ -761,7 +764,7 @@ public class DatabaseManager {
         });
     }
 
-    static void getAllInfoForOrganizerDashboard(View view){
+    static void getAllInfoForOrganizerDashboard(final View view){
 
         final TextView tvDashLoc1 = (TextView) view.findViewById(R.id.tvDashLoc1);
         final TextView tvDashLoc2 = (TextView) view.findViewById(R.id.tvDashLoc2);
@@ -771,13 +774,14 @@ public class DatabaseManager {
         final TextView  locNote2 = (TextView) view.findViewById(R.id.locNote2);
         final TextView  locNote3 = (TextView) view.findViewById(R.id.locNote3);
 
-        groupsRef.addValueEventListener(new ValueEventListener() {
+
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> currentGroupLocations =
                         (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
 
-                if (currentGroupLocations != null) {
+                if (currentGroupLocations != null && MapsActivity.locationHashMapMarker.size() == 3) {
 
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
@@ -786,8 +790,16 @@ public class DatabaseManager {
                     }
 
                     locNote1.setText(" : " + locNotes.get(0));
+                    locNote1.setVisibility(TextView.VISIBLE);
                     locNote2.setText(" : " + locNotes.get(1));
+                    locNote2.setVisibility(TextView.VISIBLE);
                     locNote3.setText(" : " + locNotes.get(2));
+                    locNote3.setVisibility(TextView.VISIBLE);
+                }
+                else{
+                    locNote1.setText("");
+                    locNote2.setText("");
+                    locNote3.setText("");
                 }
             }
 
@@ -797,13 +809,13 @@ public class DatabaseManager {
             }
         });
 
-        groupsRef.addValueEventListener(new ValueEventListener() {
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> currentGroupLocations =
                         (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
 
-                if (currentGroupLocations != null) {
+                if (currentGroupLocations != null && MapsActivity.locationHashMapMarker.size() == 3) {
 
                     for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
 
@@ -812,9 +824,17 @@ public class DatabaseManager {
                     }
 
                     tvDashLoc1.setText(locationNames.get(0));
+                    tvDashLoc1.setVisibility(TextView.VISIBLE);
                     tvDashLoc2.setText(locationNames.get(1));
+                    tvDashLoc2.setVisibility(TextView.VISIBLE);
                     tvDashLoc3.setText(locationNames.get(2));
+                    tvDashLoc3.setVisibility(TextView.VISIBLE);
 
+                }
+                else{
+                    tvDashLoc1.setText("");
+                    tvDashLoc2.setText("");
+                    tvDashLoc3.setText("");
                 }
 
             }

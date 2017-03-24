@@ -54,6 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final String TAG = MapsActivity.class.getSimpleName();
 
     static final int PREFERENCES_CODE = 5;
+    static final int FRAGMENT_CODE = 7;
 
     public static GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -479,6 +480,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Intent restart = new Intent(getApplicationContext(), MapsActivity.class);
             finish();
             startActivity(restart);
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }
