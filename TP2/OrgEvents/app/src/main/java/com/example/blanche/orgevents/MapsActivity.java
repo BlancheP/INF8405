@@ -74,40 +74,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static HashMap<String,Marker> userHashMapMarker = new HashMap<>();
 
 
-    /*
-    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-        private final View mymarkerview;
-
-        CustomInfoWindowAdapter() {
-            mymarkerview = getLayoutInflater()
-                    .inflate(R.layout.custom_info_window_contents, null);
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            render(marker, mymarkerview);
-            return mymarkerview;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            return null;
-        }
-
-        private void render(Marker marker, View view) {
-            // Add the code to set the required values
-            // for each element in your custominfowindow layout file
-        }
-    }
-    */
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
-        //tvLocInfo = (TextView)findViewById(R.id.locinfo);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -120,8 +90,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-            //Toast.makeText(MapsActivity.this, "API CLIENT BUILT", Toast.LENGTH_SHORT).show();
-            //Log.d("MapsActivity", "API CLIENT BUILT");
         }
 
 
@@ -132,9 +100,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
                 .setInterval(PreferencesActivity.getFrequency() * 1000)        // 20 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
                 .setFastestInterval(PreferencesActivity.getFrequency() * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
-        //mMap.setInfoWindowAdapter(new MapsActivity());
-
-        //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, new OrganizerDashboardFragment());
@@ -146,7 +111,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
         mGoogleApiClient.connect();
-        //Toast.makeText(MapsActivity.this, "API CLIENT CONNECTED", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -155,7 +119,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
-            //Toast.makeText(MapsActivity.this, "API CLIENT DISCONNECTED", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -179,9 +142,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMapLongClickListener(this);
 
         DatabaseManager.getAllLocationsCurrentGroup(GroupSelectionActivity.getGroup());
-
-        //Toast.makeText(MapsActivity.this, "onMapReady() CALLED", Toast.LENGTH_SHORT).show();
-        //Log.d("MapsActivity", "onMapReady called()");
     }
 
 
@@ -208,7 +168,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (mLastLocation == null) {
 
-                //Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
             else {
@@ -216,28 +175,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
         }
-
-
-        /*
-        int permissionCheck = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_CODE_ASK_PERMISSIONS);
-            return;
-        }
-        else {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-            if (mLastLocation == null) {
-
-                Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            } else {
-                zoomToThisLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            }
-        }
-        */
 
     }
 
@@ -258,35 +195,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
         }
     }
-
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-                    if (mLastLocation == null) {
-
-                        Toast.makeText(MapsActivity.this, "mLastLocation is null", Toast.LENGTH_SHORT).show();
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    } else {
-                        zoomToThisLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    }
-                } else {
-                    // Permission Denied
-                    Toast.makeText(MapsActivity.this, "FINE_LOCATION Denied", Toast.LENGTH_SHORT)
-                            .show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-    */
 
     private void showExplanation(String title,
                                  String message,
@@ -349,7 +257,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             else {
                 mMap.setMyLocationEnabled(true);
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), MAX_ZOOM_LEVEL));
-                //mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Marker of my current position"));
             }
 
         }
@@ -420,22 +327,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return false;
     }
-
-    /*
-
-    //permet de fournir une vue qui peut être utilisée pour l'intégralité de la fenêtre d'info
-    @Override
-    public View getInfoWindow(Marker marker) {
-        return null;
-    }
-
-    //permet uniquement de personnaliser le contenu de la fenêtre mais conserve le cadre et
-    //l'arrière-plan de la fenêtre d'info par défaut.
-    @Override
-    public View getInfoContents(Marker marker) {
-        return null;
-    }
-*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

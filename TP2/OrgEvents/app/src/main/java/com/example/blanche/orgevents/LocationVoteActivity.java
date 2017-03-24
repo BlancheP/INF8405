@@ -39,8 +39,6 @@ public class LocationVoteActivity extends AppCompatActivity {
             public void onClick(View w){
 
                 DatabaseManager.computeNote(LocationVoteActivity.this, LoginActivity.getCurrentUser(), GroupSelectionActivity.getGroup(),rbLoc1, rbLoc2, rbLoc3);
-                //Intent goToMap = new Intent(LocationVoteActivity.this, MapsActivity.class);
-                //LocationVoteActivity.this.startActivity(goToMap);
                 finish();
             }
         });

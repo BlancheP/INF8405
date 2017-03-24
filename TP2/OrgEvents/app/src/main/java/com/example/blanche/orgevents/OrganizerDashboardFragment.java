@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 public class OrganizerDashboardFragment extends Fragment {
 
-    //static View view;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -36,7 +34,6 @@ public class OrganizerDashboardFragment extends Fragment {
             @Override
             public void onClick(View w){
                 if(MapsActivity.locationHashMapMarker.size() == 3) {
-                    //DatabaseManager.getAllInfoForOrganizerDashboard(view);
                     Intent goToVote = new Intent(getActivity(), LocationVoteActivity.class);
                     startActivityForResult(goToVote, 7);
                 }
