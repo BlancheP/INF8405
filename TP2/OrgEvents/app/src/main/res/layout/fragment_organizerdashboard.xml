@@ -8,27 +8,21 @@
         android:id="@+id/bCreateEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="283dp"
         android:text="Create event"
-        android:layout_marginEnd="147dp"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/bVote" />
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="41dp"
+        android:layout_below="@+id/locNote3"
+        android:layout_toEndOf="@+id/locNote3" />
 
     <Button
         android:id="@+id/bVote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Vote"
-        android:layout_marginEnd="231dp"
-        android:layout_alignTop="@+id/bCreateEvent"
-        android:layout_alignParentEnd="true" />
-
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/map_frag"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="54dp"
-        android:layout_below="@+id/bVote" />
+        android:layout_marginStart="61dp"
+        android:layout_alignBaseline="@+id/bCreateEvent"
+        android:layout_alignBottom="@+id/bCreateEvent"
+        android:layout_toEndOf="@+id/bCreateEvent" />
 
     <TextView
         android:id="@+id/tvDashLoc1"
@@ -44,17 +38,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:layout_alignBottom="@+id/bMap"
-        android:layout_alignStart="@+id/tvDashLoc1" />
+        android:layout_below="@+id/tvDashLoc1"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="31dp" />
 
     <TextView
         android:id="@+id/tvDashLoc3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/tvDashLoc2"
-        android:layout_below="@+id/tvDashLoc2"
-        android:layout_marginTop="14dp"
-        android:text="TextView" />
+        android:layout_marginTop="80dp"
+        android:text="TextView"
+        android:layout_below="@+id/tvDashLoc1"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/locNote1"
@@ -79,5 +74,6 @@
         android:layout_alignBottom="@+id/tvDashLoc3"
         android:layout_toRightOf="@+id/tvDashLoc3"
         android:text="5" />
+
 
 </RelativeLayout>

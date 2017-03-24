@@ -701,6 +701,71 @@ public class DatabaseManager {
         });
     }
 
+    static void getAllInfoForOrganizerDashboard(View view){
+
+        final TextView tvDashLoc1 = (TextView) view.findViewById(R.id.tvDashLoc1);
+        final TextView tvDashLoc2 = (TextView) view.findViewById(R.id.tvDashLoc2);
+        final TextView tvDashLoc3 = (TextView) view.findViewById(R.id.tvDashLoc3);
+
+        final TextView  locNote1 = (TextView) view.findViewById(R.id.locNote1);
+        final TextView  locNote2 = (TextView) view.findViewById(R.id.locNote2);
+        final TextView  locNote3 = (TextView) view.findViewById(R.id.locNote3);
+
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        locNotes.add(dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations")
+                                .child(entry.getKey()).child("Note").getValue().toString());
+                    }
+
+                    locNote1.setText(" : " + locNotes.get(0));
+                    locNote2.setText(" : " + locNotes.get(1));
+                    locNote3.setText(" : " + locNotes.get(2));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> currentGroupLocations =
+                        (Map<String, Object>) dataSnapshot.child(GroupSelectionActivity.getGroup()).child("Locations").getValue();
+
+                if (currentGroupLocations != null) {
+
+                    for (Map.Entry<String, Object> entry : currentGroupLocations.entrySet()) {
+
+                        LocationVoteActivity.locationsName.add(entry.getKey());
+                        locationNames.add(entry.getKey());
+                    }
+
+                    tvDashLoc1.setText(locationNames.get(0));
+                    tvDashLoc2.setText(locationNames.get(1));
+                    tvDashLoc3.setText(locationNames.get(2));
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static void isGoing() {
         groupsRef.child(GroupSelectionActivity.getGroup())
                 .child("event").child("participants")

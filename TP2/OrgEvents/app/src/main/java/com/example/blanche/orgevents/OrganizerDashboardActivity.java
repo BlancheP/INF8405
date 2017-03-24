@@ -23,6 +23,7 @@ import com.google.android.gms.maps.MapFragment;
 public class OrganizerDashboardActivity extends AppCompatActivity{
 
 
+    /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,5 +65,6 @@ public class OrganizerDashboardActivity extends AppCompatActivity{
             }
         });
     }
+    */
 
 }
