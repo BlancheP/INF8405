@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -197,20 +198,15 @@ public class DatabaseManager {
         });
     }
     //Fonction qui verifie si un utilisateur est le manager de son groupe et change l'activite pour qu'elle corresponde a la bonne.
-    static void chooseManagerActivity(final Context context) {
+    static void setupDashboard(final View view) {
         String group = GroupSelectionActivity.getGroup();
         groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
                 if(dataSnapshot.exists()){
                     String user = (String) dataSnapshot.getValue();
-                    if(user.equals(LoginActivity.getCurrentUser())){
-                        Intent goToManagerDash = new Intent(context, OrganizerDashboardActivity.class);
-                        context.startActivity(goToManagerDash);
-                    }
-                    else{
-                        Intent goToMain = new Intent(context, MapsActivity.class);
-                        context.startActivity(goToMain);
+                    if(!user.equals(LoginActivity.getCurrentUser())){
+                        view.findViewById(R.id.bCreateEvent).setVisibility(Button.GONE);
                     }
                 }
             }

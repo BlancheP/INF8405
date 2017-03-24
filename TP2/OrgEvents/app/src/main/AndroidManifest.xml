@@ -41,20 +41,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="Main"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".RegisterActivity"
             android:label="Register"
             android:screenOrientation="portrait" />
         <activity
             android:name=".GroupSelectionActivity"
             android:label="Group Selection"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".OrganizerDashboardActivity"
-            android:label="Dashboard"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MapsActivity"
