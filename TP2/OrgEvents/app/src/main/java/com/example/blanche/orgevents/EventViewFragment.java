@@ -68,6 +68,7 @@ public class EventViewFragment extends Fragment {
                 bGoing.setTextColor(Color.BLACK);
                 bNotGoing.setTextColor(Color.BLACK);
                 bMaybeGoing.setTextColor(Color.BLUE);
+                addEventToCalendar(v);
             }
         });
 
