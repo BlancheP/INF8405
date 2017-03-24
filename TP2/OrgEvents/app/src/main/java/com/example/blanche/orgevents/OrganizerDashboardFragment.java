@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by alain.trandang on 2017-03-23.
@@ -49,7 +50,24 @@ public class OrganizerDashboardFragment extends Fragment {
             }
         });
 
+        bCreateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View w) {
+
+                if (MapsActivity.locationHashMapMarker.size() == 3) {
+                    Intent goToEventCreation = new Intent(getActivity(), EventCreationActivity.class);
+                    OrganizerDashboardFragment.this.startActivity(goToEventCreation);
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "Please enter 3 locations before creating an event", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         DatabaseManager.getAllInfoForOrganizerDashboard(view);
         return view;
     }
+
+
 }
