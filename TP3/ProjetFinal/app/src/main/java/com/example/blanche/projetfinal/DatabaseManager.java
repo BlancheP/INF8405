@@ -3,9 +3,13 @@ package com.example.blanche.projetfinal;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,7 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +48,8 @@ public class DatabaseManager {
                     DatabaseManager.addUserToBD(etUsername.getText().toString(),
                             password);
                     DatabaseManager.addPhotoToBD(etUsername.getText().toString(), profilePicture);
-                    Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
-                    context.startActivity(goToGroupSelection);
+                    //Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
+                    //context.startActivity(goToGroupSelection);
                     Toast done = Toast.makeText(appContext, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
                 }
@@ -75,8 +81,8 @@ public class DatabaseManager {
                         String pwd = (String) dataSnapshot.getValue();
                         if (pwd.equals(password)) {
                             LoginActivity.setCurrentUser(username);
-                            Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
-                            context.startActivity(goToGroupSelection);
+                            //Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
+                            //context.startActivity(goToGroupSelection);
                             return;
                         }
                     }
@@ -89,5 +95,24 @@ public class DatabaseManager {
                 }
             });
         }
+    }
+
+    // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
+    static void addPhotoToBD(String username, Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask task = storageRef.child(username).putBytes(data);
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Photo","Failure");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("Photo","success");
+            }
+        });
     }
 }
