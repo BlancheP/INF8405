@@ -29,6 +29,7 @@ public class DatabaseManager {
     private static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
+    private static PreferencesManager pm;
 
     private DatabaseManager() {}
 
@@ -43,7 +44,7 @@ public class DatabaseManager {
                     Toast done = Toast.makeText(context, "Some fields are invalid! Please try again", Toast.LENGTH_SHORT);
                     done.show();
                 } else {
-                    LoginActivity.setCurrentUser(username);
+                    pm.updateCurrentUser(username, password);
                     usersRef.child(username).child("password").setValue(password);
                     DatabaseManager.addPhotoToBD(username, profilePicture);
                     Intent goToDashboard = new Intent(context, MainActivity.class);
@@ -81,20 +82,30 @@ public class DatabaseManager {
         });
     }
 
+    static void userIsValid(String username, String password, Context context) {
+        userIsValid(username, password, context, false);
+    }
+
     // Fonction qui verifie les infos du login
-    static void userIsValid(final String username, final String password, final Context context) {
+    static void userIsValid(final String username, final String password, final Context context, final boolean isUserFromPreferences) {
         usersRef.child(username).child("password").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String pwd = (String) dataSnapshot.getValue();
                     if (pwd.equals(password)) {
-                        LoginActivity.setCurrentUser(username);
+                        pm.updateCurrentUser(username, password);
                         Intent goToDashboard = new Intent(context, MainActivity.class);
                         context.startActivity(goToDashboard);
                         ((Activity)context).finish();
                         return;
                     }
+                }
+                if (isUserFromPreferences){
+                    Intent goToLogin = new Intent(context, LoginActivity.class);
+                    context.startActivity(goToLogin);
+                    ((Activity)context).finish();
+                    return;
                 }
                 Toast error = Toast.makeText(context, "The username or password do not match any existing user!", Toast.LENGTH_SHORT);
                 error.show();
@@ -103,5 +114,13 @@ public class DatabaseManager {
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
+    }
+
+    static void setPreferencesManager(Context context) {
+        pm = new PreferencesManager(context);
+    }
+
+    static PreferencesManager getPreferencesManager() {
+        return pm;
     }
 }
