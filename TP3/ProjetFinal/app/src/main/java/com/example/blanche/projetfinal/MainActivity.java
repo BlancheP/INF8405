@@ -15,18 +15,19 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    Toast t = Toast.makeText(getApplicationContext(),"Home", Toast.LENGTH_SHORT);
-                    t.show();
+                case R.id.navigation_dashboard:
+                    fragmentTransaction.replace(R.id.fragment_container, new DashboardFragment());
+                    fragmentTransaction.commit();
                     return true;
-                case R.id.navigation_profile:
-                    Toast r = Toast.makeText(getApplicationContext(),"Profile", Toast.LENGTH_SHORT);
-                    r.show();
+                case R.id.navigation_home:
+                    fragmentTransaction.replace(R.id.fragment_container, new HomeFragment());
+                    fragmentTransaction.commit();
                     return true;
                 case R.id.navigation_map:
-                    Toast b = Toast.makeText(getApplicationContext(),"Map", Toast.LENGTH_SHORT);
-                    b.show();
+                    fragmentTransaction.replace(R.id.fragment_container, new MapFragment());
+                    fragmentTransaction.commit();
                     return true;
             }
             return false;
@@ -43,7 +44,7 @@ public class MainActivity extends FragmentActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new LoginActivity());
+        fragmentTransaction.replace(R.id.fragment_container, new DashboardFragment());
         fragmentTransaction.commit();
     }
 }

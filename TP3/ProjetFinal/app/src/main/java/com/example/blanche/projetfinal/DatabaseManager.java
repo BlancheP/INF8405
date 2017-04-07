@@ -1,5 +1,6 @@
 package com.example.blanche.projetfinal;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -49,6 +50,7 @@ public class DatabaseManager {
                     context.startActivity(goToDashboard);
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
+                    ((Activity)context).finishAffinity();
                 }
             }
 
@@ -90,6 +92,7 @@ public class DatabaseManager {
                         LoginActivity.setCurrentUser(username);
                         Intent goToDashboard = new Intent(context, MainActivity.class);
                         context.startActivity(goToDashboard);
+                        ((Activity)context).finish();
                         return;
                     }
                 }
