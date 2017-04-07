@@ -20,8 +20,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class DatabaseManager {
