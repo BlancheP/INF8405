@@ -31,77 +31,42 @@ public class DatabaseManager {
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
 
-    private DatabaseManager() {
-    }
+    private DatabaseManager() {}
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
-    static void addUser(final String password, final EditText etUsername, final Context context, final Context appContext, final Bitmap profilePicture) {
-        usersRef.child(etUsername.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+    static void addUser(final String password, final EditText etUsername, final Context context, final Bitmap profilePicture) {
+        final String username = etUsername.getText().toString();
+        usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     etUsername.setError("A user with the same username already exists!");
-                    Toast done = Toast.makeText(appContext, "Some fields are invalid!", Toast.LENGTH_SHORT);
+                    Toast done = Toast.makeText(context, "Some fields are invalid! Please try again", Toast.LENGTH_SHORT);
                     done.show();
                 } else {
-                    LoginActivity.setCurrentUser(etUsername.getText().toString());
-                    DatabaseManager.addUserToBD(etUsername.getText().toString(),
-                            password);
-                    DatabaseManager.addPhotoToBD(etUsername.getText().toString(), profilePicture);
-                    //Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
-                    //context.startActivity(goToGroupSelection);
-                    Toast done = Toast.makeText(appContext, "You have been successfully registered!", Toast.LENGTH_SHORT);
+                    LoginActivity.setCurrentUser(username);
+                    usersRef.child(username).child("password").setValue(password);
+                    DatabaseManager.addPhotoToBD(username, profilePicture);
+                    Intent goToDashboard = new Intent(context, MainActivity.class);
+                    context.startActivity(goToDashboard);
+                    Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast done = Toast.makeText(context, "Error while connecting to the database" + databaseError, Toast.LENGTH_SHORT);
+                done.show();
             }
         });
     }
 
-
-    // Fonction pour ajouter un user a la base de donnee
-    static void addUserToBD(String userName, String password) {
-        usersRef.child(userName)
-                .child("password")
-                .setValue(password);
-    }
-
-    // Fonction qui verifie les infos du login
-    static void userIsValid(final String username, final String password, final Context context) {
-        DatabaseReference user = usersRef.child(username);
-        if (user.getRoot() != null) {
-            user.child("password").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String pwd = (String) dataSnapshot.getValue();
-                        if (pwd.equals(password)) {
-                            LoginActivity.setCurrentUser(username);
-                            //Intent goToGroupSelection = new Intent(context, GroupSelectionActivity.class);
-                            //context.startActivity(goToGroupSelection);
-                            return;
-                        }
-                    }
-                    Toast error = Toast.makeText(context, "The username or password do not match any existing user!", Toast.LENGTH_SHORT);
-                    error.show();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-        }
-    }
-
     // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
     static void addPhotoToBD(String username, Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
+        byte[] data = b.toByteArray();
         UploadTask task = storageRef.child(username).putBytes(data);
         task.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -113,6 +78,29 @@ public class DatabaseManager {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d("Photo","success");
             }
+        });
+    }
+
+    // Fonction qui verifie les infos du login
+    static void userIsValid(final String username, final String password, final Context context) {
+        usersRef.child(username).child("password").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String pwd = (String) dataSnapshot.getValue();
+                    if (pwd.equals(password)) {
+                        LoginActivity.setCurrentUser(username);
+                        Intent goToDashboard = new Intent(context, MainActivity.class);
+                        context.startActivity(goToDashboard);
+                        return;
+                    }
+                }
+                Toast error = Toast.makeText(context, "The username or password do not match any existing user!", Toast.LENGTH_SHORT);
+                error.show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 }

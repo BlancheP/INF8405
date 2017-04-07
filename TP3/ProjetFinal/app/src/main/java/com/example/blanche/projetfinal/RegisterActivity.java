@@ -49,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
                     profilPicture.show();
                 }
                 else {
-                    DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, getApplicationContext(), ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
+                    DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
                 }
             }
         });
