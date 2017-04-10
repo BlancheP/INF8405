@@ -2,9 +2,12 @@ package com.example.blanche.projetfinal;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -122,5 +125,30 @@ public class DatabaseManager {
 
     static PreferencesManager getPreferencesManager() {
         return pm;
+    }
+
+    static void showExplanation(String title,
+                                 String message,
+                                 final String permission,
+                                 final int permissionRequestCode,
+                                 final Activity activity)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int id) {
+                        requestPermission(permission, permissionRequestCode, activity);
+                    }
+                });
+
+        builder.create().show();
+    }
+
+    static void requestPermission(String permissionName, int permissionRequestCode, Activity activity) {
+        ActivityCompat.requestPermissions(activity,
+                new String[]{permissionName}, permissionRequestCode);
     }
 }

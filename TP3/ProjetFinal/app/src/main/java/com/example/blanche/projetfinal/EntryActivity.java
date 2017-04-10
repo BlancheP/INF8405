@@ -12,7 +12,7 @@ public class EntryActivity extends Activity {
 
         DatabaseManager.setPreferencesManager(getApplicationContext());
         PreferencesManager pm = DatabaseManager.getPreferencesManager();
-        if (!pm.getCurrentUser().equals("")) {
+        if (pm.getCurrentUser() != null && !pm.getCurrentUser().equals("")) {
             DatabaseManager.userIsValid(pm.getCurrentUser(), pm.getCurrentPassword(), this, true);
         }
         else {

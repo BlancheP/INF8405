@@ -1,11 +1,15 @@
 package com.example.blanche.projetfinal;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.health.PackageHealthStats;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +20,8 @@ import android.widget.Toast;
 public class RegisterActivity extends AppCompatActivity {
 
     private Bitmap bitmap;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,21 @@ public class RegisterActivity extends AppCompatActivity {
         bPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w) {
-                dispatchTakePictureIntent();
+
+                int permissionCheck = ContextCompat.checkSelfPermission(RegisterActivity.this, android.Manifest.permission.CAMERA);
+
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(RegisterActivity.this, android.Manifest.permission.CAMERA)) {
+                        DatabaseManager.showExplanation("Permission Needed", "Rationale", android.Manifest.permission.ACCESS_FINE_LOCATION, MY_CAMERA_REQUEST_CODE, RegisterActivity.this);
+                    }
+                    else {
+                        DatabaseManager.requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, MY_CAMERA_REQUEST_CODE, RegisterActivity.this);
+                    }
+                }
+                else {
+                    dispatchTakePictureIntent();
+                }
             }
         });
 
