@@ -6,4 +6,8 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_map">Map</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="storeUserInfo">Store user information on device</string>
+    <string name="storeUserInfoMessage">Do you want to store your user information on your device for future login ?</string>
 </resources>

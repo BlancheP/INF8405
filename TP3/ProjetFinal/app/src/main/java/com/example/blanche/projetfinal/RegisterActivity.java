@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View w) {
 
-                int permissionCheck = ContextCompat.checkSelfPermission(RegisterActivity.this, android.Manifest.permission.CAMERA);
+                /*int permissionCheck = ContextCompat.checkSelfPermission(RegisterActivity.this, android.Manifest.permission.CAMERA);
 
                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
 
@@ -51,9 +51,9 @@ public class RegisterActivity extends AppCompatActivity {
                         DatabaseManager.requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, MY_CAMERA_REQUEST_CODE, RegisterActivity.this);
                     }
                 }
-                else {
+                else {*/
                     dispatchTakePictureIntent();
-                }
+                //}
             }
         });
 

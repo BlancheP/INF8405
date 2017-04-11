@@ -47,14 +47,11 @@ public class DatabaseManager {
                     Toast done = Toast.makeText(context, "Some fields are invalid! Please try again", Toast.LENGTH_SHORT);
                     done.show();
                 } else {
-                    pm.updateCurrentUser(username, password);
                     usersRef.child(username).child("password").setValue(password);
                     DatabaseManager.addPhotoToBD(username, profilePicture);
-                    Intent goToDashboard = new Intent(context, MainActivity.class);
-                    context.startActivity(goToDashboard);
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
-                    ((Activity)context).finishAffinity();
+                    storeDataInfo(username, password, (Activity)context);
                 }
             }
 
@@ -97,10 +94,14 @@ public class DatabaseManager {
                 if (dataSnapshot.exists()) {
                     String pwd = (String) dataSnapshot.getValue();
                     if (pwd.equals(password)) {
-                        pm.updateCurrentUser(username, password);
-                        Intent goToDashboard = new Intent(context, MainActivity.class);
-                        context.startActivity(goToDashboard);
-                        ((Activity)context).finish();
+                        if (isUserFromPreferences){
+                            Intent goToDashboard = new Intent(context, MainActivity.class);
+                            context.startActivity(goToDashboard);
+                            ((Activity)context).finishAffinity();
+                        }
+                        else {
+                            storeDataInfo(username, password, (Activity) context);
+                        }
                         return;
                     }
                 }
@@ -150,5 +151,26 @@ public class DatabaseManager {
     static void requestPermission(String permissionName, int permissionRequestCode, Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[]{permissionName}, permissionRequestCode);
+    }
+
+    static void storeDataInfo(final String username, final String password, final Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.storeUserInfo).setMessage(R.string.storeUserInfoMessage);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                pm.updateCurrentUser(username, password);
+                Intent goToDashboard = new Intent(activity, MainActivity.class);
+                activity.startActivity(goToDashboard);
+                activity.finishAffinity();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Intent goToDashboard = new Intent(activity, MainActivity.class);
+                activity.startActivity(goToDashboard);
+                activity.finishAffinity();
+            }
+        });
+        builder.create().show();
     }
 }
