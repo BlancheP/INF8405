@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -22,8 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+
 
 
 public class DatabaseManager {
@@ -33,6 +37,10 @@ public class DatabaseManager {
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
     private static PreferencesManager pm;
+
+
+    final static long ONE_MEGABYTE = 1024 * 1024;
+
 
     private DatabaseManager() {}
 
@@ -48,7 +56,7 @@ public class DatabaseManager {
                     done.show();
                 } else {
                     usersRef.child(username).child("password").setValue(password);
-                    DatabaseManager.addPhotoToBD(username, profilePicture);
+                    DatabaseManager.addProfilePhotoToBD(username, profilePicture);
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
                     storeDataInfo(username, password, (Activity)context);
@@ -64,11 +72,11 @@ public class DatabaseManager {
     }
 
     // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
-    static void addPhotoToBD(String username, Bitmap bitmap) {
+    static void addProfilePhotoToBD(String username, Bitmap bitmap) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
         byte[] data = b.toByteArray();
-        UploadTask task = storageRef.child(username).putBytes(data);
+        UploadTask task = storageRef.child(username + "/profile").putBytes(data);
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -172,5 +180,23 @@ public class DatabaseManager {
             }
         });
         builder.create().show();
+    }
+
+    static void loadProfilePhoto( final Context context) {
+        String username = pm.getCurrentUser();
+        storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(context)
+                        .load(uri)
+                        .into((ImageView) ((Activity) context).findViewById(R.id.ivProfilePic));
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+            }
+        });
     }
 }
