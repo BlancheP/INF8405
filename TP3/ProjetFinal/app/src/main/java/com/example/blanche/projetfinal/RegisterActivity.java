@@ -1,5 +1,7 @@
 package com.example.blanche.projetfinal;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -39,37 +41,44 @@ public class RegisterActivity extends AppCompatActivity {
         bPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w) {
-
-                /*int permissionCheck = ContextCompat.checkSelfPermission(RegisterActivity.this, android.Manifest.permission.CAMERA);
-
-                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(RegisterActivity.this, android.Manifest.permission.CAMERA)) {
-                        DatabaseManager.showExplanation("Permission Needed", "Rationale", android.Manifest.permission.ACCESS_FINE_LOCATION, MY_CAMERA_REQUEST_CODE, RegisterActivity.this);
-                    }
-                    else {
-                        DatabaseManager.requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, MY_CAMERA_REQUEST_CODE, RegisterActivity.this);
-                    }
-                }
-                else {*/
+                if (checkIfAlreadyHavePermission())
                     dispatchTakePictureIntent();
-                //}
+                else
+                    requestForSpecificPermission();
             }
         });
 
         bRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View w) {
-                Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-                if (bitmap.sameAs(emptyBitmap)) {
-                    Toast profilPicture = Toast.makeText(getApplicationContext(), "You must take a profile picture.", Toast.LENGTH_SHORT);
-                    profilPicture.show();
-                }
-                else {
-                    DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
-                }
+                DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
             }
         });
+    }
+
+    private boolean checkIfAlreadyHavePermission() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestForSpecificPermission() {
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_CAMERA_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    dispatchTakePictureIntent();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void dispatchTakePictureIntent() {
