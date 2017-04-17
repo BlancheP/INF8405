@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Final Project</string>
+    <string name="app_name">Instakilo</string>
     <string name="title_activity_main"></string>
     <string name="title_activity_login">Login</string>
     <string name="title_activity_register">Register</string>
