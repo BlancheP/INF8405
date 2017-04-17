@@ -33,10 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         bPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w) {
-                if (CameraManager.checkIfAlreadyHavePermission(RegisterActivity.this))
-                    CameraManager.dispatchTakePictureIntent(RegisterActivity.this);
-                else
-                    CameraManager.requestForSpecificPermission(RegisterActivity.this, MY_CAMERA_REQUEST_CODE);
+                CameraManager.dispatchTakePictureIntent(RegisterActivity.this, MY_CAMERA_REQUEST_CODE);
             }
         });
 
@@ -55,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
         switch (requestCode) {
             case MY_CAMERA_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    CameraManager.dispatchTakePictureIntent(this);
+                    CameraManager.dispatchTakePictureIntent(this, MY_CAMERA_REQUEST_CODE);
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);

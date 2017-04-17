@@ -26,11 +26,17 @@ public class CameraManager {
         ActivityCompat.requestPermissions(activity, new String[] {android.Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
     }
 
-    public static void dispatchTakePictureIntent(Activity activity) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-            activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    public static void dispatchTakePictureIntent(Activity activity, int code) {
+
+        if (checkIfAlreadyHavePermission(activity))
+        {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
+                activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
+        else
+            requestForSpecificPermission(activity, code);
     }
 
     public static int getRequestImageCapture() {

@@ -2,6 +2,7 @@ package com.example.blanche.projetfinal;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.audiofx.BassBoost;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -101,10 +103,41 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case MY_CAMERA_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    CameraManager.dispatchTakePictureIntent(this);
+                    CameraManager.dispatchTakePictureIntent(this, MY_CAMERA_REQUEST_CODE);
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CameraManager.getRequestImageCapture() && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            ImageView iv = (ImageView) findViewById(R.id.targetimage);
+            iv.setVisibility(ImageView.VISIBLE);
+            iv.setImageBitmap(bitmap);
+            Button b = (Button)findViewById(R.id.takephoto);
+            b.setVisibility(Button.GONE);
+            Button c = (Button)findViewById(R.id.cancelphoto);
+            c.setVisibility(Button.VISIBLE);
+            Button t = (Button)findViewById(R.id.loadphoto);
+            t.setVisibility(Button.GONE);
+            Button n = (Button)findViewById(R.id.next);
+            n.setVisibility(Button.VISIBLE);
+        }
+        else if (resultCode == RESULT_OK){
+            /*Uri targetUri = data.getData();
+            textTargetUri.setText(targetUri.toString());
+            Bitmap bitmap;
+            try {
+                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
+                targetImage.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }*/
         }
     }
 }
