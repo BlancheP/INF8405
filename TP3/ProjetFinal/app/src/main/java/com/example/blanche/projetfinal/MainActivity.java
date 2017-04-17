@@ -1,6 +1,7 @@
 package com.example.blanche.projetfinal;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.audiofx.BassBoost;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final int MY_CAMERA_REQUEST_CODE = 101;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -90,6 +93,18 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_CAMERA_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    CameraManager.dispatchTakePictureIntent(this);
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }
