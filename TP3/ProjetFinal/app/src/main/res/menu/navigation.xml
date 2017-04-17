@@ -12,18 +12,8 @@
         android:title="@string/title_profile" />
 
     <item
-        android:id="@+id/navigation_camera"
-        android:icon="@mipmap/ic_camera_black"
-        android:title="@string/title_camera"/>
-
-    <item
         android:id="@+id/navigation_map"
         android:icon="@mipmap/ic_map_black"
         android:title="@string/title_map" />
-
-    <item
-        android:id="@+id/navigation_settings"
-        android:icon="@mipmap/ic_settings_black"
-        android:title="@string/title_settings"/>
 
 </menu>
