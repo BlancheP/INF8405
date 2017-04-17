@@ -17,17 +17,19 @@ public class MainActivity extends FragmentActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             switch (item.getItemId()) {
-                case R.id.navigation_dashboard:
+                case R.id.navigation_home:
                     fragmentTransaction.replace(R.id.fragment_container, new DashboardFragment());
                     fragmentTransaction.commit();
                     return true;
-                case R.id.navigation_home:
+                case R.id.navigation_profile:
                     fragmentTransaction.replace(R.id.fragment_container, new HomeFragment());
                     fragmentTransaction.commit();
                     return true;
                 case R.id.navigation_map:
                     fragmentTransaction.replace(R.id.fragment_container, new MapFragment());
                     fragmentTransaction.commit();
+                    return true;
+                case R.id.navigation_settings:
                     return true;
             }
             return false;
