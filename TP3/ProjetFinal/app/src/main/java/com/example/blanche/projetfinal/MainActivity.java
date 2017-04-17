@@ -22,9 +22,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -150,10 +155,13 @@ public class MainActivity extends AppCompatActivity {
         bitmap = resize(bitmap, iv);
         iv.setImageBitmap(bitmap);
         iv.setVisibility(Button.VISIBLE);
-        findViewById(R.id.takephoto).setVisibility(Button.GONE);;
-        findViewById(R.id.cancelphoto).setVisibility(Button.VISIBLE);
+        findViewById(R.id.takephoto).setVisibility(Button.GONE);
         findViewById(R.id.loadphoto).setVisibility(Button.GONE);
-        findViewById(R.id.next).setVisibility(Button.VISIBLE);
+        findViewById(R.id.layout_upload).setVisibility(View.VISIBLE);
+        TextView tv = (TextView) findViewById(R.id.tvDate);
+        DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+        tv.setText(date);
     }
 
     private Bitmap resize(Bitmap image, ImageView iv) {

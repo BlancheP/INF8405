@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 public class AddPhotoFragment extends Fragment {
@@ -26,7 +28,8 @@ public class AddPhotoFragment extends Fragment {
         final Button buttonLoadPhoto = (Button)view.findViewById(R.id.loadphoto);
         final Button buttonTakePhoto = (Button)view.findViewById(R.id.takephoto);
         final Button buttonCancelPhoto = (Button)view.findViewById(R.id.cancelphoto);
-        final Button buttonNext = (Button)view.findViewById(R.id.next);
+        final LinearLayout l = (LinearLayout) view.findViewById(R.id.layout_upload);
+        l.setVisibility(View.GONE);
 
         buttonLoadPhoto.setOnClickListener(new Button.OnClickListener(){
 
@@ -45,18 +48,11 @@ public class AddPhotoFragment extends Fragment {
         buttonCancelPhoto.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonCancelPhoto.setVisibility(Button.GONE);
-                buttonNext.setVisibility(Button.GONE);
                 buttonTakePhoto.setVisibility(Button.VISIBLE);
                 buttonLoadPhoto.setVisibility(Button.VISIBLE);
                 ImageView iv = (ImageView)getView().findViewById(R.id.targetimage);
                 iv.setVisibility(ImageView.GONE);
-            }
-        });
-
-        buttonNext.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                getView().findViewById(R.id.layout_upload).setVisibility(View.GONE);
             }
         });
 
