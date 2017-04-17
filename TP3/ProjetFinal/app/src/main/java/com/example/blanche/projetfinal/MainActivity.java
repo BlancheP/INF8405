@@ -3,7 +3,11 @@ package com.example.blanche.projetfinal;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.media.audiofx.BassBoost;
+import android.net.Uri;
+import android.opengl.GLES10;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -11,6 +15,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,9 +23,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
+
+import javax.microedition.khronos.opengles.GL10;
+
 public class MainActivity extends AppCompatActivity {
 
     private final int MY_CAMERA_REQUEST_CODE = 101;
+    private final int MY_PHOTOLIBRARY_REQUEST_CODE = 201;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -105,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     CameraManager.dispatchTakePictureIntent(this, MY_CAMERA_REQUEST_CODE);
                 break;
+            case MY_PHOTOLIBRARY_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    CameraManager.accessPhotoLibrary(this, MY_PHOTOLIBRARY_REQUEST_CODE);
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -116,28 +130,46 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == CameraManager.getRequestImageCapture() && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
-            ImageView iv = (ImageView) findViewById(R.id.targetimage);
-            iv.setVisibility(ImageView.VISIBLE);
-            iv.setImageBitmap(bitmap);
-            Button b = (Button)findViewById(R.id.takephoto);
-            b.setVisibility(Button.GONE);
-            Button c = (Button)findViewById(R.id.cancelphoto);
-            c.setVisibility(Button.VISIBLE);
-            Button t = (Button)findViewById(R.id.loadphoto);
-            t.setVisibility(Button.GONE);
-            Button n = (Button)findViewById(R.id.next);
-            n.setVisibility(Button.VISIBLE);
+            setImageView(bitmap);
         }
         else if (resultCode == RESULT_OK){
-            /*Uri targetUri = data.getData();
-            textTargetUri.setText(targetUri.toString());
+            Uri targetUri = data.getData();
             Bitmap bitmap;
             try {
-                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
-                targetImage.setImageBitmap(bitmap);
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
+                setImageView(bitmap);
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            }*/
+            }
         }
+    }
+
+    public void setImageView(Bitmap bitmap) {
+        ImageView iv = (ImageView)findViewById(R.id.targetimage);
+        bitmap = resize(bitmap, iv);
+        iv.setImageBitmap(bitmap);
+        iv.setVisibility(Button.VISIBLE);
+        findViewById(R.id.takephoto).setVisibility(Button.GONE);;
+        findViewById(R.id.cancelphoto).setVisibility(Button.VISIBLE);
+        findViewById(R.id.loadphoto).setVisibility(Button.GONE);
+        findViewById(R.id.next).setVisibility(Button.VISIBLE);
+    }
+
+    private Bitmap resize(Bitmap image, ImageView iv) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float finalWidth;
+        float finalHeight;
+        if (width > height) {
+            finalWidth = iv.getWidth();
+            finalHeight = finalWidth * (float)height / (float)width;
+        }
+        else {
+            finalHeight = iv.getHeight();
+            finalWidth = finalHeight * (float)width / (float)height;
+        }
+        image = Bitmap.createScaledBitmap(image, (int)finalWidth, (int)finalHeight, true);
+        return image;
     }
 }

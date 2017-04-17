@@ -2,6 +2,7 @@ package com.example.blanche.projetfinal;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 public class AddPhotoFragment extends Fragment {
 
     private final int MY_CAMERA_REQUEST_CODE = 101;
+    private final int MY_PHOTOLIBRARY_REQUEST_CODE = 201;
 
     public AddPhotoFragment() {}
 
@@ -30,9 +32,7 @@ public class AddPhotoFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 0);
+                CameraManager.accessPhotoLibrary(getActivity(), MY_PHOTOLIBRARY_REQUEST_CODE);
             }});
 
         buttonTakePhoto.setOnClickListener(new Button.OnClickListener() {

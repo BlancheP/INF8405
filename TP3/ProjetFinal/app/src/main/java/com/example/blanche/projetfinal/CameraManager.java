@@ -1,5 +1,7 @@
 package com.example.blanche.projetfinal;
 
+import android.*;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,8 +15,8 @@ public class CameraManager {
 
     private CameraManager() {}
 
-    public static  boolean checkIfAlreadyHavePermission(Activity activity) {
-        int result = ContextCompat.checkSelfPermission(activity, android.Manifest.permission.CAMERA);
+    public static  boolean checkIfAlreadyHavePermission(Activity activity, String permission) {
+        int result = ContextCompat.checkSelfPermission(activity, permission);
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
@@ -22,13 +24,13 @@ public class CameraManager {
         }
     }
 
-    public static void requestForSpecificPermission(Activity activity, int MY_CAMERA_REQUEST_CODE) {
-        ActivityCompat.requestPermissions(activity, new String[] {android.Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+    public static void requestForSpecificPermission(Activity activity, int request_code, String permission) {
+        ActivityCompat.requestPermissions(activity, new String[] {permission}, request_code);
     }
 
     public static void dispatchTakePictureIntent(Activity activity, int code) {
 
-        if (checkIfAlreadyHavePermission(activity))
+        if (checkIfAlreadyHavePermission(activity, Manifest.permission.CAMERA))
         {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
@@ -36,7 +38,18 @@ public class CameraManager {
             }
         }
         else
-            requestForSpecificPermission(activity, code);
+            requestForSpecificPermission(activity, code, Manifest.permission.CAMERA);
+    }
+
+    public static void accessPhotoLibrary(Activity activity, int code) {
+        if (checkIfAlreadyHavePermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE))
+        {
+            Intent intent = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            activity.startActivityForResult(intent, 0);
+        }
+        else
+            requestForSpecificPermission(activity, code, Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
     public static int getRequestImageCapture() {
