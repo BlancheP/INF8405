@@ -49,7 +49,10 @@ public class DatabaseManager {
                     done.show();
                 } else {
                     usersRef.child(username).child("password").setValue(password);
-                    DatabaseManager.addPhotoToBD(username, profilePicture);
+                    Bitmap emptyBitmap = Bitmap.createBitmap(profilePicture.getWidth(), profilePicture.getHeight(), profilePicture.getConfig());
+                    if (!profilePicture.sameAs(emptyBitmap)) {
+                        DatabaseManager.addPhotoToBD(username, profilePicture);
+                    }
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
                     storeDataInfo(username, password, (Activity)context);

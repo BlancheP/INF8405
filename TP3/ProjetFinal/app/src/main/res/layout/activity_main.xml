@@ -8,6 +8,35 @@
     android:orientation="vertical"
     tools:context="com.example.blanche.projetfinal.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageView
+            android:id="@+id/addPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:src="@mipmap/ic_camera_white"
+            android:layout_gravity="left"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:text="Instakilo"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:fontFamily="sans-serif-condensed"/>
+    </android.support.v7.widget.Toolbar>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:id="@+id/fragment_container"
