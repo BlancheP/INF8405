@@ -9,12 +9,15 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,10 +38,10 @@ import java.io.ByteArrayOutputStream;
 
 public class DatabaseManager {
 
-
     private static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private static DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference usersRef = databaseRef.child("users");
+    private static DatabaseReference markerRef = databaseRef.child("markers");
     private static PreferencesManager pm;
 
 
@@ -78,6 +81,71 @@ public class DatabaseManager {
             }
         });
     }
+
+    static void addMarker(final LatLng latLng, final Context context /*TODO: eventually a picture*/)
+    {
+        /*
+        markerRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Enter Marker Name");
+
+                    // Set up the input
+                    final EditText input = new EditText(context);
+
+                    // Specify the type of input expected
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(input);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            String newMarkerName = "";
+                            newMarkerName = input.getText().toString();
+
+                            final String finalNewMarkerName = newMarkerName;
+
+                            //Add marker on LongClick position
+                            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(finalNewMarkerName);
+                            Marker marker = googleMap.addMarker(markerOptions);
+                            MapFragment.locationHashMapMarker.put(finalNewMarkerName, marker);
+                            marker.showInfoWindow();
+
+                            //send location name and coords to Firebase
+                            markerRef.child(finalNewMarkerName)
+                                    .child("Coords")
+                                    .child("latitude").setValue(latLng.latitude);
+
+                            markerRef.child(finalNewMarkerName)
+                                    .child("Coords")
+                                    .child("longitude").setValue(latLng.longitude);
+
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        */
+    }
+
 
     // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
     static void addProfilePhotoToBD(String username, Bitmap bitmap) {
@@ -211,97 +279,6 @@ public class DatabaseManager {
         });
     }
 
-    static void addNewLocationToMap(final LatLng latLng, final Context context){
 
-        /*
-        String group = GroupSelectionActivity.getGroup();
-        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    String user = (String) dataSnapshot.getValue();
-                    if (user.equals(LoginActivity.getCurrentUser())) {
 
-                        if (MapsActivity.locationHashMapMarker.size() < 3) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            builder.setTitle("Enter Location Name");
-
-                            // Set up the input
-                            final EditText input = new EditText(context);
-
-                            // Specify the type of input expected
-                            input.setInputType(InputType.TYPE_CLASS_TEXT);
-                            builder.setView(input);
-
-                            // Set up the buttons
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    String newLocationName = "";
-                                    newLocationName = input.getText().toString();
-
-                                    final String finalNewLocationName = newLocationName;
-                                    new AlertDialog.Builder(context)
-                                            .setTitle("Confirmation")
-                                            .setMessage("Would you like to send this location to your guests?")
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-
-                                                    //Add marker on LongClick position
-                                                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(finalNewLocationName);
-                                                    Marker marker = mMap.addMarker(markerOptions);
-                                                    MapsActivity.locationHashMapMarker.put(finalNewLocationName, marker);
-                                                    marker.showInfoWindow();
-
-                                                    //send location name and coords to Firebase
-                                                    DatabaseManager.addLocationToCurrentGroup(
-                                                            GroupSelectionActivity.getGroup(),
-                                                            finalNewLocationName,
-                                                            latLng.latitude,
-                                                            latLng.longitude,
-                                                            0);
-                                                }
-                                            })
-                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    //do nothing
-                                                }
-                                            })
-                                            .show();
-                                }
-                            });
-                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                            builder.show();
-
-                        } else {
-                            new AlertDialog.Builder(context)
-                                    .setTitle("Alert")
-                                    .setMessage("You cannot add more than 3 locations")
-                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
-                        }
-                    } else {
-                        Toast.makeText(context, "Only the admin of this group can add locations", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        */
-    }
 }

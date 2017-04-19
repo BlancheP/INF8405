@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static String currentUser = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,5 +36,13 @@ public class LoginActivity extends AppCompatActivity {
                 DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
             }
         });
+    }
+
+    public static String getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(String user) {
+        currentUser = user;
     }
 }
