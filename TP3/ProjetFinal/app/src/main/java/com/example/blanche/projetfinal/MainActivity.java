@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final int MY_CAMERA_REQUEST_CODE = 101;
     private final int MY_PHOTOLIBRARY_REQUEST_CODE = 201;
+    private final int MY_LOCATION_REQUEST_CODE = 301;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
