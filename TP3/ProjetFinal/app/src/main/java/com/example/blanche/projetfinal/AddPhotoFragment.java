@@ -67,9 +67,14 @@ public class AddPhotoFragment extends Fragment {
         buttonUploadPhoto.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v){
+                buttonTakePhoto.setVisibility(Button.VISIBLE);
+                buttonLoadPhoto.setVisibility(Button.VISIBLE);
                 ImageView iv = (ImageView)getView().findViewById(R.id.targetimage);
+
                 DatabaseManager.addPhotoToBD(etFileName.getText().toString(), tvDate.getText().toString(),
                         etDescription.getText().toString(),((BitmapDrawable)iv.getDrawable()).getBitmap());
+                iv.setVisibility(ImageView.GONE);
+                getView().findViewById(R.id.layout_upload).setVisibility(View.GONE);
             }
         });
 
