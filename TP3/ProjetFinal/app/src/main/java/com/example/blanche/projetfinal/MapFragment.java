@@ -1,7 +1,9 @@
 package com.example.blanche.projetfinal;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,9 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -21,19 +26,27 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMapLongClickListener,
         LocationListener {
 
-    GoogleMap mGoogleMap;
+    static GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
 
@@ -74,6 +87,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getActivity(),
@@ -91,6 +111,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
+
+
+        MarkerInfoWindow markerInfoWindow = new MarkerInfoWindow(getActivity().getLayoutInflater());
+        mGoogleMap.setInfoWindowAdapter(markerInfoWindow);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -198,5 +222,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onLocationChanged(Location location) {
 
+    }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        DatabaseManager.addMarker(latLng, getContext());
+    }
+
+    public void setImageView(Bitmap bitmap)
+    {
+        ImageView iv = (ImageView) getActivity().findViewById(R.id.markerImageView);
+        bitmap = resize(bitmap, iv);
+        iv.setImageBitmap(bitmap);
+    }
+
+    public Bitmap resize(Bitmap image, ImageView iv)
+    {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float finalWidth;
+        float finalHeight;
+        if (width > height) {
+            finalWidth = iv.getWidth();
+            finalHeight = finalWidth * (float)height / (float)width;
+        }
+        else {
+            finalHeight = iv.getHeight();
+            finalWidth = finalHeight * (float)width / (float)height;
+        }
+        image = Bitmap.createScaledBitmap(image, (int)finalWidth, (int)finalHeight, true);
+        return image;
     }
 }

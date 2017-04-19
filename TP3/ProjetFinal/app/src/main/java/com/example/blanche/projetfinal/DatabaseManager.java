@@ -84,7 +84,6 @@ public class DatabaseManager {
 
     static void addMarker(final LatLng latLng, final Context context /*TODO: eventually a picture*/)
     {
-        /*
         markerRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
@@ -113,8 +112,7 @@ public class DatabaseManager {
 
                             //Add marker on LongClick position
                             MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(finalNewMarkerName);
-                            Marker marker = googleMap.addMarker(markerOptions);
-                            MapFragment.locationHashMapMarker.put(finalNewMarkerName, marker);
+                            Marker marker = MapFragment.mGoogleMap.addMarker(markerOptions);
                             marker.showInfoWindow();
 
                             //send location name and coords to Firebase
@@ -143,7 +141,7 @@ public class DatabaseManager {
 
             }
         });
-        */
+
     }
 
 
