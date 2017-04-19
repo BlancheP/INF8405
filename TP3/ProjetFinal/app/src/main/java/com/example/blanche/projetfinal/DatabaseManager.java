@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.MemoryPolicy;
@@ -274,6 +275,28 @@ public class DatabaseManager {
 
             }
 
+        });
+    }
+
+    static void addPhotoToBD(String filename, String date, String description, Bitmap bitmap) {
+        String username = pm.getCurrentUser();
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
+        byte[] data = b.toByteArray();
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setCustomMetadata("description", description)
+                .build();
+        UploadTask task = storageRef.child(username + "/" + filename + "-" + date).putBytes(data, metadata);
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Photo","Failure");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("Photo","success");
+            }
         });
     }
 
