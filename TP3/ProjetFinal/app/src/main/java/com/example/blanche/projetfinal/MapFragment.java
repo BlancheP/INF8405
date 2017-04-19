@@ -1,7 +1,9 @@
 package com.example.blanche.projetfinal;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,9 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,7 +32,12 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -101,6 +111,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
+
+
+        MarkerInfoWindow markerInfoWindow = new MarkerInfoWindow(getActivity().getLayoutInflater());
+        mGoogleMap.setInfoWindowAdapter(markerInfoWindow);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -213,5 +227,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapLongClick(LatLng latLng) {
         DatabaseManager.addMarker(latLng, getContext());
+    }
+
+    public void setImageView(Bitmap bitmap)
+    {
+        ImageView iv = (ImageView) getActivity().findViewById(R.id.markerImageView);
+        bitmap = resize(bitmap, iv);
+        iv.setImageBitmap(bitmap);
+    }
+
+    public Bitmap resize(Bitmap image, ImageView iv)
+    {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float finalWidth;
+        float finalHeight;
+        if (width > height) {
+            finalWidth = iv.getWidth();
+            finalHeight = finalWidth * (float)height / (float)width;
+        }
+        else {
+            finalHeight = iv.getHeight();
+            finalWidth = finalHeight * (float)width / (float)height;
+        }
+        image = Bitmap.createScaledBitmap(image, (int)finalWidth, (int)finalHeight, true);
+        return image;
     }
 }
