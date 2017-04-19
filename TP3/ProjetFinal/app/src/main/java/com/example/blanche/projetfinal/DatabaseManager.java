@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,7 +57,12 @@ public class DatabaseManager {
                     done.show();
                 } else {
                     usersRef.child(username).child("password").setValue(password);
-                    DatabaseManager.addProfilePhotoToBD(username, profilePicture);
+
+                    Bitmap emptyBitmap = Bitmap.createBitmap(profilePicture.getWidth(), profilePicture.getHeight(), profilePicture.getConfig());
+                    if (!profilePicture.sameAs(emptyBitmap)) {
+                        DatabaseManager.addProfilePhotoToBD(username, profilePicture);
+                    }
+
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
                     storeDataInfo(username, password, (Activity)context);
@@ -197,6 +203,101 @@ public class DatabaseManager {
             public void onFailure(@NonNull Exception exception) {
 
             }
+
         });
+    }
+
+    static void addNewLocationToMap(final LatLng latLng, final Context context){
+
+        /*
+        String group = GroupSelectionActivity.getGroup();
+        groupsRef.child(group).child("managerName").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String user = (String) dataSnapshot.getValue();
+                    if (user.equals(LoginActivity.getCurrentUser())) {
+
+                        if (MapsActivity.locationHashMapMarker.size() < 3) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Enter Location Name");
+
+                            // Set up the input
+                            final EditText input = new EditText(context);
+
+                            // Specify the type of input expected
+                            input.setInputType(InputType.TYPE_CLASS_TEXT);
+                            builder.setView(input);
+
+                            // Set up the buttons
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    String newLocationName = "";
+                                    newLocationName = input.getText().toString();
+
+                                    final String finalNewLocationName = newLocationName;
+                                    new AlertDialog.Builder(context)
+                                            .setTitle("Confirmation")
+                                            .setMessage("Would you like to send this location to your guests?")
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    //Add marker on LongClick position
+                                                    MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(finalNewLocationName);
+                                                    Marker marker = mMap.addMarker(markerOptions);
+                                                    MapsActivity.locationHashMapMarker.put(finalNewLocationName, marker);
+                                                    marker.showInfoWindow();
+
+                                                    //send location name and coords to Firebase
+                                                    DatabaseManager.addLocationToCurrentGroup(
+                                                            GroupSelectionActivity.getGroup(),
+                                                            finalNewLocationName,
+                                                            latLng.latitude,
+                                                            latLng.longitude,
+                                                            0);
+                                                }
+                                            })
+                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    //do nothing
+                                                }
+                                            })
+                                            .show();
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
+
+                        } else {
+                            new AlertDialog.Builder(context)
+                                    .setTitle("Alert")
+                                    .setMessage("You cannot add more than 3 locations")
+                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Only the admin of this group can add locations", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        */
     }
 }

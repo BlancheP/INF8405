@@ -2,9 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.blanche.projetfinal">
 
+<<<<<<< HEAD
     <uses-feature android:name="android.hardware.camera"
         android:required="true"/>
     <uses-permission android:name="android.permission.INTERNET" />
+=======
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+>>>>>>> master
 
     <application
         android:allowBackup="true"
@@ -14,15 +28,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAgNt71jbsK7ZfY7MsNF9kMqHIsMrN9Ddc" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" />
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppThemeNoActionBar"/>
         <activity
             android:name=".LoginActivity"
-            android:label="Log in"/>
+            android:label="Log in" />
         <activity
             android:name=".RegisterActivity"
-            android:label="Register"/>
+            android:label="Register" />
         <activity
             android:name=".EntryActivity"
             android:theme="@style/Theme.Transparent">
@@ -31,7 +53,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"/>
     </application>
 
 </manifest>
