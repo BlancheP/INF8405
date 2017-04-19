@@ -25,6 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -195,6 +197,8 @@ public class DatabaseManager {
             public void onSuccess(Uri uri) {
                 Picasso.with(context)
                         .load(uri)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE )
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
                         .into((ImageView) ((Activity) context).findViewById(R.id.ivProfilePic));
             }
 
