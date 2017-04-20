@@ -237,24 +237,10 @@ public class DatabaseManager {
     }
 
     static void storeDataInfo(final String username, final String password, final Activity activity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.storeUserInfo).setMessage(R.string.storeUserInfoMessage);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                pm.updateCurrentUser(username, password);
-                Intent goToDashboard = new Intent(activity, MainActivity.class);
-                activity.startActivity(goToDashboard);
-                activity.finishAffinity();
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Intent goToDashboard = new Intent(activity, MainActivity.class);
-                activity.startActivity(goToDashboard);
-                activity.finishAffinity();
-            }
-        });
-        builder.create().show();
+        pm.updateCurrentUser(username, password);
+        Intent goToDashboard = new Intent(activity, MainActivity.class);
+        activity.startActivity(goToDashboard);
+        activity.finishAffinity();
     }
 
     static void loadProfilePhoto( final Context context) {
