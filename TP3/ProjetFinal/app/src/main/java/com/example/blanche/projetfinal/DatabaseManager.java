@@ -44,6 +44,7 @@ public class DatabaseManager {
     private static DatabaseReference usersRef = databaseRef.child("users");
     private static DatabaseReference markerRef = databaseRef.child("markers");
     private static PreferencesManager pm;
+    private static DatabaseReference picturesRef = databaseRef.child("pictures");
 
 
     final static long ONE_MEGABYTE = 1024 * 1024;
@@ -277,16 +278,14 @@ public class DatabaseManager {
 
         });
     }
-
-    static void addPhotoToBD(String filename, String date, String description, Bitmap bitmap) {
-        String username = pm.getCurrentUser();
+    @SuppressWarnings("VisibleForTests")
+    static void addPhotoToBD(final String filename, final String date, final String description, Bitmap bitmap) {
+        final String username = pm.getCurrentUser();
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
         byte[] data = b.toByteArray();
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("description", description)
-                .build();
-        UploadTask task = storageRef.child(username + "/" + filename + "-" + date).putBytes(data, metadata);
+        //Pour la sauvegarde des photos avec Firebase storage
+        UploadTask task = storageRef.child(username + "/" + filename).putBytes(data);
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -296,8 +295,16 @@ public class DatabaseManager {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d("Photo","success");
+                picturesRef.child(filename).child("username").setValue(username);
+                picturesRef.child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
+                picturesRef.child(filename).child("date").setValue(date);
+                picturesRef.child(filename).child("description").setValue(description);
             }
         });
+
+        //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
+        // Firebase database
+
     }
 
 

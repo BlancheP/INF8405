@@ -74,6 +74,8 @@ public class AddPhotoFragment extends Fragment {
                 DatabaseManager.addPhotoToBD(etFileName.getText().toString(), tvDate.getText().toString(),
                         etDescription.getText().toString(),((BitmapDrawable)iv.getDrawable()).getBitmap());
                 iv.setVisibility(ImageView.GONE);
+                etFileName.getText().clear();
+                etDescription.getText().clear();
                 getView().findViewById(R.id.layout_upload).setVisibility(View.GONE);
             }
         });
