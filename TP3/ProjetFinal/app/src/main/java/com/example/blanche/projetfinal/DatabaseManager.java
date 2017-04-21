@@ -12,6 +12,8 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,12 +53,43 @@ public class DatabaseManager {
     private static DatabaseReference markerRef = databaseRef.child("markers");
     private static PreferencesManager pm;
     private static DatabaseReference picturesRef = databaseRef.child("pictures");
-
-
-    final static long ONE_MEGABYTE = 1024 * 1024;
-
+    final public static List<String> users = new ArrayList<>();
 
     private DatabaseManager() {}
+
+    static void Init(Context context) {
+
+        pm = new PreferencesManager(context);
+
+        // Permet de recuperer les users et de modifier la liste de tous les users
+        DatabaseManager.usersRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                users.add(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                users.remove(s);
+                users.add(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                users.remove(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
     static void addUser(final String password, final EditText etUsername, final Context context, final Bitmap profilePicture) {
@@ -209,10 +243,6 @@ public class DatabaseManager {
         });
     }
 
-    static void setPreferencesManager(Context context) {
-        pm = new PreferencesManager(context);
-    }
-
     static PreferencesManager getPreferencesManager() {
         return pm;
     }
@@ -243,24 +273,10 @@ public class DatabaseManager {
     }
 
     static void storeDataInfo(final String username, final String password, final Activity activity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.storeUserInfo).setMessage(R.string.storeUserInfoMessage);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                pm.updateCurrentUser(username, password);
-                Intent goToDashboard = new Intent(activity, MainActivity.class);
-                activity.startActivity(goToDashboard);
-                activity.finishAffinity();
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Intent goToDashboard = new Intent(activity, MainActivity.class);
-                activity.startActivity(goToDashboard);
-                activity.finishAffinity();
-            }
-        });
-        builder.create().show();
+        pm.updateCurrentUser(username, password);
+        Intent goToDashboard = new Intent(activity, MainActivity.class);
+        activity.startActivity(goToDashboard);
+        activity.finishAffinity();
     }
 
     static void loadProfilePhoto( final Context context) {
@@ -354,8 +370,24 @@ public class DatabaseManager {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
+
+    // Fonction qui permet de recuperer tous les users existants
+    // Cette fonction est appelee lors de la creation du SearchFragment pour initialiser le AutoCompleteTextView
+    static List<String> getUsers() {
+        return users;
+    }
+
+    // Fonction qui permet d'ajouter a la BD un Follow
+    static void addFollow(Activity activity, String user, String follower) {
+        usersRef.child(user).child("Followers").child(follower).setValue("true");
+        usersRef.child(follower).child("Following").child(user).setValue("true");
+        Toast.makeText(activity, "You are now following " + user + "!", Toast.LENGTH_SHORT).show();
+        activity.findViewById(R.id.infoUserLayout).setVisibility(View.INVISIBLE);
+        ((AutoCompleteTextView)activity.findViewById(R.id.actvSearchUsers)).setText("");
+    }
+
+
 }

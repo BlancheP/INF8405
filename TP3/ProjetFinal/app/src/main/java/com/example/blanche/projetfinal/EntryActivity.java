@@ -10,7 +10,7 @@ public class EntryActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseManager.setPreferencesManager(getApplicationContext());
+        DatabaseManager.Init(getApplicationContext());
         PreferencesManager pm = DatabaseManager.getPreferencesManager();
         if (pm.getCurrentUser() != null && !pm.getCurrentUser().equals("")) {
             DatabaseManager.userIsValid(pm.getCurrentUser(), pm.getCurrentPassword(), this, true);

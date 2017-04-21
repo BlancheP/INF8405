@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.blanche.projetfinal.SearchFragment">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/searchLayout"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Search for users :"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <AutoCompleteTextView
+            android:id="@+id/actvSearchUsers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="100px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/infoUserLayout"
+        android:orientation="vertical"
+        android:padding="10dip"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/ivUser"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/tvUsername"/>
+
+        <Button
+            android:id="@+id/bFollow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Follow" />
+
+
+    </LinearLayout>
+</LinearLayout>

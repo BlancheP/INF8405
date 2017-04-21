@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.fragment_container, new MapFragment());
                     fragmentTransaction.commit();
                     return true;
+                case R.id.navigation_search:
+                    fragmentTransaction.replace(R.id.fragment_container, new SearchFragment());
+                    fragmentTransaction.commit();
             }
             return false;
         }
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        BottomNavigationViewHelper.disableShiftMode(navigation);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, new DashboardFragment());

@@ -32,7 +32,7 @@
         android:layout_centerHorizontal="true" />
 
     <ImageButton
-        app:srcCompat="@mipmap/ic_launcher"
+        app:srcCompat="@mipmap/ic_profile_black"
         android:id="@+id/bPhoto"
         android:layout_width="500px"
         android:layout_height="500px"
