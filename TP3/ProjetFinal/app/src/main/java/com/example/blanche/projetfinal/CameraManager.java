@@ -13,6 +13,7 @@ public class CameraManager {
 
     static final int REGISTER_CAMERA_REQUEST_CODE = 100;
     static final int ADDPHOTO_CAMERA_REQUEST_CODE = 101;
+    static final int ADDPHOTO_PHOTOLIBRARY_REQUEST_CODE = 201;
     static final int HOME_CAMERA_REQUEST_CODE = 102;
 
     private CameraManager() {}
@@ -48,7 +49,7 @@ public class CameraManager {
         {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            activity.startActivityForResult(intent, 0);
+            activity.startActivityForResult(intent, ADDPHOTO_PHOTOLIBRARY_REQUEST_CODE);
         }
         else
             requestForSpecificPermission(activity, code, Manifest.permission.READ_EXTERNAL_STORAGE);

@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     CameraManager.dispatchTakePictureIntent(this, CameraManager.ADDPHOTO_CAMERA_REQUEST_CODE);
                 break;
-            case MY_PHOTOLIBRARY_REQUEST_CODE:
+            case CameraManager.ADDPHOTO_PHOTOLIBRARY_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     CameraManager.accessPhotoLibrary(this, MY_PHOTOLIBRARY_REQUEST_CODE);
             default:
@@ -138,13 +138,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CameraManager.REGISTER_CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+        if ((requestCode == CameraManager.REGISTER_CAMERA_REQUEST_CODE || requestCode == CameraManager.ADDPHOTO_CAMERA_REQUEST_CODE) && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
-            ImageView iv = (ImageView)findViewById(R.id.targetimage);
             setImageView(bitmap);
         }
-        else if (requestCode == CameraManager.ADDPHOTO_CAMERA_REQUEST_CODE && resultCode == RESULT_OK){
+        else if (requestCode == CameraManager.ADDPHOTO_PHOTOLIBRARY_REQUEST_CODE && resultCode == RESULT_OK){
             Uri targetUri = data.getData();
             Bitmap bitmap;
             try {
