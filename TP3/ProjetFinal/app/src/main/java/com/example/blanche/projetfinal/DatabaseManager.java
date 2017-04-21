@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -380,7 +382,7 @@ public class DatabaseManager {
         return users;
     }
 
-    // Fonction qui permet d'ajouter a la BD un Follow
+    // Fonction qui permet de follow un user
     static void addFollow(Activity activity, String user, String follower) {
         usersRef.child(user).child("Followers").child(follower).setValue("true");
         usersRef.child(follower).child("Following").child(user).setValue("true");
@@ -389,5 +391,31 @@ public class DatabaseManager {
         ((AutoCompleteTextView)activity.findViewById(R.id.actvSearchUsers)).setText("");
     }
 
+    // Fonction qui permet de unfollow un user
+    static void removeFollow(Activity activity, String user, String follower) {
+        usersRef.child(user).child("Followers").child(follower).removeValue();
+        usersRef.child(follower).child("Following").child(user).removeValue();
+        Toast.makeText(activity, "You are now no more following " + user + "!", Toast.LENGTH_SHORT).show();
+        activity.findViewById(R.id.infoUserLayout).setVisibility(View.INVISIBLE);
+        ((AutoCompleteTextView)activity.findViewById(R.id.actvSearchUsers)).setText("");
+    }
+
+    static void isFollowing(final Activity activity, String user, String possibleFollowing) {
+        usersRef.child(user).child("Following").child(possibleFollowing).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                    ((Button)activity.findViewById(R.id.bFollow)).setText("Unfollow");
+                else
+                    ((Button)activity.findViewById(R.id.bFollow)).setText("Follow");
+                activity.findViewById(R.id.infoUserLayout).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.text.Line;
+import com.google.firebase.database.DatabaseReference;
 
 import org.w3c.dom.Text;
 
@@ -39,7 +40,7 @@ public class SearchFragment extends Fragment {
 
         // Mettre dans le AutoCompleteTextView la liste des users
         List<String> users = DatabaseManager.getUsers();
-        PreferencesManager pm = DatabaseManager.getPreferencesManager();
+        final PreferencesManager pm = DatabaseManager.getPreferencesManager();
         users.remove(pm.getCurrentUser());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_dropdown_item_1line, users);
@@ -50,19 +51,32 @@ public class SearchFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View arg1, int pos,
                                     long id) {
-                tv.setText((String)parent.getItemAtPosition(pos));
+                String user = (String)parent.getItemAtPosition(pos);
+                tv.setText(user);
                 ImageView iv = (ImageView)getView().findViewById(R.id.ivUser);
                 //Set the image view to the profile pic of the user
                 iv.setImageResource(R.mipmap.ic_profile_black);
                 l.setBackgroundResource(R.drawable.border_background);
-                l.setVisibility(View.VISIBLE);
+                DatabaseManager.isFollowing(getActivity(), pm.getCurrentUser(), user);
             }
         });
 
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseManager.addFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
+                if (b.getText().equals("Follow"))
+                    DatabaseManager.addFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
+                else
+                    DatabaseManager.removeFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
+            }
+        });
+
+        actvSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER)
+                    return true;
+                return false;
             }
         });
 
