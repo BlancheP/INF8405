@@ -12,10 +12,11 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,7 +32,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.MemoryPolicy;
@@ -40,6 +40,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,11 +52,8 @@ public class DatabaseManager {
     private static DatabaseReference usersRef = databaseRef.child("users");
     private static DatabaseReference markerRef = databaseRef.child("markers");
     private static PreferencesManager pm;
+    private static DatabaseReference picturesRef = databaseRef.child("pictures");
     final public static List<String> users = new ArrayList<>();
-
-
-    final static long ONE_MEGABYTE = 1024 * 1024;
-
 
     private DatabaseManager() {}
 
@@ -94,7 +92,7 @@ public class DatabaseManager {
     }
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
-    static void addUser(final String password, final EditText etUsername, final Context context, final Bitmap profilePicture) {
+    static void addUser(final String password, final EditText etUsername, final Context context, final boolean hasPhoto, final Bitmap profilePicture) {
         final String username = etUsername.getText().toString();
         usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -106,10 +104,8 @@ public class DatabaseManager {
                 } else {
                     usersRef.child(username).child("password").setValue(password);
 
-                    Bitmap emptyBitmap = Bitmap.createBitmap(profilePicture.getWidth(), profilePicture.getHeight(), profilePicture.getConfig());
-                    if (!profilePicture.sameAs(emptyBitmap)) {
+                    if (hasPhoto)
                         DatabaseManager.addProfilePhotoToBD(username, profilePicture);
-                    }
 
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
@@ -281,7 +277,7 @@ public class DatabaseManager {
         activity.finishAffinity();
     }
 
-    static void loadProfilePhoto( final Context context) {
+    static void loadProfilePhoto( final Activity context) {
         String username = pm.getCurrentUser();
         storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -290,16 +286,44 @@ public class DatabaseManager {
                         .load(uri)
                         .memoryPolicy(MemoryPolicy.NO_CACHE )
                         .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .into((ImageView) ((Activity) context).findViewById(R.id.ivProfilePic));
+                        .into((ImageView)context.findViewById(R.id.ivProfilePic));
             }
 
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-
+                ImageView iv = (ImageView)context.findViewById(R.id.ivProfilePic);
+                iv.setImageResource(R.mipmap.ic_profile_black);
             }
 
         });
+    }
+
+    static void loadProfile( final Activity context, final View view) {
+
+        loadProfilePhoto(context);
+
+        final TextView followers = (TextView)view.findViewById(R.id.tvNbFollowers);
+        final TextView following = (TextView)view.findViewById(R.id.tvNbFollowing);
+        final TextView posts = (TextView)view.findViewById(R.id.tvNbPost);
+
+        usersRef.child(DatabaseManager.getPreferencesManager().getCurrentUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long nb = dataSnapshot.child("Followers").getChildrenCount();
+                followers.setText(String.valueOf(nb));
+                nb = dataSnapshot.child("Following").getChildrenCount();
+                following.setText(String.valueOf(nb));
+                // TO-DO A Changer !!!!!
+                posts.setText("10");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     static void loadMarkerPhoto(final Context context) {
@@ -320,15 +344,14 @@ public class DatabaseManager {
         });
     }
 
-    static void addPhotoToBD(String filename, String date, String description, Bitmap bitmap) {
-        String username = pm.getCurrentUser();
+    @SuppressWarnings("VisibleForTests")
+    static void addPhotoToBD(final String filename, final String date, final String description, Bitmap bitmap) {
+        final String username = pm.getCurrentUser();
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
         byte[] data = b.toByteArray();
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("description", description)
-                .build();
-        UploadTask task = storageRef.child(username + "/" + filename + "-" + date).putBytes(data, metadata);
+        //Pour la sauvegarde des photos avec Firebase storage
+        UploadTask task = storageRef.child(username + "/" + filename).putBytes(data);
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -338,6 +361,60 @@ public class DatabaseManager {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d("Photo","success");
+                //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
+                // Firebase database
+                picturesRef.child(filename).child("username").setValue(username);
+                picturesRef.child(filename).child("filename").setValue(filename);
+                picturesRef.child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
+                picturesRef.child(filename).child("date").setValue(date);
+                picturesRef.child(filename).child("description").setValue(description);
+            }
+        });
+    }
+
+    static void loadDashboardPhoto(final Context context, final int index) {
+
+        picturesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List< Map<String, String>> pictures = new ArrayList<>();
+                Map<String, String> infos = new HashMap<>();
+                Map<String, String> individualInfo = new HashMap<>();
+                if(dataSnapshot.exists()) {
+                    //For all the pictures
+                    for (DataSnapshot picturesIter: dataSnapshot.getChildren()) {
+                        //For all the informations of each picture
+                        /*for (DataSnapshot detailsIter : dataSnapshot.child("pictures").child(picturesIter.getKey()).getChildren()) {
+                            individualInfo = (Map<String, String>) detailsIter.getValue();
+                            infos.put picturesIter.getValue();
+                        }*/
+                        String key = picturesIter.getKey();
+                        infos = (Map<String, String>) picturesIter.getValue();
+                        pictures.add(infos);
+                    }
+                    TextView username = (TextView) ((Activity) context).findViewById(R.id.tvDashUsername);
+                    TextView filename = (TextView) ((Activity) context).findViewById(R.id.tvDashFilename);
+                    TextView date = (TextView) ((Activity) context).findViewById(R.id.tvDashDate);
+                    TextView description = (TextView) ((Activity) context).findViewById(R.id.tvDashDescr);
+                    ImageView iv = (ImageView) ((Activity) context).findViewById(R.id.ivDashPhoto);
+
+
+
+                    filename.setText(pictures.get(index).get("filename"));
+                    username.setText(pictures.get(index).get("username"));
+                    date.setText(pictures.get(index).get("date"));
+                    description.setText(pictures.get(index).get("description"));
+                    Uri uri = Uri.parse(pictures.get(index).get("url"));
+                    Picasso.with(context)
+                            .load(uri)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE )
+                            .networkPolicy(NetworkPolicy.NO_CACHE)
+                            .into(iv);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
@@ -348,13 +425,40 @@ public class DatabaseManager {
         return users;
     }
 
-    // Fonction qui permet d'ajouter a la BD un Follow
+    // Fonction qui permet de follow un user
     static void addFollow(Activity activity, String user, String follower) {
         usersRef.child(user).child("Followers").child(follower).setValue("true");
         usersRef.child(follower).child("Following").child(user).setValue("true");
         Toast.makeText(activity, "You are now following " + user + "!", Toast.LENGTH_SHORT).show();
         activity.findViewById(R.id.infoUserLayout).setVisibility(View.INVISIBLE);
         ((AutoCompleteTextView)activity.findViewById(R.id.actvSearchUsers)).setText("");
+    }
+
+    // Fonction qui permet de unfollow un user
+    static void removeFollow(Activity activity, String user, String follower) {
+        usersRef.child(user).child("Followers").child(follower).removeValue();
+        usersRef.child(follower).child("Following").child(user).removeValue();
+        Toast.makeText(activity, "You are now no more following " + user + "!", Toast.LENGTH_SHORT).show();
+        activity.findViewById(R.id.infoUserLayout).setVisibility(View.INVISIBLE);
+        ((AutoCompleteTextView)activity.findViewById(R.id.actvSearchUsers)).setText("");
+    }
+
+    static void isFollowing(final Activity activity, String user, String possibleFollowing) {
+        usersRef.child(user).child("Following").child(possibleFollowing).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                    ((Button)activity.findViewById(R.id.bFollow)).setText("Unfollow");
+                else
+                    ((Button)activity.findViewById(R.id.bFollow)).setText("Follow");
+                activity.findViewById(R.id.infoUserLayout).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 public class AddPhotoFragment extends Fragment {
 
-    private final int MY_CAMERA_REQUEST_CODE = 101;
+    private final int ADDPHOTO_CAMERA_REQUEST_CODE = 101;
     private final int MY_PHOTOLIBRARY_REQUEST_CODE = 201;
 
     public AddPhotoFragment() {}
@@ -48,7 +48,7 @@ public class AddPhotoFragment extends Fragment {
         buttonTakePhoto.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraManager.dispatchTakePictureIntent(getActivity(), MY_CAMERA_REQUEST_CODE);
+                CameraManager.dispatchTakePictureIntent(getActivity(), ADDPHOTO_CAMERA_REQUEST_CODE);
             }
         });
 
@@ -63,7 +63,6 @@ public class AddPhotoFragment extends Fragment {
             }
         });
 
-        //On peut utiliser la date de firebase aussi au lieu de prendre celle qui est mise en prenant la photo.
         buttonUploadPhoto.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -74,6 +73,8 @@ public class AddPhotoFragment extends Fragment {
                 DatabaseManager.addPhotoToBD(etFileName.getText().toString(), tvDate.getText().toString(),
                         etDescription.getText().toString(),((BitmapDrawable)iv.getDrawable()).getBitmap());
                 iv.setVisibility(ImageView.GONE);
+                etFileName.getText().clear();
+                etDescription.getText().clear();
                 getView().findViewById(R.id.layout_upload).setVisibility(View.GONE);
             }
         });

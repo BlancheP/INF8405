@@ -6,17 +6,20 @@
     tools:context="com.example.blanche.projetfinal.SearchFragment">
 
     <LinearLayout
+        android:layout_marginTop="100px"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/searchLayout"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-smallcaps"
             android:text="Search for users :"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24sp" />
 
         <AutoCompleteTextView
             android:id="@+id/actvSearchUsers"
@@ -44,7 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:id="@+id/tvUsername"/>
+            android:id="@+id/tvUsername"
+            android:fontFamily="sans-serif-smallcaps"/>
 
         <Button
             android:id="@+id/bFollow"

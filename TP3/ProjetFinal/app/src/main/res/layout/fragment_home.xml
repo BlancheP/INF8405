@@ -1,23 +1,83 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.blanche.projetfinal.HomeFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/title_home" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/profilePicLayout"
+    tools:context="com.example.blanche.projetfinal.ProfileFragment">
 
     <ImageView
         android:id="@+id/ivProfilePic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/bChangePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change profile picture"
+        android:fontFamily="sans-serif-smallcaps"/>
+
+    <Button
+        android:id="@+id/bChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change password"
+        android:fontFamily="sans-serif-smallcaps"/>
+
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        app:srcCompat="@mipmap/ic_profile_black" />
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="50px">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/tvNbPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:layout_marginLeft="10px"/>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="posts" />
+
+        <TextView
+            android:id="@+id/tvNbFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:fontFamily="sans-serif-smallcaps" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=" followers" />
+
+        <TextView
+            android:id="@+id/tvNbFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:fontFamily="sans-serif-smallcaps"/>
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=" following" />
+
+    </LinearLayout>
+
+</LinearLayout>

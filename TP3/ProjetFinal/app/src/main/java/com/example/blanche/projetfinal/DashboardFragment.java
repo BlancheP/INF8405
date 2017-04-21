@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
 /**
@@ -64,7 +66,16 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+/*        final TextView username = (TextView)view.findViewById(R.id.tvDashUsername);
+        final TextView date = (TextView)view.findViewById(R.id.tvDashDate);
+        final TextView filename = (TextView)view.findViewById(R.id.tvDashFilename);
+        final TextView descr = (TextView)view.findViewById(R.id.tvDashDescr);
+        final ImageView photo = (ImageView) view.findViewById(R.id.ivDashPhoto);*/
+
+        DatabaseManager.loadDashboardPhoto(this.getContext(), 0);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
