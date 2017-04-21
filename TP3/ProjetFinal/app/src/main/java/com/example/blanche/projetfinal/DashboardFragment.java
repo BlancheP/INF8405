@@ -67,11 +67,13 @@ public class DashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-/*        final TextView username = (TextView)view.findViewById(R.id.tvDashUsername);
+        final TextView username = (TextView)view.findViewById(R.id.tvDashUsername);
         final TextView date = (TextView)view.findViewById(R.id.tvDashDate);
         final TextView filename = (TextView)view.findViewById(R.id.tvDashFilename);
         final TextView descr = (TextView)view.findViewById(R.id.tvDashDescr);
-        final ImageView photo = (ImageView) view.findViewById(R.id.ivDashPhoto);*/
+        final ImageView photo = (ImageView) view.findViewById(R.id.ivDashPhoto);
+
+        username.clearComposingText();
 
         DatabaseManager.loadDashboardPhoto(this.getContext(), 0);
 

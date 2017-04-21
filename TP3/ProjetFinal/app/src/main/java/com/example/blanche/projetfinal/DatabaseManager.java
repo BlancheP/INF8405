@@ -328,6 +328,7 @@ public class DatabaseManager {
     }
 
     static void loadDashboardPhoto(final Context context, final int index) {
+        final String currentUser = pm.getCurrentUser();
 
         picturesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -353,13 +354,31 @@ public class DatabaseManager {
                     TextView description = (TextView) ((Activity) context).findViewById(R.id.tvDashDescr);
                     ImageView iv = (ImageView) ((Activity) context).findViewById(R.id.ivDashPhoto);
 
+                    //Enlever les photos correspondant a celle de l'utilisateur courrant.
+                    for (int j = 0; j < pictures.size(); j++){
+                        if(pictures.get(j).get("username").equals(currentUser) ){
+                            pictures.remove(j);
+                            j--;
+                        }
+                    }
+                    int i = index;
+                    if(i >= pictures.size() && !pictures.isEmpty()){
+                        i = pictures.size() - 1;
+                    }
+                    else if(i <= 0 && !pictures.isEmpty()){
+                        i = 0;
+                    }
+                    if(pictures.isEmpty()){
+                        filename.setText("No Pictures!");
+                        return;
+                    }
 
 
-                    filename.setText(pictures.get(index).get("filename"));
-                    username.setText(pictures.get(index).get("username"));
-                    date.setText(pictures.get(index).get("date"));
-                    description.setText(pictures.get(index).get("description"));
-                    Uri uri = Uri.parse(pictures.get(index).get("url"));
+                    filename.setText(pictures.get(i).get("filename"));
+                    username.setText(pictures.get(i).get("username"));
+                    date.setText(pictures.get(i).get("date"));
+                    description.setText(pictures.get(i).get("description"));
+                    Uri uri = Uri.parse(pictures.get(i).get("url"));
                     Picasso.with(context)
                             .load(uri)
                             .memoryPolicy(MemoryPolicy.NO_CACHE )
