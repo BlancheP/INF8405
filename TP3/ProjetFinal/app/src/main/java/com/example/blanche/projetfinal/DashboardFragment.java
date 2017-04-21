@@ -82,35 +82,36 @@ public class DashboardFragment extends Fragment {
 
 
 
-        final TextView username = (TextView)view.findViewById(R.id.tvDashUsername);
+       /* final TextView username = (TextView)view.findViewById(R.id.tvDashUsername);
         final TextView date = (TextView)view.findViewById(R.id.tvDashDate);
         final TextView filename = (TextView)view.findViewById(R.id.tvDashFilename);
         final TextView descr = (TextView)view.findViewById(R.id.tvDashDescr);
         final ImageView photo = (ImageView) view.findViewById(R.id.ivDashPhoto);
 
-        username.clearComposingText();
-        final Context dashContext = this.getContext();
 
-        //TODO: Faire en sorte que le mouvement change la photo en temps reel
-        SensorEventListener sensorEventListener=   new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                if(event.values[0] > 2 && !justChanged) {
-                    ++index;
-                    justChanged = true;
+        final Context dashContext = this.getContext();*/
+        if(isAdded()) {
+            //TODO: Faire en sorte que le mouvement change la photo en temps reel
+            SensorEventListener sensorEventListener = new SensorEventListener() {
+                @Override
+                public void onSensorChanged(SensorEvent event) {
+                    if (event.values[0] > 2 && !justChanged) {
+                        ++index;
+                        justChanged = true;
+                    }
                 }
-            }
 
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-            }
-        };
+                }
+            };
 
-        sensorManager = (SensorManager) getContext().getSystemService(SENSOR_SERVICE);
-        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager = (SensorManager) getContext().getSystemService(SENSOR_SERVICE);
+            sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL);
 
-        DatabaseManager.loadDashboardPhoto(this.getContext());
+            DatabaseManager.loadDashboardPhoto(this.getContext());
+        }
         return view;
     }
 
@@ -137,6 +138,7 @@ public class DashboardFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

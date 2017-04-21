@@ -320,11 +320,10 @@ public class DatabaseManager {
                 Log.d("Photo","success");
                 //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
                 // Firebase database
-                picturesRef.child(filename).child("username").setValue(username);
-                picturesRef.child(filename).child("filename").setValue(filename);
-                picturesRef.child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
-                picturesRef.child(filename).child("date").setValue(date);
-                picturesRef.child(filename).child("description").setValue(description);
+                usersRef.child(username).child("pictures").child(filename).child("filename").setValue(filename);
+                usersRef.child(username).child("pictures").child(filename).child("date").setValue(date);
+                usersRef.child(username).child("pictures").child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
+                usersRef.child(username).child("pictures").child(filename).child("description").setValue(description);
             }
         });
     }
@@ -363,31 +362,33 @@ public class DatabaseManager {
                             j--;
                         }
                     }
+                    if(!pictures.isEmpty()) {
+                        if (DashboardFragment.index >= pictures.size()) {
+                            //on retourne au debut (pour l'instant)
+                            DashboardFragment.index = 0;
+                        } else if (DashboardFragment.index < 0) {
+                            DashboardFragment.index = 0;
+                        }
 
-                    if(DashboardFragment.index >= pictures.size() && !pictures.isEmpty()){
-                        //on retourne au debut (pour l'instant)
-                        DashboardFragment.index = 0;
+
+                        filename.setText(pictures.get(DashboardFragment.index).get("filename"));
+                        username.setText(pictures.get(DashboardFragment.index).get("username"));
+                        date.setText(pictures.get(DashboardFragment.index).get("date"));
+                        description.setText(pictures.get(DashboardFragment.index).get("description"));
+                        Uri uri = Uri.parse(pictures.get(DashboardFragment.index).get("url"));
+                        Picasso.with(context)
+                                .load(uri)
+                                .memoryPolicy(MemoryPolicy.NO_CACHE )
+                                .networkPolicy(NetworkPolicy.NO_CACHE)
+                                .into(iv);
+                        DashboardFragment.justChanged = false;
                     }
-                    else if(DashboardFragment.index < 0 && !pictures.isEmpty()){
-                        DashboardFragment.index = 0;
-                    }
-                    if(pictures.isEmpty()){
+                    else{
                         filename.setText("No Pictures!");
-                        return;
                     }
 
 
-                    filename.setText(pictures.get(DashboardFragment.index).get("filename"));
-                    username.setText(pictures.get(DashboardFragment.index).get("username"));
-                    date.setText(pictures.get(DashboardFragment.index).get("date"));
-                    description.setText(pictures.get(DashboardFragment.index).get("description"));
-                    Uri uri = Uri.parse(pictures.get(DashboardFragment.index).get("url"));
-                    Picasso.with(context)
-                            .load(uri)
-                            .memoryPolicy(MemoryPolicy.NO_CACHE )
-                            .networkPolicy(NetworkPolicy.NO_CACHE)
-                            .into(iv);
-                    DashboardFragment.justChanged = false;
+
                 }
             }
 
