@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.blanche.projetfinal.DashboardFragment.index;
+
 
 public class DatabaseManager {
 
@@ -327,7 +329,7 @@ public class DatabaseManager {
         });
     }
 
-    static void loadDashboardPhoto(final Context context, final int index) {
+    static void loadDashboardPhoto(final Context context/*, final int index*/) {
         final String currentUser = pm.getCurrentUser();
 
         picturesRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -361,12 +363,13 @@ public class DatabaseManager {
                             j--;
                         }
                     }
-                    int i = index;
-                    if(i >= pictures.size() && !pictures.isEmpty()){
-                        i = pictures.size() - 1;
+
+                    if(DashboardFragment.index >= pictures.size() && !pictures.isEmpty()){
+                        //on retourne au debut (pour l'instant)
+                        DashboardFragment.index = 0;
                     }
-                    else if(i <= 0 && !pictures.isEmpty()){
-                        i = 0;
+                    else if(DashboardFragment.index < 0 && !pictures.isEmpty()){
+                        DashboardFragment.index = 0;
                     }
                     if(pictures.isEmpty()){
                         filename.setText("No Pictures!");
@@ -374,16 +377,17 @@ public class DatabaseManager {
                     }
 
 
-                    filename.setText(pictures.get(i).get("filename"));
-                    username.setText(pictures.get(i).get("username"));
-                    date.setText(pictures.get(i).get("date"));
-                    description.setText(pictures.get(i).get("description"));
-                    Uri uri = Uri.parse(pictures.get(i).get("url"));
+                    filename.setText(pictures.get(DashboardFragment.index).get("filename"));
+                    username.setText(pictures.get(DashboardFragment.index).get("username"));
+                    date.setText(pictures.get(DashboardFragment.index).get("date"));
+                    description.setText(pictures.get(DashboardFragment.index).get("description"));
+                    Uri uri = Uri.parse(pictures.get(DashboardFragment.index).get("url"));
                     Picasso.with(context)
                             .load(uri)
                             .memoryPolicy(MemoryPolicy.NO_CACHE )
                             .networkPolicy(NetworkPolicy.NO_CACHE)
                             .into(iv);
+                    DashboardFragment.justChanged = false;
                 }
             }
 
