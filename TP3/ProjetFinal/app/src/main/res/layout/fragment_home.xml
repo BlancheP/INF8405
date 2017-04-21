@@ -2,103 +2,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:visibility="invisible"
+    android:orientation="vertical"
     android:id="@+id/profilePicLayout"
-    tools:context="com.example.blanche.projetfinal.HomeFragment">
+    tools:context="com.example.blanche.projetfinal.ProfileFragment">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/ivProfilePic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/bChangePhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="0.5">
+        android:text="Change profile picture"
+        android:fontFamily="sans-serif-smallcaps"/>
+
+    <Button
+        android:id="@+id/bChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change password"
+        android:fontFamily="sans-serif-smallcaps"/>
 
 
-        <ImageView
-            android:id="@+id/ivProfilePic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="50px">
 
         <TextView
-            android:id="@+id/tvChangePhoto"
+            android:id="@+id/tvNbPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:text="Change profile picture"
-            android:textColor="@color/MediumBlue" />
+            android:fontFamily="sans-serif-smallcaps"
+            android:layout_marginLeft="10px"/>
 
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="0.5"
-        android:layout_marginLeft="20px">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="posts" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tvNbFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:fontFamily="sans-serif-smallcaps" />
 
-                <TextView
-                    android:id="@+id/tvNbPost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-smallcaps"/>
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=" followers" />
 
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" posts" />
+        <TextView
+            android:id="@+id/tvNbFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:fontFamily="sans-serif-smallcaps"/>
 
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tvNbFollowers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-smallcaps" />
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" followers" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tvNbFollowing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/textView11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" following" />
-
-            </LinearLayout>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=" following" />
 
     </LinearLayout>
 

@@ -4,35 +4,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.media.audiofx.BassBoost;
 import android.net.Uri;
-import android.opengl.GLES10;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.commit();
                     return true;
                 case R.id.navigation_profile:
-                    fragmentTransaction.replace(R.id.fragment_container, new HomeFragment());
+                    fragmentTransaction.replace(R.id.fragment_container, new ProfileFragment());
                     fragmentTransaction.commit();
                     return true;
                 case R.id.navigation_map:
