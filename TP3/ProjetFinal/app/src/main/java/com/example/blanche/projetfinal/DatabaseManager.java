@@ -288,7 +288,6 @@ public class DatabaseManager {
                         .memoryPolicy(MemoryPolicy.NO_CACHE )
                         .networkPolicy(NetworkPolicy.NO_CACHE)
                         .into((ImageView)context.findViewById(R.id.ivProfilePic));
-                context.findViewById(R.id.profilePicLayout).setVisibility(View.VISIBLE);
             }
 
         }).addOnFailureListener(new OnFailureListener() {
@@ -296,7 +295,6 @@ public class DatabaseManager {
             public void onFailure(@NonNull Exception exception) {
                 ImageView iv = (ImageView)context.findViewById(R.id.ivProfilePic);
                 iv.setImageResource(R.mipmap.ic_profile_black);
-                context.findViewById(R.id.profilePicLayout).setVisibility(View.VISIBLE);
             }
 
         });
