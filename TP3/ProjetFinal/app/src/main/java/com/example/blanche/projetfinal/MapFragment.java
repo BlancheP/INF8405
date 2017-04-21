@@ -44,6 +44,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerClickListener,
         LocationListener {
 
     static GoogleMap mGoogleMap;
@@ -84,15 +85,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
 
         MapsInitializer.initialize(getContext());
+        googleMap.setOnMarkerClickListener(this);
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -111,10 +106,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
-
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         MarkerInfoWindow markerInfoWindow = new MarkerInfoWindow(getActivity().getLayoutInflater());
         mGoogleMap.setInfoWindowAdapter(markerInfoWindow);
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -252,5 +253,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
         image = Bitmap.createScaledBitmap(image, (int)finalWidth, (int)finalHeight, true);
         return image;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        DatabaseManager.loadMarkerPhoto(this.getContext());
+        return true;
     }
 }

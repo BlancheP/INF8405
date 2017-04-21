@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -298,6 +299,24 @@ public class DatabaseManager {
 
             }
 
+        });
+    }
+
+    static void loadMarkerPhoto(final Context context) {
+
+        String username = pm.getCurrentUser();
+        storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(context)
+                        .load(uri)
+                        .into((ImageView)(((Activity) context).findViewById(R.id.markerImageView)));
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+            }
         });
     }
 
