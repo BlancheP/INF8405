@@ -12,12 +12,10 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.MemoryPolicy;
@@ -94,7 +91,7 @@ public class DatabaseManager {
     }
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
-    static void addUser(final String password, final EditText etUsername, final Context context, final Bitmap profilePicture) {
+    static void addUser(final String password, final EditText etUsername, final Context context, final boolean hasPhoto, final Bitmap profilePicture) {
         final String username = etUsername.getText().toString();
         usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -106,10 +103,8 @@ public class DatabaseManager {
                 } else {
                     usersRef.child(username).child("password").setValue(password);
 
-                    Bitmap emptyBitmap = Bitmap.createBitmap(profilePicture.getWidth(), profilePicture.getHeight(), profilePicture.getConfig());
-                    if (!profilePicture.sameAs(emptyBitmap)) {
+                    if (hasPhoto)
                         DatabaseManager.addProfilePhotoToBD(username, profilePicture);
-                    }
 
                     Toast done = Toast.makeText(context, "You have been successfully registered!", Toast.LENGTH_SHORT);
                     done.show();
@@ -281,7 +276,7 @@ public class DatabaseManager {
         activity.finishAffinity();
     }
 
-    static void loadProfilePhoto( final Context context) {
+    static void loadProfilePhoto( final Activity context) {
         String username = pm.getCurrentUser();
         storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -290,17 +285,49 @@ public class DatabaseManager {
                         .load(uri)
                         .memoryPolicy(MemoryPolicy.NO_CACHE )
                         .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .into((ImageView) ((Activity) context).findViewById(R.id.ivProfilePic));
+                        .into((ImageView)context.findViewById(R.id.ivProfilePic));
+                context.findViewById(R.id.profilePicLayout).setVisibility(View.VISIBLE);
             }
 
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-
+                ImageView iv = (ImageView)context.findViewById(R.id.ivProfilePic);
+                iv.setImageResource(R.mipmap.ic_profile_black);
+                context.findViewById(R.id.profilePicLayout).setVisibility(View.VISIBLE);
             }
 
         });
     }
+
+    static void loadProfile( final Activity context, final View view) {
+
+        loadProfilePhoto(context);
+
+        final TextView followers = (TextView)view.findViewById(R.id.tvNbFollowers);
+        final TextView following = (TextView)view.findViewById(R.id.tvNbFollowing);
+        final TextView posts = (TextView)view.findViewById(R.id.tvNbPost);
+
+        usersRef.child(DatabaseManager.getPreferencesManager().getCurrentUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long nb = dataSnapshot.child("Followers").getChildrenCount();
+                followers.setText(String.valueOf(nb));
+                nb = dataSnapshot.child("Following").getChildrenCount();
+                following.setText(String.valueOf(nb));
+                // TO-DO A Changer !!!!!
+                posts.setText("10");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
     @SuppressWarnings("VisibleForTests")
     static void addPhotoToBD(final String filename, final String date, final String description, Bitmap bitmap) {
         final String username = pm.getCurrentUser();

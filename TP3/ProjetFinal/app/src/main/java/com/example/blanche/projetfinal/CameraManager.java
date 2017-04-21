@@ -11,7 +11,9 @@ import android.support.v4.content.ContextCompat;
 
 public class CameraManager {
 
-    public static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REGISTER_CAMERA_REQUEST_CODE = 100;
+    static final int ADDPHOTO_CAMERA_REQUEST_CODE = 101;
+    static final int HOME_CAMERA_REQUEST_CODE = 102;
 
     private CameraManager() {}
 
@@ -34,7 +36,7 @@ public class CameraManager {
         {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-                activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                activity.startActivityForResult(takePictureIntent, code);
             }
         }
         else
@@ -50,9 +52,5 @@ public class CameraManager {
         }
         else
             requestForSpecificPermission(activity, code, Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
-
-    public static int getRequestImageCapture() {
-        return REQUEST_IMAGE_CAPTURE;
     }
 }

@@ -11,11 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private Bitmap bitmap;
-    private final int MY_CAMERA_REQUEST_CODE = 100;
+    private final int REGISTER_CAMERA_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +34,19 @@ public class RegisterActivity extends AppCompatActivity {
         bPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w) {
-                CameraManager.dispatchTakePictureIntent(RegisterActivity.this, MY_CAMERA_REQUEST_CODE);
+                CameraManager.dispatchTakePictureIntent(RegisterActivity.this, REGISTER_CAMERA_REQUEST_CODE);
             }
         });
 
         bRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View w) {
-                DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
+                boolean hasPhoto = false;
+                Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+                if (!bitmap.sameAs(emptyBitmap)) {
+                    hasPhoto = true;
+                }
+                DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, hasPhoto, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
             }
         });
 
@@ -57,9 +63,9 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case MY_CAMERA_REQUEST_CODE:
+            case REGISTER_CAMERA_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    CameraManager.dispatchTakePictureIntent(this, MY_CAMERA_REQUEST_CODE);
+                    CameraManager.dispatchTakePictureIntent(this, REGISTER_CAMERA_REQUEST_CODE);
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -69,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         bitmap.eraseColor(Color.TRANSPARENT);
-        if (requestCode == CameraManager.getRequestImageCapture() && resultCode == RESULT_OK) {
+        if (requestCode == CameraManager.REGISTER_CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             bitmap = (Bitmap)extras.get("data");
             ImageButton b = (ImageButton) findViewById(R.id.bPhoto);

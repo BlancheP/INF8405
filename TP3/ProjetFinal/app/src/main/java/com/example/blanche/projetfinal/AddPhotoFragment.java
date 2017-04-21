@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 public class AddPhotoFragment extends Fragment {
 
-    private final int MY_CAMERA_REQUEST_CODE = 101;
+    private final int ADDPHOTO_CAMERA_REQUEST_CODE = 101;
     private final int MY_PHOTOLIBRARY_REQUEST_CODE = 201;
 
     public AddPhotoFragment() {}
@@ -48,7 +48,7 @@ public class AddPhotoFragment extends Fragment {
         buttonTakePhoto.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraManager.dispatchTakePictureIntent(getActivity(), MY_CAMERA_REQUEST_CODE);
+                CameraManager.dispatchTakePictureIntent(getActivity(), ADDPHOTO_CAMERA_REQUEST_CODE);
             }
         });
 
