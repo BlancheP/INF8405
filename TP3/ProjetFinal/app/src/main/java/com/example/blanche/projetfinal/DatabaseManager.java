@@ -358,39 +358,42 @@ public class DatabaseManager {
     }
 
     static void loadDashboardPhoto(final Context context/*, final int index*/) {
+
         final String currentUser = pm.getCurrentUser();
 
-        picturesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List< Map<String, String>> pictures = new ArrayList<>();
-                Map<String, String> infos = new HashMap<>();
-                Map<String, String> individualInfo = new HashMap<>();
+                Map<String, String> infos;
                 if(dataSnapshot.exists()) {
-                    //For all the pictures
+                    for(DataSnapshot usersIter: dataSnapshot.getChildren()) {
+                        if(!usersIter.getKey().equals(currentUser)) {
+                            for(DataSnapshot picturesIter: usersIter.child("pictures").getChildren()){
+                                infos = (Map<String, String>) picturesIter.getValue();
+                                infos.put("username", usersIter.getKey());
+                                pictures.add(infos);
+                            }
+                        }
+                    }
+                   /* //For all the pictures
                     for (DataSnapshot picturesIter: dataSnapshot.getChildren()) {
                         //For all the informations of each picture
-                        /*for (DataSnapshot detailsIter : dataSnapshot.child("pictures").child(picturesIter.getKey()).getChildren()) {
+                        *//*for (DataSnapshot detailsIter : dataSnapshot.child("pictures").child(picturesIter.getKey()).getChildren()) {
                             individualInfo = (Map<String, String>) detailsIter.getValue();
                             infos.put picturesIter.getValue();
-                        }*/
+                        }*//*
                         String key = picturesIter.getKey();
                         infos = (Map<String, String>) picturesIter.getValue();
                         pictures.add(infos);
-                    }
+                    }*/
                     TextView username = (TextView) ((Activity) context).findViewById(R.id.tvDashUsername);
                     TextView filename = (TextView) ((Activity) context).findViewById(R.id.tvDashFilename);
                     TextView date = (TextView) ((Activity) context).findViewById(R.id.tvDashDate);
                     TextView description = (TextView) ((Activity) context).findViewById(R.id.tvDashDescr);
                     ImageView iv = (ImageView) ((Activity) context).findViewById(R.id.ivDashPhoto);
 
-                    //Enlever les photos correspondant a celle de l'utilisateur courrant.
-                    for (int j = 0; j < pictures.size(); j++){
-                        if(pictures.get(j).get("username").equals(currentUser) ){
-                            pictures.remove(j);
-                            j--;
-                        }
-                    }
+
                     if(!pictures.isEmpty()) {
                         if (DashboardFragment.index >= pictures.size()) {
                             //on retourne au debut (pour l'instant)
