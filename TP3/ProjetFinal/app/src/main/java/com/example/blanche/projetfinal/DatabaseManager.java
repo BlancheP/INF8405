@@ -11,8 +11,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -34,7 +36,10 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class DatabaseManager {
@@ -295,18 +300,62 @@ public class DatabaseManager {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d("Photo","success");
+                //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
+                // Firebase database
                 picturesRef.child(filename).child("username").setValue(username);
+                picturesRef.child(filename).child("filename").setValue(filename);
                 picturesRef.child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
                 picturesRef.child(filename).child("date").setValue(date);
                 picturesRef.child(filename).child("description").setValue(description);
             }
         });
-
-        //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
-        // Firebase database
-
     }
 
+    static void loadDashboardPhoto(final Context context, final int index) {
+
+        picturesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List< Map<String, String>> pictures = new ArrayList<>();
+                Map<String, String> infos = new HashMap<>();
+                Map<String, String> individualInfo = new HashMap<>();
+                if(dataSnapshot.exists()) {
+                    //For all the pictures
+                    for (DataSnapshot picturesIter: dataSnapshot.getChildren()) {
+                        //For all the informations of each picture
+                        /*for (DataSnapshot detailsIter : dataSnapshot.child("pictures").child(picturesIter.getKey()).getChildren()) {
+                            individualInfo = (Map<String, String>) detailsIter.getValue();
+                            infos.put picturesIter.getValue();
+                        }*/
+                        String key = picturesIter.getKey();
+                        infos = (Map<String, String>) picturesIter.getValue();
+                        pictures.add(infos);
+                    }
+                    TextView username = (TextView) ((Activity) context).findViewById(R.id.tvDashUsername);
+                    TextView filename = (TextView) ((Activity) context).findViewById(R.id.tvDashFilename);
+                    TextView date = (TextView) ((Activity) context).findViewById(R.id.tvDashDate);
+                    TextView description = (TextView) ((Activity) context).findViewById(R.id.tvDashDescr);
+                    ImageView iv = (ImageView) ((Activity) context).findViewById(R.id.ivDashPhoto);
 
 
+
+                    filename.setText(pictures.get(index).get("filename"));
+                    username.setText(pictures.get(index).get("username"));
+                    date.setText(pictures.get(index).get("date"));
+                    description.setText(pictures.get(index).get("description"));
+                    Uri uri = Uri.parse(pictures.get(index).get("url"));
+                    Picasso.with(context)
+                            .load(uri)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE )
+                            .networkPolicy(NetworkPolicy.NO_CACHE)
+                            .into(iv);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

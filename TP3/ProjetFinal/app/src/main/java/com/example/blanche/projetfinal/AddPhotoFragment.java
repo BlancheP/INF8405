@@ -63,7 +63,6 @@ public class AddPhotoFragment extends Fragment {
             }
         });
 
-        //On peut utiliser la date de firebase aussi au lieu de prendre celle qui est mise en prenant la photo.
         buttonUploadPhoto.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v){
