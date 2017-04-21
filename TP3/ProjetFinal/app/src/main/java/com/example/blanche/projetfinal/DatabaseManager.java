@@ -365,8 +365,10 @@ public class DatabaseManager {
                 List< Map<String, String>> pictures = new ArrayList<>();
                 Map<String, String> infos;
                 if(dataSnapshot.exists()) {
+                    //For all users
                     for(DataSnapshot usersIter: dataSnapshot.getChildren()) {
                         if(!usersIter.getKey().equals(currentUser)) {
+                            //For all pictures
                             for(DataSnapshot picturesIter: usersIter.child("pictures").getChildren()){
                                 infos = (Map<String, String>) picturesIter.getValue();
                                 infos.put("username", usersIter.getKey());
@@ -374,17 +376,7 @@ public class DatabaseManager {
                             }
                         }
                     }
-                   /* //For all the pictures
-                    for (DataSnapshot picturesIter: dataSnapshot.getChildren()) {
-                        //For all the informations of each picture
-                        *//*for (DataSnapshot detailsIter : dataSnapshot.child("pictures").child(picturesIter.getKey()).getChildren()) {
-                            individualInfo = (Map<String, String>) detailsIter.getValue();
-                            infos.put picturesIter.getValue();
-                        }*//*
-                        String key = picturesIter.getKey();
-                        infos = (Map<String, String>) picturesIter.getValue();
-                        pictures.add(infos);
-                    }*/
+                   
                     TextView username = (TextView) ((Activity) context).findViewById(R.id.tvDashUsername);
                     TextView filename = (TextView) ((Activity) context).findViewById(R.id.tvDashFilename);
                     TextView date = (TextView) ((Activity) context).findViewById(R.id.tvDashDate);
