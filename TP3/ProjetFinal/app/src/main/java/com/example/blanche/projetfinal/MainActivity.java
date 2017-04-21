@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
@@ -35,7 +36,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int MY_CAMERA_REQUEST_CODE = 101;
     private final int MY_PHOTOLIBRARY_REQUEST_CODE = 201;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_search:
                     fragmentTransaction.replace(R.id.fragment_container, new SearchFragment());
                     fragmentTransaction.commit();
+                    return true;
             }
             return false;
         }
@@ -121,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case MY_CAMERA_REQUEST_CODE:
+            case CameraManager.ADDPHOTO_CAMERA_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    CameraManager.dispatchTakePictureIntent(this, MY_CAMERA_REQUEST_CODE);
+                    CameraManager.dispatchTakePictureIntent(this, CameraManager.ADDPHOTO_CAMERA_REQUEST_CODE);
                 break;
-            case MY_PHOTOLIBRARY_REQUEST_CODE:
+            case CameraManager.ADDPHOTO_PHOTOLIBRARY_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     CameraManager.accessPhotoLibrary(this, MY_PHOTOLIBRARY_REQUEST_CODE);
             default:
@@ -137,12 +138,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CameraManager.getRequestImageCapture() && resultCode == RESULT_OK) {
+        if ((requestCode == CameraManager.REGISTER_CAMERA_REQUEST_CODE || requestCode == CameraManager.ADDPHOTO_CAMERA_REQUEST_CODE) && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
             setImageView(bitmap);
         }
-        else if (resultCode == RESULT_OK){
+        else if (requestCode == CameraManager.ADDPHOTO_PHOTOLIBRARY_REQUEST_CODE && resultCode == RESULT_OK){
             Uri targetUri = data.getData();
             Bitmap bitmap;
             try {
@@ -152,6 +153,14 @@ public class MainActivity extends AppCompatActivity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+        else if (requestCode == CameraManager.HOME_CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            DatabaseManager.addProfilePhotoToBD(DatabaseManager.getPreferencesManager().getCurrentUser(), bitmap);
+            ImageView iv = (ImageView)findViewById(R.id.ivProfilePic);
+            bitmap = resize(bitmap, iv);
+            iv.setImageBitmap(bitmap);
         }
     }
 
