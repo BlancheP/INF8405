@@ -367,12 +367,15 @@ public class DatabaseManager {
                 if(dataSnapshot.exists()) {
                     //For all users
                     for(DataSnapshot usersIter: dataSnapshot.getChildren()) {
-                        if(!usersIter.getKey().equals(currentUser)) {
-                            //For all pictures
-                            for(DataSnapshot picturesIter: usersIter.child("pictures").getChildren()){
-                                infos = (Map<String, String>) picturesIter.getValue();
-                                infos.put("username", usersIter.getKey());
-                                pictures.add(infos);
+                        if(dataSnapshot.child(currentUser).child("Following").exists()) {
+                            //On n'affiche que les photos de ceux d'on est abonné.
+                            if (dataSnapshot.child(currentUser).child("Following").getValue().toString().contains(usersIter.getKey())) {
+                                //For all pictures
+                                for (DataSnapshot picturesIter : usersIter.child("pictures").getChildren()) {
+                                    infos = (Map<String, String>) picturesIter.getValue();
+                                    infos.put("username", usersIter.getKey());
+                                    pictures.add(infos);
+                                }
                             }
                         }
                     }
