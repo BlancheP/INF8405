@@ -386,9 +386,7 @@ public class DatabaseManager {
 
                     if(!pictures.isEmpty()) {
                         if (DashboardFragment.index >= pictures.size()) {
-                            //on retourne au debut (pour l'instant)
-                            DashboardFragment.index = 0;
-                        } else if (DashboardFragment.index < 0) {
+                            //on retourne au debut
                             DashboardFragment.index = 0;
                         }
 
@@ -404,6 +402,7 @@ public class DatabaseManager {
                                 .networkPolicy(NetworkPolicy.NO_CACHE)
                                 .into(iv);
                         DashboardFragment.justChanged = false;
+
                     }
                     else{
                         filename.setText("No Pictures!");

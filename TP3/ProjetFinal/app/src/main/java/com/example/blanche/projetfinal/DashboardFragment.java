@@ -23,6 +23,7 @@ public class DashboardFragment extends Fragment {
     private Sensor sensor;
     public static int index = 0;
     public static boolean justChanged = false;
+    private SensorEventListener sensorEventListener;
 
 
     public DashboardFragment() {
@@ -35,25 +36,13 @@ public class DashboardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-
-
-
-       /* final TextView username = (TextView)view.findViewById(R.id.tvDashUsername);
-        final TextView date = (TextView)view.findViewById(R.id.tvDashDate);
-        final TextView filename = (TextView)view.findViewById(R.id.tvDashFilename);
-        final TextView descr = (TextView)view.findViewById(R.id.tvDashDescr);
-        final ImageView photo = (ImageView) view.findViewById(R.id.ivDashPhoto);
-
-
-        final Context dashContext = this.getContext();*/
-
-        //TODO: Faire en sorte que le mouvement change la photo en temps reel
-        SensorEventListener sensorEventListener = new SensorEventListener() {
+        sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 if (event.values[0] > 2 && !justChanged) {
                     ++index;
                     justChanged = true;
+                    loadPhotos();
                 }
             }
 
@@ -68,6 +57,17 @@ public class DashboardFragment extends Fragment {
 
         DatabaseManager.loadDashboardPhoto(this.getContext());
 
+
         return view;
+    }
+
+    private void loadPhotos(){
+        DatabaseManager.loadDashboardPhoto(this.getContext());
+
+    }
+    @Override
+    public void onStop(){
+        sensorManager.unregisterListener(sensorEventListener);
+        super.onStop();
     }
 }
