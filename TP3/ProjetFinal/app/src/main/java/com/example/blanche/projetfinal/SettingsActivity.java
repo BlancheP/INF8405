@@ -4,6 +4,7 @@ package com.example.blanche.projetfinal;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -33,7 +34,7 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -169,6 +170,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
+    }
+
+    /**
+        When the user changes the preferences selection,
+        onSharedPreferenceChanged() restarts the main activity as a new
+        task. Sets the refreshDisplay flag to "true" to indicate that
+        the main activity should update its display.
+        The main activity queries the PreferenceManager to get the latest settings.
+     */
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // Sets refreshDisplay to true so that when the user returns to the main
+        // activity, the display refreshes to reflect the new settings.
+        NetworkActivity.refreshDisplay = true;
     }
 
     /**
