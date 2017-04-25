@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,9 +34,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -81,7 +87,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
 
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
@@ -89,9 +95,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
+        final LatLng sydney = new LatLng(-33.852, 151.211);
+        final ImageView v = new ImageView(getContext());
+        Uri uri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/projetfinal-481cd.appspot.com/o/rob%2Fcirque?alt=media&token=01323dbb-bead-4c24-a793-776727cb1f0e");
+        Picasso.with(getContext()).load(uri).into(v, new com.squareup.picasso.Callback() {
+            @Override
+            public void onSuccess() {
+                //do smth when picture is loaded successfully
+
+                Bitmap bitmap = ((BitmapDrawable)v.getDrawable()).getBitmap();
+                bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bitmap);
+                MarkerOptions marker = new MarkerOptions().position(sydney).title("My marker").snippet("Thinking of finding some thing...").icon(icon);
+                googleMap.addMarker(marker);
+            }
+
+            @Override
+            public void onError() {
+                //do smth when there is picture loading error
+            }
+        });
+
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         //Initialize Google Play Services
