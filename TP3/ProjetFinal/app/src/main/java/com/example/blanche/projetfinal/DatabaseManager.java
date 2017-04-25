@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -55,6 +57,9 @@ public class DatabaseManager {
     private static DatabaseReference picturesRef = databaseRef.child("pictures");
     final public static List<String> users = new ArrayList<>();
     final public static List< Map<String, String>> picturesGlob = new ArrayList<>();
+    final public static List< Map<String, String>> myPicturesGlob = new ArrayList<>();
+    final public static List<String> myURLS = new ArrayList<>();
+    final public static List<ImageItem> myImageItems = new ArrayList<>();
 
     private DatabaseManager() {}
 
@@ -109,8 +114,12 @@ public class DatabaseManager {
                      public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                          int index = getPhotoIndex(picturesGlob, username, s);
                          if(index != -1){
-                             //picturesGlob.remove(index);
+                             picturesGlob.remove(index);
+
                          }
+                         Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
+                         infos.put("username", username);
+                         picturesGlob.add(infos);
 
                      }
 
@@ -132,6 +141,43 @@ public class DatabaseManager {
 
                      }
                  });
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                deletePhotoFollower(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        usersRef.child(pm.getCurrentUser()).child("pictures").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                               final long ONE_MEGABYTE = 1024 * 1024;
+                final String filename = dataSnapshot.getKey().toString();
+                storageRef.child(pm.getCurrentUser() + "/"+filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        myImageItems.add(new ImageItem(bitmap, filename));
+
+                    }
+                });
+
             }
 
             @Override
@@ -419,11 +465,7 @@ public class DatabaseManager {
                 usersRef.child(username).child("pictures").child(filename).setValue(photo);
 
 
-                /*
-                usersRef.child(username).child("pictures").child(filename).child("filename").setValue(filename);
-                usersRef.child(username).child("pictures").child(filename).child("date").setValue(date);
-                usersRef.child(username).child("pictures").child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
-                usersRef.child(username).child("pictures").child(filename).child("description").setValue(description);*/
+
             }
         });
     }
@@ -515,14 +557,24 @@ public class DatabaseManager {
         return -1;
     }
 
-    /*static void loadProfileLibrary(final Context context){
+    static void deletePhotoFollower(String username){
+        for(int i = 0; i < picturesGlob.size(); i++ ){
+            if(picturesGlob.get(i).get("username").equals(username)){
+                picturesGlob.remove(i);
+                --i;
+            }
+        }
+    }
+
+
+   /* static void loadProfileLibrary(final Context context){
         final String currentUser = pm.getCurrentUser();
 
         usersRef.child(currentUser).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               GridView gridView = (GridView)((Activity) context).findViewById(R.id.gvPhotoLibrary);
-               GridViewAdapter gridAdapter = new GridViewAdapter(this, R.layout.photo_library_item_layout, getData());
+                GridView gridView = (GridView)((Activity) context).findViewById(R.id.gvPhotoLibrary);
+                GridViewAdapter gridAdapter = new GridViewAdapter(this, R.layout.photo_library_item_layout, getData());
                 gridView.setAdapter(gridAdapter);
             }
 
@@ -532,5 +584,15 @@ public class DatabaseManager {
             }
         });
     }*/
+
+/*
+    static ArrayList<ImageItem> getLibraryPhotos(){
+        final ArrayList<ImageItem> imageItems = new ArrayList<>();
+        TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
+        for (int i = 0; i < imgs.length(); i++) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
+            imageItems.add(new ImageItem(bitmap, "Image#" + i));
+    }
+*/
 
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 
 public class ProfileFragment extends Fragment {
 
@@ -53,6 +54,10 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+
+        GridView gridView = (GridView) view.findViewById(R.id.gvPhotoLibrary);
+        GridViewAdapter gridAdapter = new GridViewAdapter(this.getContext(), R.layout.photo_library_item_layout, DatabaseManager.myImageItems);
+        gridView.setAdapter(gridAdapter);
 
         return view;
     }
