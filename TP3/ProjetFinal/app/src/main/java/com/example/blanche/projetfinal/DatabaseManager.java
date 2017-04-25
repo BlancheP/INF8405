@@ -312,8 +312,8 @@ public class DatabaseManager {
                 followers.setText(String.valueOf(nb));
                 nb = dataSnapshot.child("Following").getChildrenCount();
                 following.setText(String.valueOf(nb));
-                // TO-DO A Changer !!!!!
-                posts.setText("10");
+                nb = dataSnapshot.child("pictures").getChildrenCount();
+                posts.setText(String.valueOf(nb));
             }
 
             @Override
@@ -459,6 +459,32 @@ public class DatabaseManager {
 
             }
         });
+    }
+
+    static boolean changePassword(final Activity activity, final String oldPwd, final String newPwd1, final String newPwd2, final View view, final DialogInterface dialog) {
+        usersRef.child(pm.getCurrentUser()).child("password").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue().toString().equals(oldPwd)) {
+                    if (newPwd1.equals(newPwd2)) {
+                        usersRef.child(pm.getCurrentUser()).child("password").setValue(newPwd1);
+                        dialog.cancel();
+                    }
+                    else {
+                        ((TextView)view.findViewById(R.id.etConfirmPassword)).setError("Please enter the same password");
+                    }
+                }
+                else {
+                    ((TextView)view.findViewById(R.id.etOldPassword)).setError("You entered the wrong password");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return true;
     }
 
 }
