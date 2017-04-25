@@ -33,7 +33,12 @@ public class LoginActivity extends AppCompatActivity {
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
+                if (etUsername.getText().toString().trim().length() <= 0) {
+                    etUsername.setError("You need to enter a username");
+                }
+                else {
+                    DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
+                }
             }
         });
     }
