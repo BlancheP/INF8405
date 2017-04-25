@@ -39,11 +39,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.example.blanche.projetfinal.DashboardFragment.index;
 
 
 public class DatabaseManager {
@@ -355,7 +352,7 @@ public class DatabaseManager {
         });
     }
 
-    static void loadDashboardPhoto(final Context context/*, final int index*/) {
+    static void loadHomePhoto(final Context context/*, final int index*/) {
 
         final String currentUser = pm.getCurrentUser();
 
@@ -388,23 +385,23 @@ public class DatabaseManager {
 
 
                     if(!pictures.isEmpty()) {
-                        if (DashboardFragment.index >= pictures.size()) {
+                        if (HomeFragment.index >= pictures.size()) {
                             //on retourne au debut
-                            DashboardFragment.index = 0;
+                            HomeFragment.index = 0;
                         }
 
 
-                        filename.setText(pictures.get(DashboardFragment.index).get("filename"));
-                        username.setText(pictures.get(DashboardFragment.index).get("username"));
-                        date.setText(pictures.get(DashboardFragment.index).get("date"));
-                        description.setText(pictures.get(DashboardFragment.index).get("description"));
-                        Uri uri = Uri.parse(pictures.get(DashboardFragment.index).get("url"));
+                        filename.setText(pictures.get(HomeFragment.index).get("filename"));
+                        username.setText(pictures.get(HomeFragment.index).get("username"));
+                        date.setText(pictures.get(HomeFragment.index).get("date"));
+                        description.setText(pictures.get(HomeFragment.index).get("description"));
+                        Uri uri = Uri.parse(pictures.get(HomeFragment.index).get("url"));
                         Picasso.with(context)
                                 .load(uri)
                                 .memoryPolicy(MemoryPolicy.NO_CACHE )
                                 .networkPolicy(NetworkPolicy.NO_CACHE)
                                 .into(iv);
-                        DashboardFragment.justChanged = false;
+                        HomeFragment.justChanged = false;
 
                     }
                     else{

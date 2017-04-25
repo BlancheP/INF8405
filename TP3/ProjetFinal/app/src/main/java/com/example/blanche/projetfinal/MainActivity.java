@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragmentTransaction.replace(R.id.fragment_container, new DashboardFragment());
+                    fragmentTransaction.replace(R.id.fragment_container, new HomeFragment());
                     fragmentTransaction.commit();
                     return true;
                 case R.id.navigation_profile:
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationViewHelper.disableShiftMode(navigation);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new DashboardFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new HomeFragment());
         fragmentTransaction.commit();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
