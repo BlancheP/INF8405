@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +54,7 @@ public class DatabaseManager {
     private static PreferencesManager pm;
     private static DatabaseReference picturesRef = databaseRef.child("pictures");
     final public static List<String> users = new ArrayList<>();
+    final public static List< Map<String, String>> picturesGlob = new ArrayList<>();
 
     private DatabaseManager() {}
 
@@ -75,6 +78,70 @@ public class DatabaseManager {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 users.remove(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        usersRef.child(pm.getCurrentUser()).child("Following").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                final String username = dataSnapshot.getKey().toString();
+                 usersRef.child(username).child("pictures").addChildEventListener(new ChildEventListener() {
+                     @Override
+                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                         Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
+                         infos.put("username", username);
+                         picturesGlob.add(infos);
+                     }
+
+                     @Override
+                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                         int index = getPhotoIndex(picturesGlob, username, s);
+                         if(index != -1){
+                             //picturesGlob.remove(index);
+                         }
+
+                     }
+
+                     @Override
+                     public void onChildRemoved(DataSnapshot dataSnapshot) {
+                         int index = getPhotoIndex(picturesGlob, username, dataSnapshot.child("filename").getValue().toString());
+                         if(index != -1){
+                             picturesGlob.remove(index);
+                         }
+                     }
+
+                     @Override
+                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                     }
+
+                     @Override
+                     public void onCancelled(DatabaseError databaseError) {
+
+                     }
+                 });
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
             }
 
             @Override
@@ -344,79 +411,55 @@ public class DatabaseManager {
                 Log.d("Photo","success");
                 //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
                 // Firebase database
+                Map<String, String> photo = new HashMap<String, String>();
+                photo.put("filename", filename);
+                photo.put("date", date);
+                photo.put("url", taskSnapshot.getDownloadUrl().toString());
+                photo.put("description", description);
+                usersRef.child(username).child("pictures").child(filename).setValue(photo);
+
+
+                /*
                 usersRef.child(username).child("pictures").child(filename).child("filename").setValue(filename);
                 usersRef.child(username).child("pictures").child(filename).child("date").setValue(date);
                 usersRef.child(username).child("pictures").child(filename).child("url").setValue( taskSnapshot.getDownloadUrl().toString());
-                usersRef.child(username).child("pictures").child(filename).child("description").setValue(description);
+                usersRef.child(username).child("pictures").child(filename).child("description").setValue(description);*/
             }
         });
     }
 
-    static void loadHomePhoto(final Context context/*, final int index*/) {
+    static void loadHomePhoto(final View view, final Context context) {
 
-        final String currentUser = pm.getCurrentUser();
-
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List< Map<String, String>> pictures = new ArrayList<>();
-                Map<String, String> infos;
-                if(dataSnapshot.exists()) {
-                    //For all users
-                    for(DataSnapshot usersIter: dataSnapshot.getChildren()) {
-                        if(dataSnapshot.child(currentUser).child("Following").exists()) {
-                            //On n'affiche que les photos de ceux d'on est abonné.
-                            if (dataSnapshot.child(currentUser).child("Following").getValue().toString().contains(usersIter.getKey())) {
-                                //For all pictures
-                                for (DataSnapshot picturesIter : usersIter.child("pictures").getChildren()) {
-                                    infos = (Map<String, String>) picturesIter.getValue();
-                                    infos.put("username", usersIter.getKey());
-                                    pictures.add(infos);
-                                }
-                            }
-                        }
-                    }
-                   
-                    TextView username = (TextView) ((Activity) context).findViewById(R.id.tvDashUsername);
-                    TextView filename = (TextView) ((Activity) context).findViewById(R.id.tvDashFilename);
-                    TextView date = (TextView) ((Activity) context).findViewById(R.id.tvDashDate);
-                    TextView description = (TextView) ((Activity) context).findViewById(R.id.tvDashDescr);
-                    ImageView iv = (ImageView) ((Activity) context).findViewById(R.id.ivDashPhoto);
+        TextView username = (TextView) view.findViewById(R.id.tvDashUsername);
+        TextView filename = (TextView) view.findViewById(R.id.tvDashFilename);
+        TextView date = (TextView) view.findViewById(R.id.tvDashDate);
+        TextView description = (TextView) view.findViewById(R.id.tvDashDescr);
+        ImageView iv = (ImageView) view.findViewById(R.id.ivDashPhoto);
 
 
-                    if(!pictures.isEmpty()) {
-                        if (HomeFragment.index >= pictures.size()) {
-                            //on retourne au debut
-                            HomeFragment.index = 0;
-                        }
-
-
-                        filename.setText(pictures.get(HomeFragment.index).get("filename"));
-                        username.setText(pictures.get(HomeFragment.index).get("username"));
-                        date.setText(pictures.get(HomeFragment.index).get("date"));
-                        description.setText(pictures.get(HomeFragment.index).get("description"));
-                        Uri uri = Uri.parse(pictures.get(HomeFragment.index).get("url"));
-                        Picasso.with(context)
-                                .load(uri)
-                                .memoryPolicy(MemoryPolicy.NO_CACHE )
-                                .networkPolicy(NetworkPolicy.NO_CACHE)
-                                .into(iv);
-                        HomeFragment.justChanged = false;
-
-                    }
-                    else{
-                        filename.setText("No Pictures!");
-                    }
-
-
-
-                }
+        if(!picturesGlob.isEmpty()) {
+            if (HomeFragment.index >= picturesGlob.size()) {
+                //on retourne au debut
+                HomeFragment.index = 0;
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+
+            filename.setText(picturesGlob.get(HomeFragment.index).get("filename"));
+            username.setText(picturesGlob.get(HomeFragment.index).get("username"));
+            date.setText(picturesGlob.get(HomeFragment.index).get("date"));
+            description.setText(picturesGlob.get(HomeFragment.index).get("description"));
+            Uri uri = Uri.parse(picturesGlob.get(HomeFragment.index).get("url"));
+            Picasso.with(context)
+                    .load(uri)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE )
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(iv);
+            HomeFragment.justChanged = false;
+
+        }
+        else{
+            filename.setText("No Pictures!");
+        }
     }
 
     // Fonction qui permet de recuperer tous les users existants
@@ -460,5 +503,34 @@ public class DatabaseManager {
             }
         });
     }
+
+    static int getPhotoIndex(List<Map<String, String>> photos, String username, String filename){
+        int index = 0;
+        for(; index < photos.size(); index++){
+           if(photos.get(index).get("username").equals(username)
+                   && photos.get(index).get("filename").equals(filename)){
+               return index;
+           }
+        }
+        return -1;
+    }
+
+    /*static void loadProfileLibrary(final Context context){
+        final String currentUser = pm.getCurrentUser();
+
+        usersRef.child(currentUser).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+               GridView gridView = (GridView)((Activity) context).findViewById(R.id.gvPhotoLibrary);
+               GridViewAdapter gridAdapter = new GridViewAdapter(this, R.layout.photo_library_item_layout, getData());
+                gridView.setAdapter(gridAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }*/
 
 }

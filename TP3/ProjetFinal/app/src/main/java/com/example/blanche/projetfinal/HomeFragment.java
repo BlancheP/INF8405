@@ -51,14 +51,14 @@ public class HomeFragment extends Fragment {
         sensorManager = (SensorManager) getContext().getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL);
 
-        DatabaseManager.loadHomePhoto(this.getContext());
+        DatabaseManager.loadHomePhoto(view, this.getContext());
 
 
         return view;
     }
 
     private void loadPhotos(){
-        DatabaseManager.loadHomePhoto(this.getContext());
+        DatabaseManager.loadHomePhoto(getView(), this.getContext());
 
     }
     @Override
