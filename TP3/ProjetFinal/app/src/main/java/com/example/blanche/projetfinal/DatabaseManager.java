@@ -523,52 +523,76 @@ public class DatabaseManager {
 
 
     @SuppressWarnings("VisibleForTests")
-    static void addPhotoToBD(final String filename, final String date, final String description, final Bitmap bitmap) {
+    static void addPhotoToBD(final String filename, final String date, final String description,
+                             final Bitmap bitmap, final Context context, final View view) {
+
         final String username = pm.getCurrentUser();
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
-        final byte[] data = b.toByteArray();
-        //Pour la sauvegarde des photos avec Firebase storage
-        UploadTask task = storageRef.child(username + "/" + filename).putBytes(data);
-        task.addOnFailureListener(new OnFailureListener() {
+        usersRef.child(username).child("pictures").child(filename).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Photo","Failure");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.d("Photo","success");
-                //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
-                // Firebase database
-                usersRef.child(username).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long a = dataSnapshot.getChildrenCount();
-                        if (dataSnapshot.getChildrenCount() > 0 ) {
-                            for (DataSnapshot picturesIter : dataSnapshot.getChildren()) {
-                                String b = picturesIter.child("current").getValue().toString();
-                                if (b.equals("true"))
-                                    picturesIter.child("current").getRef().setValue("false");
-                            }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Toast.makeText(context, "A picture with the same name already exists!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    ByteArrayOutputStream b = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
+                    final byte[] data = b.toByteArray();
+                    //Pour la sauvegarde des photos avec Firebase storage
+                    UploadTask task = storageRef.child(username + "/" + filename).putBytes(data);
+                    task.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Photo","Failure");
                         }
-                    }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d("Photo","success");
+                            //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
+                            // Firebase database
+                            usersRef.child(username).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    long a = dataSnapshot.getChildrenCount();
+                                    if (dataSnapshot.getChildrenCount() > 0 ) {
+                                        for (DataSnapshot picturesIter : dataSnapshot.getChildren()) {
+                                            String b = picturesIter.child("current").getValue().toString();
+                                            if (b.equals("true"))
+                                                picturesIter.child("current").getRef().setValue("false");
+                                        }
+                                    }
+                                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
-                Map<String, String> photo = new HashMap<String, String>();
-                photo.put("filename", filename);
-                photo.put("date", date);
-                photo.put("url", taskSnapshot.getDownloadUrl().toString());
-                photo.put("description", description);
-                photo.put("current", "true");
-                markerImages.put(username, bitmap);
-                usersRef.child(username).child("pictures").child(filename).setValue(photo);
+                                }
+                            });
+                            Map<String, String> photo = new HashMap<String, String>();
+                            photo.put("filename", filename);
+                            photo.put("date", date);
+                            photo.put("url", taskSnapshot.getDownloadUrl().toString());
+                            photo.put("description", description);
+                            photo.put("current", "true");
+                            markerImages.put(username, bitmap);
+                            usersRef.child(username).child("pictures").child(filename).setValue(photo);
+                            view.findViewById(R.id.targetimage).setVisibility(ImageView.GONE);
+                            ((EditText)view.findViewById(R.id.etFileName)).getText().clear();
+                            ((EditText)view.findViewById(R.id.etDescription)).getText().clear();
+                            view.findViewById(R.id.layout_upload).setVisibility(View.GONE);
+                            view.findViewById(R.id.loadphoto).setVisibility(View.VISIBLE);
+                            view.findViewById(R.id.takephoto).setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
+
     }
 
     static void loadHomePhoto(final View view, final Context context) {
