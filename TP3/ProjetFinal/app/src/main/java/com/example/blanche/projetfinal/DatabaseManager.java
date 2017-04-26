@@ -436,8 +436,8 @@ public class DatabaseManager {
                 followers.setText(String.valueOf(nb));
                 nb = dataSnapshot.child("Following").getChildrenCount();
                 following.setText(String.valueOf(nb));
-                // TO-DO A Changer !!!!!
-                posts.setText("10");
+                nb = dataSnapshot.child("pictures").getChildrenCount();
+                posts.setText(String.valueOf(nb));
             }
 
             @Override
@@ -577,16 +577,22 @@ public class DatabaseManager {
         }
     }
 
-
-   /* static void loadProfileLibrary(final Context context){
-        final String currentUser = pm.getCurrentUser();
-
-        usersRef.child(currentUser).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
+    static boolean changePassword(final Activity activity, final String oldPwd, final String newPwd1, final String newPwd2, final View view, final DialogInterface dialog) {
+        usersRef.child(pm.getCurrentUser()).child("password").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                GridView gridView = (GridView)((Activity) context).findViewById(R.id.gvPhotoLibrary);
-                GridViewAdapter gridAdapter = new GridViewAdapter(this, R.layout.photo_library_item_layout, getData());
-                gridView.setAdapter(gridAdapter);
+                if (dataSnapshot.getValue().toString().equals(oldPwd)) {
+                    if (newPwd1.equals(newPwd2)) {
+                        usersRef.child(pm.getCurrentUser()).child("password").setValue(newPwd1);
+                        dialog.cancel();
+                    }
+                    else {
+                        ((TextView)view.findViewById(R.id.etConfirmPassword)).setError("Please enter the same password");
+                    }
+                }
+                else {
+                    ((TextView)view.findViewById(R.id.etOldPassword)).setError("You entered the wrong password");
+                }
             }
 
             @Override
@@ -594,16 +600,8 @@ public class DatabaseManager {
 
             }
         });
-    }*/
 
-/*
-    static ArrayList<ImageItem> getLibraryPhotos(){
-        final ArrayList<ImageItem> imageItems = new ArrayList<>();
-        TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
-        for (int i = 0; i < imgs.length(); i++) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
-            imageItems.add(new ImageItem(bitmap, "Image#" + i));
+        return true;
     }
-*/
 
 }

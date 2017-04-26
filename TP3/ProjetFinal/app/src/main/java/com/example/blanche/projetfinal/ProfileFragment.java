@@ -1,6 +1,10 @@
 package com.example.blanche.projetfinal;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -9,6 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.EditText;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
@@ -38,19 +46,45 @@ public class ProfileFragment extends Fragment {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                 dialog.setTitle("Change password");
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                dialog.setView(inflater.inflate(R.layout.change_password, null));
+                final View dialogView = inflater.inflate(R.layout.change_password, null);
+                dialog.setView(dialogView);
 
-                dialog.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton("SAVE", null)
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });
 
-                dialog.show();
+                final AlertDialog d = dialog.create();
+                d.show();
+
+                d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        EditText etOldPwd = (EditText)dialogView.findViewById(R.id.etOldPassword);
+                        EditText etNewPwd = (EditText)dialogView.findViewById(R.id.etNewPassword);
+                        EditText etNewPwd2 = (EditText)dialogView.findViewById(R.id.etConfirmPassword);
+
+                        if (etOldPwd.getText().toString().trim().length() <=0)
+                            etOldPwd.setError("You must enter your current password");
+
+                        if (etNewPwd.getText().toString().trim().length() <= 0)
+                            etNewPwd.setError("You must enter a new password");
+
+                        if (etNewPwd2.getText().toString().trim().length() <= 0)
+                            etNewPwd2.setError("You must enter something");
+
+                        if (etOldPwd.getText().toString().trim().length() > 0 &&
+                                etNewPwd.getText().toString().trim().length() > 0 &&
+                                etNewPwd2.getText().toString().trim().length() > 0) {
+                            DatabaseManager.changePassword(getActivity(), etOldPwd.getText().toString(),
+                                    etNewPwd.getText().toString(), etNewPwd2.getText().toString(), dialogView, d);
+                        }
+                    }
+                });
 
             }
         });
