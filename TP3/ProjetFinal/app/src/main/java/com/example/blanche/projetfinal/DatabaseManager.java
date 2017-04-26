@@ -67,10 +67,6 @@ public class DatabaseManager {
 
         pm = new PreferencesManager(context);
         users.clear();
-        picturesGlob.clear();
-        myPicturesGlob.clear();
-        myURLS.clear();
-        myImageItems.clear();
 
         // Permet de recuperer les users et de modifier la liste de tous les users
         DatabaseManager.usersRef.addChildEventListener(new ChildEventListener() {
@@ -101,9 +97,14 @@ public class DatabaseManager {
             }
         });
 
-        String user =  pm.getCurrentUser();
-        if (user != null && user != "") {
-            usersRef.child(pm.getCurrentUser()).child("Following").addChildEventListener(new ChildEventListener() {
+        if (pm.getCurrentUser() != null && !pm.getCurrentUser().equals(""))
+            InitUser(pm.getCurrentUser().toString());
+    }
+
+    static void InitUser(final String username) {
+
+        if (username != null && username != "") {
+            usersRef.child(username).child("Following").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     if (dataSnapshot.exists()) {
@@ -111,9 +112,12 @@ public class DatabaseManager {
                         usersRef.child(username).child("pictures").addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
-                                infos.put("username", username);
-                                picturesGlob.add(infos);
+                                int index = getPhotoIndex(picturesGlob, username, s);
+                                if(index == -1){
+                                    Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
+                                    infos.put("username", username);
+                                    picturesGlob.add(infos);
+                                }
                             }
 
                             @Override
@@ -172,12 +176,12 @@ public class DatabaseManager {
                 }
             });
 
-            usersRef.child(pm.getCurrentUser()).child("pictures").addChildEventListener(new ChildEventListener() {
+            usersRef.child(username).child("pictures").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     final long ONE_MEGABYTE = 1024 * 1024;
                     final String filename = dataSnapshot.getKey().toString();
-                    storageRef.child(pm.getCurrentUser() + "/"+filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    storageRef.child(username + "/"+filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -210,6 +214,65 @@ public class DatabaseManager {
             });
         }
     }
+
+    static void loadPhotoAfterLogin(final String currentUser, final Context context, final View view) {
+        picturesGlob.clear();
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> infos;
+                if (dataSnapshot.exists()) {
+                    //For all users
+                    for (DataSnapshot usersIter : dataSnapshot.getChildren()) {
+                        if (dataSnapshot.child(currentUser).child("Following").exists()) {
+                            //On affiche que les photos de ceux d'on est abonné.
+                            if (dataSnapshot.child(currentUser).child("Following").getValue().toString().contains(usersIter.getKey())) {
+                                //For all pictures
+                                for (DataSnapshot picturesIter : usersIter.child("pictures").getChildren()) {
+                                    infos = (Map<String, String>) picturesIter.getValue();
+                                    infos.put("username", usersIter.getKey());
+                                    picturesGlob.add(infos);
+                                }
+                            }
+                        }
+                    }
+                    TextView username = (TextView) view.findViewById(R.id.tvDashUsername);
+                    TextView filename = (TextView) view.findViewById(R.id.tvDashFilename);
+                    TextView date = (TextView) view.findViewById(R.id.tvDashDate);
+                    TextView description = (TextView) view.findViewById(R.id.tvDashDescr);
+                    ImageView iv = (ImageView) view.findViewById(R.id.ivDashPhoto);
+
+                    if (!picturesGlob.isEmpty()) {
+                        if (HomeFragment.index >= picturesGlob.size()) {
+                            //on retourne au debut
+                            HomeFragment.index = 0;
+                        }
+
+                        filename.setText(picturesGlob.get(HomeFragment.index).get("filename"));
+                        username.setText(picturesGlob.get(HomeFragment.index).get("username"));
+                        date.setText(picturesGlob.get(HomeFragment.index).get("date"));
+                        description.setText(picturesGlob.get(HomeFragment.index).get("description"));
+                        Uri uri = Uri.parse(picturesGlob.get(HomeFragment.index).get("url"));
+                        Picasso.with(context)
+                                .load(uri)
+                                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                                .networkPolicy(NetworkPolicy.NO_CACHE)
+                                .into(iv);
+                        HomeFragment.justChanged = false;
+                    } else {
+                        filename.setText("No Pictures!");
+                    }
+                    InitUser(currentUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
     static void addUser(final String password, final EditText etUsername, final Context context, final boolean hasPhoto, final Bitmap profilePicture) {
@@ -338,7 +401,6 @@ public class DatabaseManager {
                         if (isUserFromPreferences){
                             Intent goToDashboard = new Intent(context, MainActivity.class);
                             context.startActivity(goToDashboard);
-                            Init(context);
                             ((Activity)context).finishAffinity();
                         }
                         else {
@@ -393,9 +455,12 @@ public class DatabaseManager {
 
     static void storeDataInfo(final String username, final String password, final Activity activity) {
         pm.updateCurrentUser(username, password);
+        picturesGlob.clear();
+        myImageItems.clear();
+        myURLS.clear();
+        myPicturesGlob.clear();
         Intent goToDashboard = new Intent(activity, MainActivity.class);
         activity.startActivity(goToDashboard);
-        Init(activity);
         activity.finishAffinity();
     }
 
@@ -511,7 +576,7 @@ public class DatabaseManager {
 
         }
         else{
-            filename.setText("No Pictures!");
+            loadPhotoAfterLogin(pm.getCurrentUser(), context, view);
         }
     }
 
