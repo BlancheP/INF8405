@@ -90,7 +90,7 @@ public class ProfileFragment extends Fragment {
         });
 
         GridView gridView = (GridView) view.findViewById(R.id.gvPhotoLibrary);
-        GridViewAdapter gridAdapter = new GridViewAdapter(this.getContext(), R.layout.photo_library_item_layout, DatabaseManager.myImageItems);
+        GridViewAdapter gridAdapter = new GridViewAdapter(this.getContext(), R.layout.photo_library_item_layout, DatabaseManager.getMyImageItems());
         gridView.setAdapter(gridAdapter);
 
         return view;
