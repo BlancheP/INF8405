@@ -46,7 +46,16 @@ public class RegisterActivity extends AppCompatActivity {
                 if (!bitmap.sameAs(emptyBitmap)) {
                     hasPhoto = true;
                 }
-                DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, hasPhoto, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
+
+                if (etUsername.getText().toString().trim().length() <= 0) {
+                    etUsername.setError("You need a username");
+                }
+                if (etPassword.getText().toString().trim().length() <= 0) {
+                    etPassword.setError("You need a password");
+                }
+
+                if (etPassword.getText().toString().trim().length() > 0 && etUsername.getText().toString().length() > 0)
+                    DatabaseManager.addUser(etPassword.getText().toString(), etUsername, RegisterActivity.this, hasPhoto, ((BitmapDrawable)bPhoto.getDrawable()).getBitmap());
             }
         });
 
