@@ -13,12 +13,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -724,6 +727,85 @@ public class DatabaseManager {
         });
 
         return true;
+    }
+
+    static void getFollowers(final Activity activity) {
+        usersRef.child(pm.getCurrentUser()).child("Followers").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                dialog.setTitle("Followers");
+                LayoutInflater inflater = activity.getLayoutInflater();
+                final List<String> followers = new ArrayList<>();
+                for (DataSnapshot usersIter : dataSnapshot.getChildren()) {
+                    followers.add(usersIter.getKey().toString());
+                }
+                if (followers.size() == 0)
+                    followers.add("You do not have any followers");
+                final View dialogView = inflater.inflate(R.layout.followers_following, null);
+                ListView lv = (ListView)dialogView.findViewById(R.id.lvFollow);
+                ArrayAdapter adapter = new ArrayAdapter<>(activity,
+                        android.R.layout.simple_list_item_1,
+                        followers);
+                lv.setAdapter(adapter);
+
+                dialog.setView(dialogView);
+
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+                final AlertDialog d = dialog.create();
+                d.show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    static void getFollowing(final Activity activity) {
+        usersRef.child(pm.getCurrentUser()).child("Following").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                dialog.setTitle("Following");
+                LayoutInflater inflater = activity.getLayoutInflater();
+                final List<String> followers = new ArrayList<>();
+                for (DataSnapshot usersIter : dataSnapshot.getChildren()) {
+                    followers.add(usersIter.getKey().toString());
+                }
+                if (followers.size() == 0)
+                    followers.add("You are not following anybody");
+                final View dialogView = inflater.inflate(R.layout.followers_following, null);
+                ListView lv = (ListView)dialogView.findViewById(R.id.lvFollow);
+                ArrayAdapter adapter = new ArrayAdapter<>(activity,
+                        android.R.layout.simple_list_item_1,
+                        followers);
+                lv.setAdapter(adapter);
+
+                dialog.setView(dialogView);
+
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+                final AlertDialog d = dialog.create();
+                d.show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

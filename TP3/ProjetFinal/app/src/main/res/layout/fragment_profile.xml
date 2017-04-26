@@ -46,37 +46,41 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10px"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="posts" />
+            android:text="posts"/>
 
         <TextView
             android:id="@+id/tvNbFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30px"
-            android:fontFamily="sans-serif-smallcaps" />
+            android:fontFamily="sans-serif-smallcaps"
+            android:clickable="true"/>
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/tvFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10px"
             android:fontFamily="sans-serif-smallcaps"
-            android:text=" followers" />
+            android:text=" followers"
+            android:clickable="true"/>
 
         <TextView
             android:id="@+id/tvNbFollowing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30px"
-            android:fontFamily="sans-serif-smallcaps"/>
+            android:fontFamily="sans-serif-smallcaps"
+            android:clickable="true"/>
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/tvFollowing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10px"
             android:fontFamily="sans-serif-smallcaps"
-            android:text=" following" />
+            android:text=" following"
+            android:clickable="true"/>
 
     </LinearLayout>
 

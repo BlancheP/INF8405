@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -86,6 +87,38 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
+            }
+        });
+
+        TextView tvNbFollowers = (TextView)view.findViewById(R.id.tvNbFollowers);
+        tvNbFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseManager.getFollowers(getActivity());
+            }
+        });
+
+        TextView tvNbFollowing = (TextView)view.findViewById(R.id.tvNbFollowing);
+        tvNbFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseManager.getFollowing(getActivity());
+            }
+        });
+
+        TextView tvFollowers = (TextView)view.findViewById(R.id.tvFollowers);
+        tvFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseManager.getFollowers(getActivity());
+            }
+        });
+
+        TextView tvFollowing = (TextView)view.findViewById(R.id.tvFollowing);
+        tvFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseManager.getFollowing(getActivity());
             }
         });
 
