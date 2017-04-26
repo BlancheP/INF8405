@@ -464,7 +464,7 @@ public class DatabaseManager {
         activity.finishAffinity();
     }
 
-    static void loadProfilePhoto( final Activity context) {
+    static void loadProfilePhoto( final Activity context, final ImageView iv) {
         String username = pm.getCurrentUser();
         storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -473,13 +473,12 @@ public class DatabaseManager {
                         .load(uri)
                         .memoryPolicy(MemoryPolicy.NO_CACHE )
                         .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .into((ImageView)context.findViewById(R.id.ivProfilePic));
+                        .into(iv);
             }
 
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                ImageView iv = (ImageView)context.findViewById(R.id.ivProfilePic);
                 iv.setImageResource(R.mipmap.ic_profile_black);
             }
 
@@ -488,7 +487,7 @@ public class DatabaseManager {
 
     static void loadProfile( final Activity context, final View view) {
 
-        loadProfilePhoto(context);
+        loadProfilePhoto(context, (ImageView)view.findViewById(R.id.ivProfilePic));
 
         final TextView followers = (TextView)view.findViewById(R.id.tvNbFollowers);
         final TextView following = (TextView)view.findViewById(R.id.tvNbFollowing);
