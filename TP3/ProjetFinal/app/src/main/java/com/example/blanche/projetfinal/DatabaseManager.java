@@ -66,6 +66,11 @@ public class DatabaseManager {
     static void Init(Context context) {
 
         pm = new PreferencesManager(context);
+        users.clear();
+        picturesGlob.clear();
+        myPicturesGlob.clear();
+        myURLS.clear();
+        myImageItems.clear();
 
         // Permet de recuperer les users et de modifier la liste de tous les users
         DatabaseManager.usersRef.addChildEventListener(new ChildEventListener() {
@@ -96,110 +101,114 @@ public class DatabaseManager {
             }
         });
 
+        String user =  pm.getCurrentUser();
+        if (user != null && user != "") {
+            usersRef.child(pm.getCurrentUser()).child("Following").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if (dataSnapshot.exists()) {
+                        final String username = dataSnapshot.getKey().toString();
+                        usersRef.child(username).child("pictures").addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
+                                infos.put("username", username);
+                                picturesGlob.add(infos);
+                            }
 
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                int index = getPhotoIndex(picturesGlob, username, s);
+                                if(index != -1){
+                                    picturesGlob.remove(index);
 
-        usersRef.child(pm.getCurrentUser()).child("Following").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                final String username = dataSnapshot.getKey().toString();
-                 usersRef.child(username).child("pictures").addChildEventListener(new ChildEventListener() {
-                     @Override
-                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                         Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
-                         infos.put("username", username);
-                         picturesGlob.add(infos);
-                     }
+                                }
+                                Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
+                                infos.put("username", username);
+                                picturesGlob.add(infos);
 
-                     @Override
-                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                         int index = getPhotoIndex(picturesGlob, username, s);
-                         if(index != -1){
-                             picturesGlob.remove(index);
+                            }
 
-                         }
-                         Map<String, String> infos = (Map<String, String>) dataSnapshot.getValue();
-                         infos.put("username", username);
-                         picturesGlob.add(infos);
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                int index = getPhotoIndex(picturesGlob, username, dataSnapshot.child("filename").getValue().toString());
+                                if(index != -1){
+                                    picturesGlob.remove(index);
+                                }
+                            }
 
-                     }
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                     @Override
-                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                         int index = getPhotoIndex(picturesGlob, username, dataSnapshot.child("filename").getValue().toString());
-                         if(index != -1){
-                             picturesGlob.remove(index);
-                         }
-                     }
+                            }
 
-                     @Override
-                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                     }
-
-                     @Override
-                     public void onCancelled(DatabaseError databaseError) {
-
-                     }
-                 });
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                deletePhotoFollower(dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        usersRef.child(pm.getCurrentUser()).child("pictures").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                               final long ONE_MEGABYTE = 1024 * 1024;
-                final String filename = dataSnapshot.getKey().toString();
-                storageRef.child(pm.getCurrentUser() + "/"+filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        myImageItems.add(new ImageItem(bitmap, filename));
-
+                            }
+                        });
                     }
-                });
 
-            }
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    deletePhotoFollower(dataSnapshot.getKey());
+                }
 
-            }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
+            });
 
-            }
-        });
+            usersRef.child(pm.getCurrentUser()).child("pictures").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final String filename = dataSnapshot.getKey().toString();
+                    storageRef.child(pm.getCurrentUser() + "/"+filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            myImageItems.add(new ImageItem(bitmap, filename));
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
@@ -329,6 +338,7 @@ public class DatabaseManager {
                         if (isUserFromPreferences){
                             Intent goToDashboard = new Intent(context, MainActivity.class);
                             context.startActivity(goToDashboard);
+                            Init(context);
                             ((Activity)context).finishAffinity();
                         }
                         else {
@@ -385,6 +395,7 @@ public class DatabaseManager {
         pm.updateCurrentUser(username, password);
         Intent goToDashboard = new Intent(activity, MainActivity.class);
         activity.startActivity(goToDashboard);
+        Init(activity);
         activity.finishAffinity();
     }
 
