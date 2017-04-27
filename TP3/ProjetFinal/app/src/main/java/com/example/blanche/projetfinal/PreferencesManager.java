@@ -20,6 +20,15 @@ public class PreferencesManager {
         editor.commit();
     }
 
+    public void updateNetworkConnectivity(String connectivity){
+        editor.putString("connectivity", connectivity);
+        editor.commit();
+    }
+
+    public String getNetworkConnectivity(){
+        return settings.getString("connectivity", null);
+    }
+
     public String getCurrentUser() {
         return settings.getString("user", null);
     }

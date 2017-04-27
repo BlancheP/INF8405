@@ -93,7 +93,6 @@ public class NetworkActivity extends AppCompatActivity {
         }
     }
 
-    // Uses AsyncTask subclass to download the XML feed from stackoverflow.com.
     public void loadPage() {
         if (((currentNetworkPreference.equals(ANY)) && (wifiConnected || mobileConnected))
                 || ((currentNetworkPreference.equals(WIFI)) && (wifiConnected))) {

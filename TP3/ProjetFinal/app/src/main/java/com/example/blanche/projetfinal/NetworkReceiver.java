@@ -53,7 +53,6 @@ public class NetworkReceiver extends BroadcastReceiver {
 
             NetworkActivity.refreshDisplay = false;
             Toast.makeText(context, "Lost Connection!", Toast.LENGTH_SHORT).show();
-
         }
     }
 }
