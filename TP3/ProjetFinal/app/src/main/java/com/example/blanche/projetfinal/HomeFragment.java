@@ -1,23 +1,19 @@
 package com.example.blanche.projetfinal;
 
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class DashboardFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -26,7 +22,7 @@ public class DashboardFragment extends Fragment {
     private SensorEventListener sensorEventListener;
 
 
-    public DashboardFragment() {
+    public HomeFragment() {
         // Required empty public constructor
     }
 
@@ -34,7 +30,7 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         sensorEventListener = new SensorEventListener() {
             @Override
@@ -55,14 +51,14 @@ public class DashboardFragment extends Fragment {
         sensorManager = (SensorManager) getContext().getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL);
 
-        DatabaseManager.loadDashboardPhoto(this.getContext());
+        DatabaseManager.loadHomePhoto(view, this.getContext());
 
 
         return view;
     }
 
     private void loadPhotos(){
-        DatabaseManager.loadDashboardPhoto(this.getContext());
+        DatabaseManager.loadHomePhoto(getView(), this.getContext());
 
     }
     @Override

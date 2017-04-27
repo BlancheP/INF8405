@@ -3,6 +3,7 @@ package com.example.blanche.projetfinal;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -57,8 +58,7 @@ public class SearchFragment extends Fragment {
                 String user = (String)parent.getItemAtPosition(pos);
                 tv.setText(user);
                 ImageView iv = (ImageView)getView().findViewById(R.id.ivUser);
-                //Set the image view to the profile pic of the user
-                iv.setImageResource(R.mipmap.ic_profile_black);
+                DatabaseManager.loadProfilePhoto(getActivity(), iv);
                 l.setBackgroundResource(R.drawable.border_background);
                 DatabaseManager.isFollowing(getActivity(), pm.getCurrentUser(), user);
             }

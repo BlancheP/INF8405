@@ -1,0 +1,100 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/profilePicLayout"
+    tools:context="com.example.blanche.projetfinal.ProfileFragment">
+
+    <ImageView
+        android:id="@+id/ivProfilePic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/bChangePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change profile picture"
+        android:fontFamily="sans-serif-smallcaps"/>
+
+    <Button
+        android:id="@+id/bChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change password"
+        android:fontFamily="sans-serif-smallcaps"/>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="50px">
+
+        <TextView
+            android:id="@+id/tvNbPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:layout_marginLeft="10px"/>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="posts"/>
+
+        <TextView
+            android:id="@+id/tvNbFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:clickable="true"/>
+
+        <TextView
+            android:id="@+id/tvFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=" followers"
+            android:clickable="true"/>
+
+        <TextView
+            android:id="@+id/tvNbFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:clickable="true"/>
+
+        <TextView
+            android:id="@+id/tvFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=" following"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/gvPhotoLibrary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:drawSelectorOnTop="true"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp"
+        android:focusable="true"
+        android:clickable="true" />
+
+</LinearLayout>
