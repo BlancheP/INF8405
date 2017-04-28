@@ -481,8 +481,7 @@ public class DatabaseManager {
         activity.finishAffinity();
     }
 
-    static void loadProfilePhoto( final Activity context, final ImageView iv) {
-        String username = pm.getCurrentUser();
+    static void loadProfilePhoto(String username, final Activity context, final ImageView iv) {
         storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -504,7 +503,7 @@ public class DatabaseManager {
 
     static void loadProfile( final Activity context, final View view) {
 
-        loadProfilePhoto(context, (ImageView)view.findViewById(R.id.ivProfilePic));
+        loadProfilePhoto(pm.getCurrentUser().toString(), context, (ImageView)view.findViewById(R.id.ivProfilePic));
 
         final TextView followers = (TextView)view.findViewById(R.id.tvNbFollowers);
         final TextView following = (TextView)view.findViewById(R.id.tvNbFollowing);

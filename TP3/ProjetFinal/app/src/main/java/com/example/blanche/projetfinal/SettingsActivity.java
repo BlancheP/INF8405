@@ -1,10 +1,6 @@
 package com.example.blanche.projetfinal;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -21,9 +17,6 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         wifiRadioButton = (RadioButton) findViewById(R.id.wifiRadioButton);
         anyNetworkRadioButton = (RadioButton) findViewById(R.id.anyNetworkRadioButton);
@@ -47,6 +40,15 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
 
@@ -62,11 +64,5 @@ public class SettingsActivity extends AppCompatActivity {
             anyNetworkRadioButton.setChecked(true);
             wifiRadioButton.setChecked(false);
         }
-
-        else{
-            //par defaut on set a "Wi-Fi Only"
-            wifiRadioButton.setChecked(true);
-        }
-
     }
 }

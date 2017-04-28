@@ -61,7 +61,7 @@ public class SearchFragment extends Fragment {
                     String user = (String) parent.getItemAtPosition(pos);
                     tv.setText(user);
                     ImageView iv = (ImageView) getView().findViewById(R.id.ivUser);
-                    DatabaseManager.loadProfilePhoto(getActivity(), iv);
+                    DatabaseManager.loadProfilePhoto(user, getActivity(), iv);
                     l.setBackgroundResource(R.drawable.border_background);
                     DatabaseManager.isFollowing(getActivity(), pm.getCurrentUser(), user);
                 }
