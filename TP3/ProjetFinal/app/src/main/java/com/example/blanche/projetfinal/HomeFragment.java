@@ -18,8 +18,8 @@ public class HomeFragment extends Fragment {
     private SensorManager sensorManager;
     private Sensor sensor;
     public static int index = 0;
-    public static boolean justChanged = false;
     private SensorEventListener sensorEventListener;
+    private long lastTime;
 
 
     public HomeFragment() {
@@ -35,11 +35,14 @@ public class HomeFragment extends Fragment {
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                if (event.values[0] > 2 && !justChanged) {
+                long now = System.currentTimeMillis();
+                if (event.values[0] > 5 && now - lastTime > 100) {
+
                     ++index;
-                    justChanged = true;
                     loadPhotos();
+
                 }
+                lastTime = now;
             }
 
             @Override

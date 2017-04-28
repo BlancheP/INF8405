@@ -301,7 +301,6 @@ public class DatabaseManager {
                                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                                 .networkPolicy(NetworkPolicy.NO_CACHE)
                                 .into(iv);
-                        HomeFragment.justChanged = false;
                     } else {
                         filename.setText("No Pictures!");
                     }
@@ -630,7 +629,6 @@ public class DatabaseManager {
                     .memoryPolicy(MemoryPolicy.NO_CACHE )
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .into(iv);
-            HomeFragment.justChanged = false;
 
         }
         else{
