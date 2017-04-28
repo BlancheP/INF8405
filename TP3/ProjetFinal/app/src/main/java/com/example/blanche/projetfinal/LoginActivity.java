@@ -1,8 +1,12 @@
 package com.example.blanche.projetfinal;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +29,24 @@ public class LoginActivity extends AppCompatActivity {
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToRegister = new Intent(LoginActivity.this, RegisterActivity.class);
-                LoginActivity.this.startActivity(goToRegister);
+
+                if(NetworkManager.hasValidConnectivity(getApplicationContext())) {
+                    Intent goToRegister = new Intent(LoginActivity.this, RegisterActivity.class);
+                    LoginActivity.this.startActivity(goToRegister);
+                }
+
+                else {
+                    new AlertDialog.Builder(LoginActivity.this)
+                            .setTitle("Cannot Register")
+                            .setMessage("In order to register, please make sure that your connectivity settings match your phone's current connectivity")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         });
 
@@ -37,10 +57,36 @@ public class LoginActivity extends AppCompatActivity {
                     etUsername.setError("You need to enter a username");
                 }
                 else {
-                    DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
+                    if(NetworkManager.hasValidConnectivity(getApplication())) {
+                        DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
+                    }
+                    else{
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("Cannot Log In")
+                                .setMessage("In order to log in, please make sure that your connectivity settings match your phone's current connectivity")
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //do nothing
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    }
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent goToSettings = new Intent(this, SettingsActivity.class);
+                startActivity(goToSettings);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public static String getCurrentUser() {

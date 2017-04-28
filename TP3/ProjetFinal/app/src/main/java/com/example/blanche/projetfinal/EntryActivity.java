@@ -19,9 +19,6 @@ public class EntryActivity extends Activity {
         DatabaseManager.Init(getApplicationContext());
         PreferencesManager pm = DatabaseManager.getPreferencesManager();
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = registerReceiver(null, ifilter);
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
@@ -29,35 +26,12 @@ public class EntryActivity extends Activity {
 
         pm.setBatteryPct(level / (float)scale);
 
-        if (pm.getCurrentUser() != null && !pm.getCurrentUser().equals("")) {
+        if (pm.getCurrentUser() != null && !pm.getCurrentUser().equals("") && NetworkManager.hasValidConnectivity(getApplicationContext())) {
             DatabaseManager.userIsValid(pm.getCurrentUser(), pm.getCurrentPassword(), this, true);
         } else {
             Intent goToLogin = new Intent(this, LoginActivity.class);
             startActivity(goToLogin);
             finish();
         }
-
-        /*
-        if (currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI){
-            Toast.makeText(getApplicationContext(), "You are using Wi-Fi!", Toast.LENGTH_SHORT).show();
-        }
-
-        else if (currentNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE){
-            Toast.makeText(getApplicationContext(), "You are using Mobile Network!", Toast.LENGTH_SHORT).show();
-        }
-
-        else{
-            Toast.makeText(getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
-        }
-        */
-
-        /*
-        if(pm.getNetworkConnectivity() == "wifi" &&
-                currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-        }
-        else {
-            Toast.makeText(getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
-        }
-        */
     }
 }
