@@ -36,9 +36,9 @@ public class ImageItem {
         this.m_title = title;
     }
 
-    public String get_description() {
+    public String getDescription() {
         return m_description;
     }
 
-    public String get_date() { return m_date; }
+    public String getDate() { return m_date; }
 }

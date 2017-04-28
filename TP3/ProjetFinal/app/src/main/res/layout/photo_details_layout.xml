@@ -6,6 +6,13 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/tvPhotoDetailsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Filename"
+        android:textAlignment="center" />
+
+    <TextView
         android:id="@+id/tvPhotoDetailsDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,9 +21,9 @@
 
     <ImageView
         android:id="@+id/ivPhotoDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/border_background" />
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/tvPhotoDetailsDesc"
@@ -24,4 +31,5 @@
         android:layout_height="wrap_content"
         android:text="Description"
         android:textAlignment="center" />
+
 </LinearLayout>
