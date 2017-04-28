@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,9 +57,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     MapView mMapView;
     View mView;
 
-    LocationRequest mLocationRequest;
-    Location mLastLocation;
     GoogleApiClient mGoogleApiClient;
+
+    private Location mCurrentLocation;
+    private Location mPreviousLocation;
+    private Location mLastLocation;
+    private static LocationRequest mLocationRequest;
 
 
     @Override
@@ -84,6 +88,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
+
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
+                .setFastestInterval(10 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
     }
 
     @Override
@@ -243,38 +252,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
+    /*
+    This method gets called every time a new location is detected by Google Play Services.
+    So as the user is moving around with their phone or tablet, the location APIs are updating
+    the location silently in the background. When the current location is updated, this method
+    is called, and we can now handle it in our Activity.
+     */
     @Override
     public void onLocationChanged(Location location) {
+        mPreviousLocation = mCurrentLocation;
+        mCurrentLocation = location;
+        try {
+            //Toast.makeText(getActivity(), "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Current Long: " + mCurrentLocation.getLongitude() + " Current Lat: " + mCurrentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+            Log.d("MapsActivity", "onLocationChanged CALLED");
+            mGoogleMap.setMyLocationEnabled(true);
 
+
+
+        } catch(SecurityException e) {
+
+        }
     }
 
     @Override
     public void onMapLongClick(LatLng latLng) {
         DatabaseManager.addMarker(latLng, getContext());
-    }
-
-    public void setImageView(Bitmap bitmap)
-    {
-        ImageView iv = (ImageView) getActivity().findViewById(R.id.markerImageView);
-        bitmap = resize(bitmap, iv);
-        iv.setImageBitmap(bitmap);
-    }
-
-    public Bitmap resize(Bitmap image, ImageView iv)
-    {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        float finalWidth;
-        float finalHeight;
-        if (width > height) {
-            finalWidth = iv.getWidth();
-            finalHeight = finalWidth * (float)height / (float)width;
-        }
-        else {
-            finalHeight = iv.getHeight();
-            finalWidth = finalHeight * (float)width / (float)height;
-        }
-        image = Bitmap.createScaledBitmap(image, (int)finalWidth, (int)finalHeight, true);
-        return image;
     }
 }

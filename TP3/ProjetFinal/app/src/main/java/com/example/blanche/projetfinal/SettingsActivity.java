@@ -62,11 +62,5 @@ public class SettingsActivity extends AppCompatActivity {
             anyNetworkRadioButton.setChecked(true);
             wifiRadioButton.setChecked(false);
         }
-
-        else{
-            //par defaut on set a "Wi-Fi Only"
-            wifiRadioButton.setChecked(true);
-        }
-
     }
 }
