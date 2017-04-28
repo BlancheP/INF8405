@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -59,10 +60,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     GoogleApiClient mGoogleApiClient;
 
-    private Location mCurrentLocation;
-    private Location mPreviousLocation;
-    private Location mLastLocation;
+    public static Location mCurrentLocation;
     private static LocationRequest mLocationRequest;
+
+    private static final int CURRENT_LOCATION_UPDATE_INTERVAL = 3000;
 
 
     @Override
@@ -88,11 +89,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
-
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
-                .setFastestInterval(10 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
     }
 
     @Override
@@ -121,7 +117,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onError() {
-                //do smth when there is picture loading error
             }
         });
 
@@ -162,7 +157,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(CURRENT_LOCATION_UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(getActivity(),
@@ -216,8 +211,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
+                    // permission was granted.
                     if (ContextCompat.checkSelfPermission(getActivity(),
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
@@ -226,19 +220,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             buildGoogleApiClient();
                         }
                         mGoogleMap.setMyLocationEnabled(true);
+
+                        // Reload current fragment
+                        Fragment frg;
+                        frg = getFragmentManager().findFragmentById(R.id.map);
+                        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(frg);
+                        ft.attach(frg);
+                        ft.commit();
                     }
 
                 } else {
 
-                    // permission denied, boo! Disable the
+                    // permission denied. Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -260,19 +259,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     @Override
     public void onLocationChanged(Location location) {
-        mPreviousLocation = mCurrentLocation;
         mCurrentLocation = location;
         try {
             //Toast.makeText(getActivity(), "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), "Current Long: " + mCurrentLocation.getLongitude() + " Current Lat: " + mCurrentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Current Long: " + mCurrentLocation.getLongitude() + " Current Lat: " + mCurrentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
             Log.d("MapsActivity", "onLocationChanged CALLED");
-            mGoogleMap.setMyLocationEnabled(true);
-
-
-
+            //mGoogleMap.setMyLocationEnabled(true);
         } catch(SecurityException e) {
 
         }
+
     }
 
     @Override

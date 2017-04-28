@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -533,7 +534,7 @@ public class DatabaseManager {
 
     @SuppressWarnings("VisibleForTests")
     static void addPhotoToBD(final String filename, final String date, final String description,
-                             final Bitmap bitmap, final Context context, final View view) {
+                             final Bitmap bitmap, final Context context, final View view, final Location currentLocation) {
 
         final String username = pm.getCurrentUser();
         usersRef.child(username).child("pictures").child(filename).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -562,7 +563,6 @@ public class DatabaseManager {
                             usersRef.child(username).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    long a = dataSnapshot.getChildrenCount();
                                     if (dataSnapshot.getChildrenCount() > 0 ) {
                                         for (DataSnapshot picturesIter : dataSnapshot.getChildren()) {
                                             String b = picturesIter.child("current").getValue().toString();
@@ -583,8 +583,12 @@ public class DatabaseManager {
                             photo.put("url", taskSnapshot.getDownloadUrl().toString());
                             photo.put("description", description);
                             photo.put("current", "true");
+                            photo.put("Lat", Double.toString(currentLocation.getLatitude()));
+                            photo.put("Long", Double.toString(currentLocation.getLongitude()));
                             markerImages.put(username, bitmap);
                             usersRef.child(username).child("pictures").child(filename).setValue(photo);
+
+
                             view.findViewById(R.id.targetimage).setVisibility(ImageView.GONE);
                             ((EditText)view.findViewById(R.id.etFileName)).getText().clear();
                             ((EditText)view.findViewById(R.id.etDescription)).getText().clear();
