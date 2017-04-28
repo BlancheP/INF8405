@@ -69,7 +69,8 @@ public class AddPhotoFragment extends Fragment {
                 ImageView iv = (ImageView)getView().findViewById(R.id.targetimage);
 
                 DatabaseManager.addPhotoToBD(etFileName.getText().toString(), tvDate.getText().toString(),
-                        etDescription.getText().toString(),((BitmapDrawable)iv.getDrawable()).getBitmap(), getContext(), getView());
+                        etDescription.getText().toString(),((BitmapDrawable)iv.getDrawable()).getBitmap(),
+                        getContext(), getView(), MapFragment.mCurrentLocation);
             }
         });
 
