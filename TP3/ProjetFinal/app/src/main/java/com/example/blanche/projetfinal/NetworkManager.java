@@ -21,7 +21,13 @@ public class NetworkManager {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
-        if ((currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) && (pm.getNetworkConnectivity().equals("wifi")))
+        //set connectivity to Any Network by default when the app is runned for the first time
+        if(pm.getNetworkConnectivity() == null){
+            pm.updateNetworkConnectivity("any");
+            //Toast.makeText(context.getApplicationContext(), "Default Connectivity setted to Any Network!", Toast.LENGTH_SHORT).show();
+        }
+
+        if (((currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) && (pm.getNetworkConnectivity().equals("wifi"))))
         {
             //Toast.makeText(context.getApplicationContext(), "You are using Wi-Fi!", Toast.LENGTH_SHORT).show();
             return true;
@@ -35,8 +41,7 @@ public class NetworkManager {
 
         else
         {
-            //Toast.makeText(context.getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
-            //Toast.makeText(context.getApplicationContext(), "Current network info: " + pm.getNetworkConnectivity(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context.getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
