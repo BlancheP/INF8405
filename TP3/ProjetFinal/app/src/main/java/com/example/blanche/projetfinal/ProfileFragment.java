@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.EditText;
@@ -122,9 +123,37 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        GridView gridView = (GridView) view.findViewById(R.id.gvPhotoLibrary);
+        final GridView gridView = (GridView) view.findViewById(R.id.gvPhotoLibrary);
         GridViewAdapter gridAdapter = new GridViewAdapter(this.getContext(), R.layout.photo_library_item_layout, DatabaseManager.getMyImageItems());
         gridView.setAdapter(gridAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                final ImageItem item = (ImageItem) adapterView.getItemAtPosition(position);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setTitle(item.getTitle());
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View dialogView = inflater.inflate(R.layout.photo_details_layout, null);
+
+                dialog.setView(dialogView);
+                final AlertDialog d = dialog.create();
+
+                ImageView image = (ImageView) dialogView.findViewById(R.id.ivPhotoDetails);
+                TextView date = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsDate);
+                TextView description = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsDesc);
+
+
+                image.setImageBitmap(item.getImage());
+                date.setText(item.get_date());
+                description.setText(item.get_description());
+                d.show();
+
+
+
+
+            }
+        });
 
         return view;
     }

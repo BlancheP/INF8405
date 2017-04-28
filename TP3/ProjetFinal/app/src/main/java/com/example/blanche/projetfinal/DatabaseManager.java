@@ -215,14 +215,15 @@ public class DatabaseManager {
 
             usersRef.child(username).child("pictures").addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                public void onChildAdded(final DataSnapshot dataSnapshot, String s) {
                     final long ONE_MEGABYTE = 1024 * 1024;
                     final String filename = dataSnapshot.getKey().toString();
                     storageRef.child(username + "/"+filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            myImageItems.add(new ImageItem(bitmap, filename));
+                            myImageItems.add(new ImageItem(bitmap, filename,dataSnapshot.child("description").getValue().toString(),
+                                    dataSnapshot.child("date").getValue().toString()));
 
                         }
                     });
@@ -262,7 +263,7 @@ public class DatabaseManager {
                     //For all users
                     for (DataSnapshot usersIter : dataSnapshot.getChildren()) {
                         if (dataSnapshot.child(currentUser).child("Following").exists()) {
-                            //On affiche que les photos de ceux d'on est abonné.
+                            //On affiche que les photos de ceux dont on est abonné.
                             if (dataSnapshot.child(currentUser).child("Following").getValue().toString().contains(usersIter.getKey())) {
                                 //For all pictures
                                 for (DataSnapshot picturesIter : usersIter.child("pictures").getChildren()) {
