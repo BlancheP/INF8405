@@ -1,11 +1,13 @@
 package com.example.blanche.projetfinal;
 
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +37,13 @@ public class HomeFragment extends Fragment {
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                if (event.values[0] > 2 && !justChanged) {
-                    ++index;
-                    justChanged = true;
-                    loadPhotos();
+
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    if (event.values[0] > 2 && !justChanged) {
+                        ++index;
+                        justChanged = true;
+                        loadPhotos();
+                    }
                 }
             }
 
@@ -51,8 +56,23 @@ public class HomeFragment extends Fragment {
         sensorManager = (SensorManager) getContext().getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL);
 
-        DatabaseManager.loadHomePhoto(view, this.getContext());
 
+        if(NetworkManager.hasValidConnectivity(getContext())) {
+            DatabaseManager.loadHomePhoto(view, this.getContext());
+        }
+
+        else{
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Cannot Download Feed")
+                    .setMessage("To download feed, please make sure that your connectivity settings match your phone's current connectivity")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
 
         return view;
     }

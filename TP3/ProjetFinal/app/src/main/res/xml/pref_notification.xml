@@ -23,5 +23,4 @@
         android:dependency="notifications_new_message"
         android:key="notifications_new_message_vibrate"
         android:title="@string/pref_title_vibrate" />
-
 </PreferenceScreen>

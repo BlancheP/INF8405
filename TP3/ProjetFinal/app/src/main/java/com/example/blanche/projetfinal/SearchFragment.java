@@ -40,49 +40,52 @@ public class SearchFragment extends Fragment {
         final Button b = (Button)view.findViewById(R.id.bFollow);
         final TextView tv = (TextView)view.findViewById(R.id.tvUsername);
 
-        // Mettre dans le AutoCompleteTextView la liste des users
-        List<String> users = DatabaseManager.getUsers();
-        final PreferencesManager pm = DatabaseManager.getPreferencesManager();
-        users.remove(pm.getCurrentUser());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_dropdown_item_1line, users);
-        actvSearch.setAdapter(adapter);
 
-        // Actualiser le profil qu'on voit au bas de la page lorsque le user clique sur un nom
-        actvSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
-                                    long id) {
-                InputMethodManager imm =(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
-                String user = (String)parent.getItemAtPosition(pos);
-                tv.setText(user);
-                ImageView iv = (ImageView)getView().findViewById(R.id.ivUser);
-                DatabaseManager.loadProfilePhoto(getActivity(), iv);
-                l.setBackgroundResource(R.drawable.border_background);
-                DatabaseManager.isFollowing(getActivity(), pm.getCurrentUser(), user);
-            }
-        });
+        if(NetworkManager.hasValidConnectivity(getContext())) {
+            // Mettre dans le AutoCompleteTextView la liste des users
+            List<String> users = DatabaseManager.getUsers();
+            final PreferencesManager pm = DatabaseManager.getPreferencesManager();
+            users.remove(pm.getCurrentUser());
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_dropdown_item_1line, users);
+            actvSearch.setAdapter(adapter);
 
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (b.getText().equals("Follow"))
-                    DatabaseManager.addFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
-                else
-                    DatabaseManager.removeFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
-            }
-        });
 
-        actvSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER)
-                    return true;
-                return false;
-            }
-        });
+            // Actualiser le profil qu'on voit au bas de la page lorsque le user clique sur un nom
+            actvSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View arg1, int pos,
+                                        long id) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getActivity().getWindow().getCurrentFocus().getWindowToken(), 0);
+                    String user = (String) parent.getItemAtPosition(pos);
+                    tv.setText(user);
+                    ImageView iv = (ImageView) getView().findViewById(R.id.ivUser);
+                    DatabaseManager.loadProfilePhoto(getActivity(), iv);
+                    l.setBackgroundResource(R.drawable.border_background);
+                    DatabaseManager.isFollowing(getActivity(), pm.getCurrentUser(), user);
+                }
+            });
 
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (b.getText().equals("Follow"))
+                        DatabaseManager.addFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
+                    else
+                        DatabaseManager.removeFollow(getActivity(), tv.getText().toString(), DatabaseManager.getPreferencesManager().getCurrentUser());
+                }
+            });
+
+            actvSearch.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER)
+                        return true;
+                    return false;
+                }
+            });
+        }
         return view;
     }
 }
