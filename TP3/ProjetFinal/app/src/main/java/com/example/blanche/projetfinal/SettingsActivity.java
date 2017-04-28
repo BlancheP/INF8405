@@ -1,5 +1,6 @@
 package com.example.blanche.projetfinal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -34,9 +36,11 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if(wifiRadioButton.isChecked()) {
                     DatabaseManager.getPreferencesManager().updateNetworkConnectivity("wifi");
+                    Toast.makeText(SettingsActivity.this, "Connectivity set to Wi-Fi Only", Toast.LENGTH_SHORT).show();
                 }
                 else if (anyNetworkRadioButton.isChecked()) {
                     DatabaseManager.getPreferencesManager().updateNetworkConnectivity("any");
+                    Toast.makeText(SettingsActivity.this, "Connectivity set to Any Network", Toast.LENGTH_SHORT).show();
                 }
 
                 finish();
@@ -50,16 +54,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         String currentAcceptedConnectivity = DatabaseManager.getPreferencesManager().getNetworkConnectivity();
 
-        if(currentAcceptedConnectivity == "wifi") {
+        if(currentAcceptedConnectivity.equals("wifi")) {
             wifiRadioButton.setChecked(true);
             anyNetworkRadioButton.setChecked(false);
         }
-        else if(currentAcceptedConnectivity == "any") {
+        else if(currentAcceptedConnectivity.equals("any")) {
             anyNetworkRadioButton.setChecked(true);
             wifiRadioButton.setChecked(false);
         }
 
         else{
+            //par defaut on set a "Wi-Fi Only"
             wifiRadioButton.setChecked(true);
         }
 
