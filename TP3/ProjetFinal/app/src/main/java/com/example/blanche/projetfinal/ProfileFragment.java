@@ -25,13 +25,41 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        DatabaseManager.loadProfile(getActivity(), view);
+
+        if(NetworkManager.hasValidConnectivity(getContext())){
+            DatabaseManager.loadProfile(getActivity(), view);
+        } else{
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Cannot Download Feed")
+                    .setMessage("To download feed, please make sure that your connectivity settings match your phone's current connectivity")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
 
         Button bChangePhoto = (Button)view.findViewById(R.id.bChangePhoto);
         bChangePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraManager.dispatchTakePictureIntent(getActivity(), HOME_CAMERA_REQUEST_CODE);
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    CameraManager.dispatchTakePictureIntent(getActivity(), HOME_CAMERA_REQUEST_CODE);
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Cannot Change Profile Picture")
+                            .setMessage("In order to change profile picture, please make sure that your connectivity settings match your phone's current connectivity")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         });
 
@@ -40,49 +68,63 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                dialog.setTitle("Change password");
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View dialogView = inflater.inflate(R.layout.change_password, null);
-                dialog.setView(dialogView);
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                    dialog.setTitle("Change password");
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    final View dialogView = inflater.inflate(R.layout.change_password, null);
+                    dialog.setView(dialogView);
 
-                dialog.setPositiveButton("SAVE", null)
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                    dialog.setPositiveButton("SAVE", null)
+                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
 
-                final AlertDialog d = dialog.create();
-                d.show();
+                    final AlertDialog d = dialog.create();
+                    d.show();
 
-                d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
                     {
-                        EditText etOldPwd = (EditText)dialogView.findViewById(R.id.etOldPassword);
-                        EditText etNewPwd = (EditText)dialogView.findViewById(R.id.etNewPassword);
-                        EditText etNewPwd2 = (EditText)dialogView.findViewById(R.id.etConfirmPassword);
+                        @Override
+                        public void onClick(View v)
+                        {
+                            EditText etOldPwd = (EditText)dialogView.findViewById(R.id.etOldPassword);
+                            EditText etNewPwd = (EditText)dialogView.findViewById(R.id.etNewPassword);
+                            EditText etNewPwd2 = (EditText)dialogView.findViewById(R.id.etConfirmPassword);
 
-                        if (etOldPwd.getText().toString().trim().length() <=0)
-                            etOldPwd.setError("You must enter your current password");
+                            if (etOldPwd.getText().toString().trim().length() <=0)
+                                etOldPwd.setError("You must enter your current password");
 
-                        if (etNewPwd.getText().toString().trim().length() <= 0)
-                            etNewPwd.setError("You must enter a new password");
+                            if (etNewPwd.getText().toString().trim().length() <= 0)
+                                etNewPwd.setError("You must enter a new password");
 
-                        if (etNewPwd2.getText().toString().trim().length() <= 0)
-                            etNewPwd2.setError("You must enter something");
+                            if (etNewPwd2.getText().toString().trim().length() <= 0)
+                                etNewPwd2.setError("You must enter something");
 
-                        if (etOldPwd.getText().toString().trim().length() > 0 &&
-                                etNewPwd.getText().toString().trim().length() > 0 &&
-                                etNewPwd2.getText().toString().trim().length() > 0) {
-                            DatabaseManager.changePassword(getActivity(), etOldPwd.getText().toString(),
-                                    etNewPwd.getText().toString(), etNewPwd2.getText().toString(), dialogView, d);
+                            if (etOldPwd.getText().toString().trim().length() > 0 &&
+                                    etNewPwd.getText().toString().trim().length() > 0 &&
+                                    etNewPwd2.getText().toString().trim().length() > 0) {
+                                DatabaseManager.changePassword(getActivity(), etOldPwd.getText().toString(),
+                                        etNewPwd.getText().toString(), etNewPwd2.getText().toString(), dialogView, d);
+                            }
                         }
-                    }
-                });
+                    });
 
+                } else {
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Cannot Change Password")
+                            .setMessage("In order to change password, please make sure that your connectivity settings match your phone's current connectivity")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         });
 
@@ -90,7 +132,9 @@ public class ProfileFragment extends Fragment {
         tvNbFollowers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseManager.getFollowers(getActivity());
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    DatabaseManager.getFollowers(getActivity());
+                }
             }
         });
 
@@ -98,7 +142,9 @@ public class ProfileFragment extends Fragment {
         tvNbFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseManager.getFollowing(getActivity());
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    DatabaseManager.getFollowing(getActivity());
+                }
             }
         });
 
@@ -106,7 +152,9 @@ public class ProfileFragment extends Fragment {
         tvFollowers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseManager.getFollowers(getActivity());
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    DatabaseManager.getFollowers(getActivity());
+                }
             }
         });
 
@@ -114,7 +162,9 @@ public class ProfileFragment extends Fragment {
         tvFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseManager.getFollowing(getActivity());
+                if(NetworkManager.hasValidConnectivity(getContext())) {
+                    DatabaseManager.getFollowing(getActivity());
+                }
             }
         });
 
