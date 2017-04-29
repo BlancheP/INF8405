@@ -209,7 +209,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
@@ -241,7 +240,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onMapLongClick(LatLng latLng) {
     }
 
-    //fonction qui mets sur la map la photo la plus recente de tous les users de l'application
+    //load most recent picture of each user of the app
     public void loadMarkerImages(){
 
         Map<String, ImageItem> markerImages = DatabaseManager.getMarkerImages();
