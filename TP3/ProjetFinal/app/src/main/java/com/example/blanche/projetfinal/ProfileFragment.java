@@ -168,63 +168,57 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        final GridView gridView = (GridView) view.findViewById(R.id.gvPhotoLibrary);
-        final GridViewAdapter gridAdapter = new GridViewAdapter(this.getContext(), R.layout.photo_library_item_layout, DatabaseManager.getMyImageItems());
-        gridView.setAdapter(gridAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(final AdapterView<?> adapterView, View view, int position, long id) {
-                final ImageItem item = (ImageItem) adapterView.getItemAtPosition(position);
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        if(NetworkManager.hasValidConnectivity(getContext())) {
+            final GridView gridView = (GridView) view.findViewById(R.id.gvPhotoLibrary);
+            final GridViewAdapter gridAdapter = new GridViewAdapter(this.getContext(), R.layout.photo_library_item_layout, DatabaseManager.getMyImageItems());
+            gridView.setAdapter(gridAdapter);
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(final AdapterView<?> adapterView, View view, int position, long id) {
+                    final ImageItem item = (ImageItem) adapterView.getItemAtPosition(position);
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
 
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View dialogView = inflater.inflate(R.layout.photo_details_layout, null);
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    final View dialogView = inflater.inflate(R.layout.photo_details_layout, null);
 
-                dialog.setView(dialogView);
+                    dialog.setView(dialogView);
 
+                    dialog.setPositiveButton("DELETE", null)
+                            .setNegativeButton("CLOSE", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
 
+                    final AlertDialog d = dialog.create();
 
-                dialog.setPositiveButton("DELETE", null)
-                        .setNegativeButton("CLOSE", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
+                    d.show();
 
-                final AlertDialog d = dialog.create();
-
-                d.show();
-
-                ImageView image = (ImageView) dialogView.findViewById(R.id.ivPhotoDetails);
-                TextView filename = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsTitle);
-                TextView date = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsDate);
-                TextView description = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsDesc);
-
-
-                image.setImageBitmap(item.getImage());
-                filename.setText(item.getTitle());
-                date.setText(item.getDate());
-                description.setText(item.getDescription());
-
-                d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DatabaseManager.deletePhoto(item.getTitle());
-                        d.dismiss();
-                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.fragment_container, new ProfileFragment());
-                        fragmentTransaction.commit();
-                    }
-                });
+                    ImageView image = (ImageView) dialogView.findViewById(R.id.ivPhotoDetails);
+                    TextView filename = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsTitle);
+                    TextView date = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsDate);
+                    TextView description = (TextView) dialogView.findViewById(R.id.tvPhotoDetailsDesc);
 
 
+                    image.setImageBitmap(item.getImage());
+                    filename.setText(item.getTitle());
+                    date.setText(item.getDate());
+                    description.setText(item.getDescription());
 
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DatabaseManager.deletePhoto(item.getTitle());
+                            d.dismiss();
+                            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.fragment_container, new ProfileFragment());
+                            fragmentTransaction.commit();
+                        }
+                    });
+                }
+            });
 
-
-
-
-            }
-        });
+        }
 
         return view;
     }
