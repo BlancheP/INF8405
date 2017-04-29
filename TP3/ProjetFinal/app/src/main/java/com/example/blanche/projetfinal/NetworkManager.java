@@ -15,7 +15,6 @@ public class NetworkManager {
 
     public static boolean hasValidConnectivity(Context context){
 
-        //DatabaseManager.Init(context.getApplicationContext());
         PreferencesManager pm = DatabaseManager.getPreferencesManager();
 
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -24,24 +23,17 @@ public class NetworkManager {
         //set connectivity to Any Network by default when the app is runned for the first time
         if(pm.getNetworkConnectivity() == null){
             pm.updateNetworkConnectivity("any");
-            //Toast.makeText(context.getApplicationContext(), "Default Connectivity setted to Any Network!", Toast.LENGTH_SHORT).show();
         }
 
-        if (((currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) && (pm.getNetworkConnectivity().equals("wifi"))))
-        {
-            //Toast.makeText(context.getApplicationContext(), "You are using Wi-Fi!", Toast.LENGTH_SHORT).show();
+        if (((currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) && (pm.getNetworkConnectivity().equals("wifi")))) {
             return true;
         }
 
-        else if (pm.getNetworkConnectivity().equals("any"))
-        {
-            //Toast.makeText(context.getApplicationContext(), "You are using any Network!", Toast.LENGTH_SHORT).show();
+        else if (pm.getNetworkConnectivity().equals("any")) {
             return true;
         }
 
-        else
-        {
-            Toast.makeText(context.getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
+        else {
             return false;
         }
     }

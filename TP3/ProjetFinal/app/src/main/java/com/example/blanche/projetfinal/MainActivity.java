@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationViewHelper.disableShiftMode(navigation);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new HomeFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new MapFragment());
         fragmentTransaction.commit();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);

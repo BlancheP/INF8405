@@ -1,13 +1,9 @@
 package com.example.blanche.projetfinal;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,9 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,7 +23,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -38,13 +30,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Map;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -59,10 +47,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     GoogleApiClient mGoogleApiClient;
 
-    private Location mCurrentLocation;
-    private Location mPreviousLocation;
-    private Location mLastLocation;
+    public static Location mCurrentLocation;
     private static LocationRequest mLocationRequest;
+
+    private static final int CURRENT_LOCATION_UPDATE_INTERVAL = 3000;
 
 
     @Override
@@ -82,17 +70,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mMapView = (MapView) mView.findViewById(R.id.map);
-        if(mMapView != null) {
-            mMapView.onCreate(null);
-            mMapView.onResume();
-            mMapView.getMapAsync(this);
+        if(NetworkManager.hasValidConnectivity(getContext())) {
+            mMapView = (MapView) mView.findViewById(R.id.map);
+            if(mMapView != null) {
+                mMapView.onCreate(null);
+                mMapView.onResume();
+                mMapView.getMapAsync(this);
+            }
         }
-
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // high accuracy requests require more time and power
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds; frequency that we want location updates - faster updates = more power!
-                .setFastestInterval(10 * 1000); // 10 second, in milliseconds; if a location is available sooner we can get it without extra power (i.e. another app is using the location services)
+        else {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Cannot Load Photos")
+                    .setMessage("In order to user Google Maps, please make sure that your connectivity settings match your phone's current connectivity")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
     }
 
     @Override
@@ -101,31 +98,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-        final LatLng sydney = new LatLng(-33.852, 151.211);
-        final ImageView v = new ImageView(getContext());
-        Uri uri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/projetfinal-481cd.appspot.com/o/rob%2Fcirque?alt=media&token=01323dbb-bead-4c24-a793-776727cb1f0e");
-        Picasso.with(getContext()).load(uri).into(v, new com.squareup.picasso.Callback() {
-            @Override
-            public void onSuccess() {
-                //do smth when picture is loaded successfully
-
-                Bitmap bitmap = ((BitmapDrawable)v.getDrawable()).getBitmap();
-                bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bitmap);
-                MarkerOptions marker = new MarkerOptions().position(sydney).title("My marker").snippet("Thinking of finding some thing...").icon(icon);
-                googleMap.addMarker(marker);
-            }
-
-            @Override
-            public void onError() {
-                //do smth when there is picture loading error
-            }
-        });
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -144,10 +116,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
-
-
-        MarkerInfoWindow markerInfoWindow = new MarkerInfoWindow(getActivity().getLayoutInflater());
-        mGoogleMap.setInfoWindowAdapter(markerInfoWindow);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -162,7 +130,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(CURRENT_LOCATION_UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(getActivity(),
@@ -174,6 +142,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
+
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -208,16 +177,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
+                    // permission was granted.
                     if (ContextCompat.checkSelfPermission(getActivity(),
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
@@ -230,21 +198,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                 } else {
 
-                    // permission denied, boo! Disable the
+                    // permission denied. Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
@@ -260,23 +224,43 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
      */
     @Override
     public void onLocationChanged(Location location) {
-        mPreviousLocation = mCurrentLocation;
         mCurrentLocation = location;
         try {
-            //Toast.makeText(getActivity(), "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), "Current Long: " + mCurrentLocation.getLongitude() + " Current Lat: " + mCurrentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
-            Log.d("MapsActivity", "onLocationChanged CALLED");
+            loadMarkerImages();
             mGoogleMap.setMyLocationEnabled(true);
+            Log.d("MapsActivity", "onLocationChanged CALLED");
+        }
 
-
-
-        } catch(SecurityException e) {
+        catch(SecurityException e) {
 
         }
     }
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        DatabaseManager.addMarker(latLng, getContext());
+    }
+
+    //load most recent picture of each user of the app
+    public void loadMarkerImages(){
+
+        Map<String, ImageItem> markerImages = DatabaseManager.getMarkerImages();
+
+        for (Map.Entry<String, ImageItem> image : markerImages.entrySet()) {
+
+            if(image.getValue().getLatitude() != null && image.getValue().getLongitude() != null ) {
+
+                Bitmap imageToDisplay = Bitmap.createScaledBitmap(image.getValue().getImage(), 150, 150, false);
+                BitmapDescriptor iconWithImage = BitmapDescriptorFactory.fromBitmap(imageToDisplay);
+
+                MarkerOptions markerOptions = new MarkerOptions().position(
+                        new LatLng(
+                                image.getValue().getLatitude(),
+                                image.getValue().getLongitude()))
+                        .title(image.getKey())
+                        .icon(iconWithImage);
+
+                mGoogleMap.addMarker(markerOptions);
+            }
+        }
     }
 }

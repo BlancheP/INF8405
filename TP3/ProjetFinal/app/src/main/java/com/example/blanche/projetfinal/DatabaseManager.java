@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -62,7 +63,7 @@ public class DatabaseManager {
     private static List< Map<String, String>> myPicturesGlob = new ArrayList<>();
     private static List<String> myURLS = new ArrayList<>();
     private static List<ImageItem> myImageItems = new ArrayList<>();
-    private static Map<String, Bitmap> markerImages = new HashMap<>();
+    private static Map<String, ImageItem> markerImages = new HashMap<>();
 
     private DatabaseManager() {}
 
@@ -101,7 +102,7 @@ public class DatabaseManager {
             }
         });
 
-        // Get la photo la plus recente de tous les users
+        // Get most recent picture of each user
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -110,16 +111,26 @@ public class DatabaseManager {
                     //For all users
                     for (DataSnapshot usersIter : dataSnapshot.getChildren()) {
                         final String username = usersIter.getKey();
-                        for (DataSnapshot picturesIter : dataSnapshot.child(username).child("pictures").getChildren()) {
-                            String a = picturesIter.child("current").getValue().toString();
-                            if (a.equals("true")) {
+                        for (final DataSnapshot picturesIter : dataSnapshot.child(username).child("pictures").getChildren()) {
+                            String isMostRecentPhoto = picturesIter.child("current").getValue().toString();
+                            if (isMostRecentPhoto.equals("true")) {
                                 final long ONE_MEGABYTE = 1024 * 1024;
                                 final String filename = picturesIter.getKey().toString();
                                 storageRef.child(username + "/" + filename).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                     @Override
                                     public void onSuccess(byte[] bytes) {
                                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                        markerImages.put(username, bitmap);
+
+                                        ImageItem mostRecentPhoto =
+                                                new ImageItem(
+                                                        bitmap,
+                                                        filename,
+                                                        picturesIter.child("description").getValue().toString(),
+                                                        picturesIter.child("date").getValue().toString(),
+                                                        Double.parseDouble(picturesIter.child("Lat").getValue().toString()),
+                                                        Double.parseDouble(picturesIter.child("Long").getValue().toString()));
+
+                                        markerImages.put(username, mostRecentPhoto);
                                     }
                                 });
                             }
@@ -223,9 +234,12 @@ public class DatabaseManager {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            myImageItems.add(new ImageItem(bitmap, filename,dataSnapshot.child("description").getValue().toString(),
-                                    dataSnapshot.child("date").getValue().toString()));
-
+                            myImageItems.add(new ImageItem(
+                                    bitmap,
+                                    filename,dataSnapshot.child("description").getValue().toString(),
+                                    dataSnapshot.child("date").getValue().toString(),
+                                    Double.parseDouble(dataSnapshot.child("Lat").getValue().toString()),
+                                    Double.parseDouble(dataSnapshot.child("Long").getValue().toString())));
                         }
                     });
 
@@ -316,7 +330,7 @@ public class DatabaseManager {
     }
 
 
-    // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
+    // checks if user already exists in DB, if not create an account
     static void addUser(final String password, final EditText etUsername, final Context context, final boolean hasPhoto, final Bitmap profilePicture) {
         final String username = etUsername.getText().toString();
         usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -346,70 +360,7 @@ public class DatabaseManager {
         });
     }
 
-    static void addMarker(final LatLng latLng, final Context context /*TODO: eventually a picture*/)
-    {
-        markerRef.addListenerForSingleValueEvent(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("Enter Marker Name");
-
-                    // Set up the input
-                    final EditText input = new EditText(context);
-
-                    // Specify the type of input expected
-                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                    builder.setView(input);
-
-                    // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            String newMarkerName = "";
-                            newMarkerName = input.getText().toString();
-
-                            final String finalNewMarkerName = newMarkerName;
-
-                            //Add marker on LongClick position
-                            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(finalNewMarkerName);
-                            Marker marker = MapFragment.mGoogleMap.addMarker(markerOptions);
-                            marker.showInfoWindow();
-
-                            //send location name and coords to Firebase
-                            markerRef.child(finalNewMarkerName)
-                                    .child("Coords")
-                                    .child("latitude").setValue(latLng.latitude);
-
-                            markerRef.child(finalNewMarkerName)
-                                    .child("Coords")
-                                    .child("longitude").setValue(latLng.longitude);
-
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-
-    // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
+    // function that adds the profile picture a user to DB
     static void addProfilePhotoToBD(String username, Bitmap bitmap) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
@@ -531,7 +482,7 @@ public class DatabaseManager {
 
     @SuppressWarnings("VisibleForTests")
     static void addPhotoToBD(final String filename, final String date, final String description,
-                             final Bitmap bitmap, final Context context, final View view) {
+                             final Bitmap bitmap, final Context context, final View view, final Location currentLocation) {
 
         final String username = pm.getCurrentUser();
         usersRef.child(username).child("pictures").child(filename).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -560,7 +511,6 @@ public class DatabaseManager {
                             usersRef.child(username).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    long a = dataSnapshot.getChildrenCount();
                                     if (dataSnapshot.getChildrenCount() > 0 ) {
                                         for (DataSnapshot picturesIter : dataSnapshot.getChildren()) {
                                             String b = picturesIter.child("current").getValue().toString();
@@ -581,8 +531,22 @@ public class DatabaseManager {
                             photo.put("url", taskSnapshot.getDownloadUrl().toString());
                             photo.put("description", description);
                             photo.put("current", "true");
-                            markerImages.put(username, bitmap);
+                            photo.put("Lat", Double.toString(currentLocation.getLatitude()));
+                            photo.put("Long", Double.toString(currentLocation.getLongitude()));
+
+                            ImageItem newPhoto =
+                                    new ImageItem(
+                                            bitmap,
+                                            filename,
+                                            description,
+                                            date,
+                                            currentLocation.getLatitude(),
+                                            currentLocation.getLongitude());
+
+                            markerImages.put(username, newPhoto);
                             usersRef.child(username).child("pictures").child(filename).setValue(photo);
+
+
                             view.findViewById(R.id.targetimage).setVisibility(ImageView.GONE);
                             ((EditText)view.findViewById(R.id.etFileName)).getText().clear();
                             ((EditText)view.findViewById(R.id.etDescription)).getText().clear();
@@ -649,7 +613,7 @@ public class DatabaseManager {
 
     static List<ImageItem> getMyImageItems() { return myImageItems; }
 
-    static Map<String, Bitmap> getMarkerImages() { return markerImages; }
+    static Map<String, ImageItem> getMarkerImages() { return markerImages; }
 
     // Fonction qui permet de follow un user
     static void addFollow(Activity activity, String user, String follower) {
