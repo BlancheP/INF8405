@@ -41,7 +41,7 @@ public class NetworkManager {
 
         else
         {
-            Toast.makeText(context.getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context.getApplicationContext(), "Not currently connected to a supported network type", Toast.LENGTH_SHORT).show();
             return false;
         }
     }

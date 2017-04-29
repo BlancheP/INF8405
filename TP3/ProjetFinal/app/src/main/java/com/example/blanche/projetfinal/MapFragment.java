@@ -1,29 +1,21 @@
 package com.example.blanche.projetfinal;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,7 +23,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -39,14 +30,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -85,11 +70,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mMapView = (MapView) mView.findViewById(R.id.map);
-        if(mMapView != null) {
-            mMapView.onCreate(null);
-            mMapView.onResume();
-            mMapView.getMapAsync(this);
+        if(NetworkManager.hasValidConnectivity(getContext())) {
+            mMapView = (MapView) mView.findViewById(R.id.map);
+            if(mMapView != null) {
+                mMapView.onCreate(null);
+                mMapView.onResume();
+                mMapView.getMapAsync(this);
+            }
+        }
+        else {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Cannot Load Photos")
+                    .setMessage("In order to user Google Maps, please make sure that your connectivity settings match your phone's current connectivity")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
     }
 
@@ -99,34 +98,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        initMarkerImages();
-
-        /*
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-        final LatLng sydney = new LatLng(-33.852, 151.211);
-        final ImageView v = new ImageView(getContext());
-        Uri uri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/projetfinal-481cd.appspot.com/o/rob%2Fcirque?alt=media&token=01323dbb-bead-4c24-a793-776727cb1f0e");
-        Picasso.with(getContext()).load(uri).into(v, new com.squareup.picasso.Callback() {
-            @Override
-            public void onSuccess() {
-                //do smth when picture is loaded successfully
-
-                Bitmap bitmap = ((BitmapDrawable)v.getDrawable()).getBitmap();
-                bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bitmap);
-                MarkerOptions marker = new MarkerOptions().position(sydney).title("My marker").snippet("Thinking of finding some thing...").icon(icon);
-                googleMap.addMarker(marker);
-            }
-
-            @Override
-            public void onError() {
-            }
-
-        });
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        */
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -145,12 +116,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
-
-
-        /*
-        MarkerInfoWindow markerInfoWindow = new MarkerInfoWindow(getActivity().getLayoutInflater());
-        mGoogleMap.setInfoWindowAdapter(markerInfoWindow);
-        */
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -177,6 +142,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
+
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -211,8 +177,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -261,14 +227,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
         try {
-            //Toast.makeText(getActivity(), "OnLocationChanged() CALLED", Toast.LENGTH_SHORT).show();
-            //Toast.makeText(getActivity(), "Current Long: " + mCurrentLocation.getLongitude() + " Current Lat: " + mCurrentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+            loadMarkerImages();
+            mGoogleMap.setMyLocationEnabled(true);
             Log.d("MapsActivity", "onLocationChanged CALLED");
-            //mGoogleMap.setMyLocationEnabled(true);
-        } catch(SecurityException e) {
-
         }
 
+        catch(SecurityException e) {
+
+        }
     }
 
     @Override
@@ -276,7 +242,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     //fonction qui mets sur la map la photo la plus recente de tous les users de l'application
-    public void initMarkerImages(){
+    public void loadMarkerImages(){
 
         Map<String, ImageItem> markerImages = DatabaseManager.getMarkerImages();
 
@@ -295,11 +261,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         .icon(iconWithImage);
 
                 mGoogleMap.addMarker(markerOptions);
-
             }
         }
-
-
     }
-
 }
