@@ -46,6 +46,8 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -97,7 +99,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        initMarkerImages();
 
+        /*
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
         final LatLng sydney = new LatLng(-33.852, 151.211);
@@ -118,9 +122,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onError() {
             }
+
         });
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        */
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -141,8 +147,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
 
 
+        /*
         MarkerInfoWindow markerInfoWindow = new MarkerInfoWindow(getActivity().getLayoutInflater());
         mGoogleMap.setInfoWindowAdapter(markerInfoWindow);
+        */
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -220,14 +228,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             buildGoogleApiClient();
                         }
                         mGoogleMap.setMyLocationEnabled(true);
-
-                        // Reload current fragment
-                        Fragment frg;
-                        frg = getFragmentManager().findFragmentById(R.id.map);
-                        final FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.detach(frg);
-                        ft.attach(frg);
-                        ft.commit();
                     }
 
                 } else {
@@ -273,6 +273,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        DatabaseManager.addMarker(latLng, getContext());
     }
+
+    //fonction qui mets sur la map la photo la plus recente de tous les users de l'application
+    public void initMarkerImages(){
+
+        Map<String, ImageItem> markerImages = DatabaseManager.getMarkerImages();
+
+        for (Map.Entry<String, ImageItem> image : markerImages.entrySet()) {
+
+            if(image.getValue().getLatitude() != null && image.getValue().getLongitude() != null ) {
+
+                Bitmap imageToDisplay = Bitmap.createScaledBitmap(image.getValue().getImage(), 150, 150, false);
+                BitmapDescriptor iconWithImage = BitmapDescriptorFactory.fromBitmap(imageToDisplay);
+
+                MarkerOptions markerOptions = new MarkerOptions().position(
+                        new LatLng(
+                                image.getValue().getLatitude(),
+                                image.getValue().getLongitude()))
+                        .title(image.getKey())
+                        .icon(iconWithImage);
+
+                mGoogleMap.addMarker(markerOptions);
+
+            }
+        }
+
+
+    }
+
 }
