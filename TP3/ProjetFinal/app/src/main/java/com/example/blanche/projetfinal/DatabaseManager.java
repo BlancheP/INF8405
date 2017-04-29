@@ -102,7 +102,7 @@ public class DatabaseManager {
             }
         });
 
-        // Get la photo la plus recente de tous les users
+        // Get most recent picture of each user
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -331,7 +331,7 @@ public class DatabaseManager {
     }
 
 
-    // Fonction qui verifie si le user existe deja et s'il n'existe pas, l'ajoute a la BD
+    // checks if user already exists in DB, if not create an account
     static void addUser(final String password, final EditText etUsername, final Context context, final boolean hasPhoto, final Bitmap profilePicture) {
         final String username = etUsername.getText().toString();
         usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -361,7 +361,7 @@ public class DatabaseManager {
         });
     }
 
-    // Fonction pour ajouter la photo de profil de l'utilisateur a la BD
+    // function that adds the profile picture a user to DB
     static void addProfilePhotoToBD(String username, Bitmap bitmap) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
