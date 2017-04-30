@@ -38,7 +38,6 @@ import java.util.Map;
 public class MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMapLongClickListener,
         LocationListener {
 
     static GoogleMap mGoogleMap;
@@ -233,10 +232,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         catch(SecurityException e) {
 
         }
-    }
-
-    @Override
-    public void onMapLongClick(LatLng latLng) {
     }
 
     //load most recent picture of each user of the app

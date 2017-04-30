@@ -75,8 +75,10 @@ public class SettingsActivity extends AppCompatActivity {
         if(currentAcceptedConnectivity == null){
             //set connectivity to Any Network by default when the app is runned for the first time
             DatabaseManager.getPreferencesManager().updateNetworkConnectivity("any");
+            currentAcceptedConnectivity = "any";
         }
-        else if(currentAcceptedConnectivity.equals("wifi")) {
+
+        if(currentAcceptedConnectivity.equals("wifi")) {
             wifiRadioButton.setChecked(true);
             anyNetworkRadioButton.setChecked(false);
         }
