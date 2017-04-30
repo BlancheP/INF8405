@@ -21,11 +21,6 @@ public class NetworkManager {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
-        //set connectivity to Any Network by default when the app is runned for the first time
-        if(pm.getNetworkConnectivity() == null){
-            pm.updateNetworkConnectivity("any");
-        }
-
         if (((currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) && (pm.getNetworkConnectivity().equals("wifi")))) {
             return true;
         }
