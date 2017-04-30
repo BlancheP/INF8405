@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -72,6 +74,14 @@ public class DatabaseManager {
         pm = new PreferencesManager(context);
         users.clear();
         markerImages.clear();
+
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        PowerLevelReceiver.initialPowerLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) / (float) scale;
+
+
 
         // Permet de recuperer les users et de modifier la liste de tous les users
         DatabaseManager.usersRef.addChildEventListener(new ChildEventListener() {
@@ -315,7 +325,6 @@ public class DatabaseManager {
                                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                                 .networkPolicy(NetworkPolicy.NO_CACHE)
                                 .into(iv);
-                        HomeFragment.justChanged = false;
                     } else {
                         filename.setText("No Pictures!");
                     }
@@ -433,6 +442,7 @@ public class DatabaseManager {
         activity.finishAffinity();
     }
 
+    //Function that gets the profile picture from Firebase Storage and sets the imageView with it.
     static void loadProfilePhoto(String username, final Activity context, final ImageView iv) {
         storageRef.child(username + "/profile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -480,7 +490,7 @@ public class DatabaseManager {
 
     }
 
-
+    //Function that saves a picture to Firebase storage and realtime database.
     @SuppressWarnings("VisibleForTests")
     static void addPhotoToBD(final String filename, final String date, final String description,
                              final Bitmap bitmap, final Context context, final View view, final Location currentLocation) {
@@ -496,7 +506,7 @@ public class DatabaseManager {
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
                     final byte[] data = b.toByteArray();
-                    //Pour la sauvegarde des photos avec Firebase storage
+                    //To save pictures files with Firebase storage
                     UploadTask task = storageRef.child(username + "/" + filename).putBytes(data);
                     task.addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -507,8 +517,7 @@ public class DatabaseManager {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Log.d("Photo","success");
-                            //Pour pouvoir avoir les liens vers les photos avec toutes les informations pertinentes dans
-                            // Firebase database
+                            //To save the informations about the pictures in Firebase database
                             usersRef.child(username).child("pictures").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -567,6 +576,8 @@ public class DatabaseManager {
 
     }
 
+    //Function that loads the picture from the list picturesGlob, and uses the url of the picture
+    // in Firebase storage to load it.
     static void loadHomePhoto(final View view, final Context context) {
 
         TextView username = (TextView) view.findViewById(R.id.tvDashUsername);
@@ -578,7 +589,7 @@ public class DatabaseManager {
 
         if(!picturesGlob.isEmpty()) {
             if (HomeFragment.index >= picturesGlob.size()) {
-                //on retourne au debut
+                //We go back to the start
                 HomeFragment.index = 0;
             }
 
@@ -593,7 +604,6 @@ public class DatabaseManager {
                     .memoryPolicy(MemoryPolicy.NO_CACHE )
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .into(iv);
-            HomeFragment.justChanged = false;
 
         }
         else{
@@ -652,7 +662,8 @@ public class DatabaseManager {
             }
         });
     }
-
+    //Function that returns the index of a picture in the list passed as argument using the username and the
+    //filename.
     static int getPhotoIndex(List<Map<String, String>> photos, String username, String filename){
         int index = 0;
         for(; index < photos.size(); index++){
@@ -663,7 +674,7 @@ public class DatabaseManager {
         }
         return -1;
     }
-
+    //Function that removes the pictures of previously followed people from the list that shows pictures.
     static void deletePhotoFollower(String username){
         for(int i = 0; i < picturesGlob.size(); i++ ){
             if(picturesGlob.get(i).get("username").equals(username)){
@@ -779,12 +790,14 @@ public class DatabaseManager {
         });
     }
 
+    //Function that removes a picture from Firebase storage using it's name.
     static void deletePhoto(String filename) {
         String username = pm.getCurrentUser();
         usersRef.child(username).child("pictures").child(filename).removeValue();
         storageRef.child(username + "/"+filename).delete();
     }
 
+    //Function that gets the index from the list of ImageItems using the filename.
     static int getPhotoItemIndex(List<ImageItem> photos, String filename) {
         int index = 0;
 
