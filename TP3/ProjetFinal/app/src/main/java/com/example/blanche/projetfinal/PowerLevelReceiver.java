@@ -9,6 +9,7 @@ import static android.content.Intent.ACTION_BATTERY_LOW;
 import static android.content.Intent.ACTION_BATTERY_OKAY;
 
 public class PowerLevelReceiver extends BroadcastReceiver {
+    static float initialPowerLevel = 0;
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION_BATTERY_LOW)) {
