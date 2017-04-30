@@ -16,6 +16,6 @@ public class PowerLevelReceiver extends BroadcastReceiver {
             Toast.makeText(context, "Careful! Your battery is low!! Please minimize your usage of the application!", Toast.LENGTH_LONG);
         }
         else if (intent.getAction().equals(ACTION_BATTERY_OKAY))
-            Toast.makeText(context, "Your battery is now okay you can continue using the application as normal :)", Toast.LENGTH_LONG);
+            Toast.makeText(context, "Your battery is now okay, you can continue to use the application as normal :)", Toast.LENGTH_LONG);
     }
 }

@@ -13,6 +13,7 @@ public class NetworkManager {
 
     private NetworkManager() {}
 
+    //check if phone is connected to right network to be able to download feed
     public static boolean hasValidConnectivity(Context context){
 
         PreferencesManager pm = DatabaseManager.getPreferencesManager();
