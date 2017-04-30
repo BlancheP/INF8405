@@ -8,7 +8,6 @@ public class PreferencesManager {
     private String PREFERENCES_FILE = "MyPrefsFile";
     private static SharedPreferences settings;
     private static SharedPreferences.Editor editor;
-    private static float batteryPct;
 
     public PreferencesManager(Context context) {
         settings = context.getSharedPreferences(PREFERENCES_FILE, 0);
@@ -43,13 +42,4 @@ public class PreferencesManager {
         editor.putString("password", "");
         editor.commit();
     }
-
-    public Float getBatteryPct() {
-        return batteryPct;
-    }
-
-    public void setBatteryPct(Float pct) {
-        batteryPct = pct;
-    }
-
 }

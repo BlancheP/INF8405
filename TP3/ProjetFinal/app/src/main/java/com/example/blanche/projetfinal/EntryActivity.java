@@ -19,13 +19,6 @@ public class EntryActivity extends Activity {
         DatabaseManager.Init(getApplicationContext());
         PreferencesManager pm = DatabaseManager.getPreferencesManager();
 
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = registerReceiver(null, ifilter);
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        pm.setBatteryPct(level / (float)scale);
-
         if (pm.getCurrentUser() != null && !pm.getCurrentUser().equals("") && NetworkManager.hasValidConnectivity(getApplicationContext())) {
             DatabaseManager.userIsValid(pm.getCurrentUser(), pm.getCurrentPassword(), this, true);
         } else {
