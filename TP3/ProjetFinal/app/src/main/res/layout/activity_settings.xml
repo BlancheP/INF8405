@@ -8,20 +8,40 @@
     android:orientation="vertical"
     tools:context="com.example.blanche.projetfinal.SettingsActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-    </android.support.design.widget.AppBarLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/radioGroup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_alignParentStart="true"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Network Connectivity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/Black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please select the network connectivity required to download feed: "
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
 
             <RadioButton
                 android:id="@+id/wifiRadioButton"
@@ -30,9 +50,11 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="bottom|left"
-                android:layout_marginTop="75dp"
+                android:layout_marginTop="25dp"
                 android:text="Wi-Fi Only"
-                app:layout_anchorGravity="top|left" />
+                app:layout_anchorGravity="top|left"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
 
             <RadioButton
                 android:id="@+id/anyNetworkRadioButton"
@@ -41,9 +63,11 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/wifiRadioButton"
                 android:layout_gravity="bottom|left"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="10dp"
                 android:text="Any Network"
-                app:layout_anchorGravity="top|right" />
+                app:layout_anchorGravity="top|right"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
 
         </RadioGroup>
 
@@ -55,16 +79,23 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="bottom|right"
+            android:elevation="0dp"
             android:text="Save"
-            app:layout_anchorGravity="bottom|right" />
+            app:layout_anchorGravity="bottom|right"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="15dp"/>
 
         <TextView
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:text="Battery usage: " />
+            android:layout_below="@+id/radioGroup"
+            android:layout_marginTop="36dp"
+            android:text="Battery usage: "
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
 
         <TextView
             android:id="@+id/tvBattPct"
@@ -72,8 +103,18 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/textView9"
             android:layout_toEndOf="@+id/textView9"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
     </RelativeLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+    </android.support.design.widget.AppBarLayout>
 
     <include
         android:id="@+id/include"
