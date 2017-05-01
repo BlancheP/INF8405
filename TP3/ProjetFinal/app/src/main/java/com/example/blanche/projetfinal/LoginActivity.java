@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         final EditText etUsername = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
         final Button bLogin = (Button) findViewById(R.id.bLogin);
@@ -61,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                 else {
                     if(NetworkManager.hasValidConnectivity(getApplication())) {
                         DatabaseManager.userIsValid(etUsername.getText().toString(), etPassword.getText().toString(), LoginActivity.this);
+
                     }
                     else{
                         new AlertDialog.Builder(LoginActivity.this)

@@ -328,7 +328,7 @@ public class DatabaseManager {
                     } else {
                         filename.setText("No Pictures!");
                     }
-                    InitUser(currentUser);
+                    //InitUser(currentUser);
                 }
             }
 
@@ -437,6 +437,7 @@ public class DatabaseManager {
         myImageItems.clear();
         myURLS.clear();
         myPicturesGlob.clear();
+        DatabaseManager.Init(activity);
         Intent goToDashboard = new Intent(activity, MainActivity.class);
         activity.startActivity(goToDashboard);
         activity.finishAffinity();
