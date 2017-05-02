@@ -30,13 +30,11 @@ public class SettingsActivity extends AppCompatActivity {
         //To get the current battery level
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = this.registerReceiver(null, ifilter);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        Float batteryPct = new Float(level / scale);
-        Float deltaPower = PowerLevelReceiver.initialPowerLevel - batteryPct;
+        int currentLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int deltaPower = PowerLevelReceiver.initialPowerLevel - currentLevel;
 
         TextView tvBattPct = (TextView) findViewById(R.id.tvBattPct);
-        tvBattPct.setText( deltaPower.toString());
+        tvBattPct.setText( String.valueOf(deltaPower) + " %");
 
 
         final Button saveButton = (Button) findViewById(R.id.saveButton);

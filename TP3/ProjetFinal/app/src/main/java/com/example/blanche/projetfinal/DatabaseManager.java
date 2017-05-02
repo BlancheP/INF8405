@@ -78,8 +78,7 @@ public class DatabaseManager {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
 
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        PowerLevelReceiver.initialPowerLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) / (float) scale;
+        PowerLevelReceiver.initialPowerLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
 
 
